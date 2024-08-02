@@ -15,7 +15,7 @@ if ($stmt === false) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WAFER Dashboard</title>
-    <style>
+    <!-- <style>
         .table-container {
             max-width: 100%;
             overflow-x: auto;
@@ -35,10 +35,11 @@ if ($stmt === false) {
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
-    </style>
+    </style> -->
+    <link rel="stylesheet" href="src/output.css">
 </head>
 <body>
-    <h1>WAFER Table Dashboard</h1>
+    <h1 class="text-center bg-green-300">WAFER Table Dashboard</h1>
     <div class="table-container">
         <table>
             <thead>
