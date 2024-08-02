@@ -1,8 +1,21 @@
 <?php
 require __DIR__ . '/../connection.php';
 
-$tsql = "SELECT * FROM WAFER";
-$stmt = sqlsrv_query($conn, $tsql);
+// Pagination logic
+$records_per_page = 10; // Number of records per page
+$current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($current_page - 1) * $records_per_page;
+
+// Count total number of records
+$count_sql = "SELECT COUNT(*) AS total FROM WAFER";
+$count_stmt = sqlsrv_query($conn, $count_sql);
+$total_rows = sqlsrv_fetch_array($count_stmt, SQLSRV_FETCH_ASSOC)['total'];
+$total_pages = ceil($total_rows / $records_per_page);
+
+// Retrieve records for the current page
+$tsql = "SELECT * FROM WAFER ORDER BY Wafer_Sequence OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+$params = array($offset, $records_per_page);
+$stmt = sqlsrv_query($conn, $tsql, $params);
 
 if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
@@ -18,8 +31,11 @@ if ($stmt === false) {
     <link rel="stylesheet" href="../src/output.css">
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen text-black">
-    <div class="w-full max-w-6xl p-6rounded-lg shadow-lg">
+    <div class="w-full max-w-6xl p-6 rounded-lg shadow-lg">
         <h1 class="text-center text-2xl font-bold mb-4">Yieldwerx</h1>
+        <div class="mb-4 text-right">
+            <a href="export.php" class="px-4 py-2 bg-green-500 text-white rounded">Export to CSV</a>
+        </div>
         <div class="overflow-x-auto">
             <table class="w-full border-collapse table-fixed p-4">
                 <thead>
@@ -53,6 +69,18 @@ if ($stmt === false) {
                     <?php endwhile; ?>
                 </tbody>
             </table>
+        </div>
+        <!-- Pagination -->
+        <div class="mt-4 flex justify-center">
+            <?php if ($current_page > 1): ?>
+                <a href="?page=<?php echo $current_page - 1; ?>" class="px-4 py-2 bg-blue-500 text-white rounded-l">Previous</a>
+            <?php endif; ?>
+            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <a href="?page=<?php echo $i; ?>" class="px-4 py-2 <?php echo $i == $current_page ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'; ?>"><?php echo $i; ?></a>
+            <?php endfor; ?>
+            <?php if ($current_page < $total_pages): ?>
+                <a href="?page=<?php echo $current_page + 1; ?>" class="px-4 py-2 bg-blue-500 text-white rounded-r">Next</a>
+            <?php endif; ?>
         </div>
     </div>
 
