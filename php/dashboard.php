@@ -50,15 +50,20 @@ if ($stmt === false) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wafer Dashboard</title>
     <link rel="stylesheet" href="../src/output.css">
+    <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
     <style>
         .table-container {
             overflow-x: auto;
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen text-black">
-    <div class="w-full max-w-6xl p-6 rounded-lg shadow-lg bg-white">
-        <h1 class="text-center text-2xl font-bold mb-4">Yieldwerx</h1>
+<body class="bg-gray-100 flex justify-center text-black">
+<div class="flex flex-col">
+<?php include('navbar.php'); ?>
+    <div class="w-full max-w-7xl p-6 rounded-lg shadow-lg bg-white">
+        <h1 class="text-start text-2xl font-bold mb-4">Data Extraction [Total: <?php echo $total_rows; ?>]</h1>
         <div class="mb-4 text-right">
             <a href="export.php" class="px-4 py-2 bg-green-500 text-white rounded">Export to CSV</a>
         </div>
@@ -130,7 +135,7 @@ if ($stmt === false) {
             <?php endif; ?>
         </div>
     </div>
-
+</div>
     <?php
     sqlsrv_free_stmt($stmt);
     sqlsrv_close($conn);
