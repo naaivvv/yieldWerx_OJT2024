@@ -94,7 +94,7 @@
                 device_name: "SELECT Part_Type FROM lot",
                 test_program: "SELECT Program_Name FROM lot",
                 lot: "SELECT Lot_ID FROM lot",
-                wafer: "SELECT Wafer_ID FROM wafer",
+                wafer: "SELECT Wafer_ID FROM wafer ORDER BY Wafer_ID ASC",
                 parameter: "SELECT Test_Name FROM TEST_PARAM_MAP"
             };
 
