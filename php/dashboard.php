@@ -97,7 +97,7 @@ $query_string = preg_replace('/(&?page=null)|(&?page=\d+)/', '', $query_string);
 <body class="bg-gray-100 text-black">
 <?php include('navbar.php'); ?>
 <div class="flex justify-center items-center h-screen">
-    <div class="w-full max-w-7xl p-6 rounded-lg shadow-lg bg-white">
+    <div class="w-full max-w-7xl p-6 rounded-lg shadow-lg bg-white mt-10">
         <h1 class="text-start text-2xl font-bold mb-4">Data Extraction [Total: <?php echo $total_rows; ?>]</h1>
         <div class="mb-4 text-right">
             <a href="export.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-green-500 text-white rounded">Export to CSV</a>
