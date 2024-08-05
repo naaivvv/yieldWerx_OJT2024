@@ -52,13 +52,18 @@ if ($stmt === false) {
 
 // Fetch data and prepare for Chart.js
 $data = [];
+$xLabel = '';
+$yLabel = '';
 while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+    if (!$xLabel) {
+        $xLabel = $row['Test_Name'];
+    } elseif (!$yLabel) {
+        $yLabel = $row['Test_Name'];
+    }
     $xValue = floatval($row[$filters['tm.Column_Name'][0]]);
     $yValue = floatval($row[$filters['tm.Column_Name'][1]]);
     $data[] = ['x' => $xValue, 'y' => $yValue];
 }
-$xLabel = $filters['tm.Column_Name'][0];
-$yLabel = $filters['tm.Column_Name'][1];
 sqlsrv_free_stmt($stmt); // Free the statement here after fetching the data
 ?>
 <!DOCTYPE html>
@@ -198,7 +203,7 @@ sqlsrv_free_stmt($stmt); // Free the statement here after fetching the data
 
 <div class="p-4 sm:ml-64">
     <div class="p-4 rounded-lg dark:border-gray-700 mt-14">
-        <h1 class="text-center text-2xl font-bold mb-4 w-full">Scatter Plot</h1>
+        <h1 class="text-center text-2xl font-bold mb-4 w-full">XY Scatter Plot</h1>
         <div class="grid grid-cols-2 gap-4 px-32 max-h-[50rem]">
           <div><canvas id="chartYX"></canvas></div>
           <div><canvas id="chartYY"></canvas></div>
@@ -209,86 +214,137 @@ sqlsrv_free_stmt($stmt); // Free the statement here after fetching the data
           
         </div>
         <script>
-          var xLabel = <?php echo json_encode($xLabel); ?>;
-          var yLabel = <?php echo json_encode($yLabel); ?>;
+    document.addEventListener('DOMContentLoaded', function() {
+        const data = <?php echo json_encode($data); ?>;
+        const xLabel = <?php echo json_encode($xLabel); ?>;
+        const yLabel = <?php echo json_encode($yLabel); ?>;
 
-            document.addEventListener('DOMContentLoaded', function() {
-                const data = <?php echo json_encode($data); ?>;
-
-                const configYX = {
-                    type: 'scatter',
-                    data: {
-                        datasets: [{
-                            label: yLabel + ' vs. ' + xLabel,
-                            data: data,
-                            backgroundColor: 'rgba(75, 192, 192, 0.6)'
-                        }]
+        const configYX = {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: yLabel + ' vs. ' + xLabel,
+                    data: data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)'
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: xLabel
+                        }
                     },
-                    options: {
-                        scales: {
-                            x: { type: 'linear', position: 'bottom' },
-                            y: { type: 'linear' }
+                    y: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: yLabel
                         }
                     }
-                };
+                }
+            }
+        };
 
-                const configYY = {
-                    type: 'scatter',
-                    data: {
-                        datasets: [{
-                          label: yLabel + ' vs. ' + yLabel,
-                            data: data.map(d => ({ x: d.y, y: d.y })),
-                            backgroundColor: 'rgba(192, 75, 75, 0.6)'
-                        }]
+        const configYY = {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: yLabel + ' vs. ' + yLabel,
+                    data: data.map(d => ({ x: d.y, y: d.y })),
+                    backgroundColor: 'rgba(192, 75, 75, 0.6)'
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: yLabel
+                        }
                     },
-                    options: {
-                        scales: {
-                            x: { type: 'linear', position: 'bottom' },
-                            y: { type: 'linear' }
+                    y: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: yLabel
                         }
                     }
-                };
+                }
+            }
+        };
 
-                const configXX = {
-                    type: 'scatter',
-                    data: {
-                        datasets: [{
-                            label: xLabel + ' vs. ' + xLabel,
-                            data: data.map(d => ({ x: d.x, y: d.x })),
-                            backgroundColor: 'rgba(75, 75, 192, 0.6)'
-                        }]
+        const configXX = {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: xLabel + ' vs. ' + xLabel,
+                    data: data.map(d => ({ x: d.x, y: d.x })),
+                    backgroundColor: 'rgba(75, 75, 192, 0.6)'
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: xLabel
+                        }
                     },
-                    options: {
-                        scales: {
-                            x: { type: 'linear', position: 'bottom' },
-                            y: { type: 'linear' }
+                    y: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: xLabel
                         }
                     }
-                };
+                }
+            }
+        };
 
-                const configXY = {
-                    type: 'scatter',
-                    data: {
-                        datasets: [{
-                            label: xLabel + ' vs. ' + yLabel,
-                            data: data.map(d => ({ x: d.x, y: d.y })),
-                            backgroundColor: 'rgba(192, 192, 75, 0.6)'
-                        }]
+        const configXY = {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: xLabel + ' vs. ' + yLabel,
+                    data: data.map(d => ({ x: d.x, y: d.y })),
+                    backgroundColor: 'rgba(192, 192, 75, 0.6)'
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: xLabel
+                        }
                     },
-                    options: {
-                        scales: {
-                            x: { type: 'linear', position: 'bottom' },
-                            y: { type: 'linear' }
+                    y: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: yLabel
                         }
                     }
-                };
+                }
+            }
+        };
 
-                new Chart(document.getElementById('chartYX').getContext('2d'), configYX);
-                new Chart(document.getElementById('chartYY').getContext('2d'), configYY);
-                new Chart(document.getElementById('chartXX').getContext('2d'), configXX);
-                new Chart(document.getElementById('chartXY').getContext('2d'), configXY);
-            });
-        </script>
+        new Chart(document.getElementById('chartYX').getContext('2d'), configYX);
+        new Chart(document.getElementById('chartYY').getContext('2d'), configYY);
+        new Chart(document.getElementById('chartXX').getContext('2d'), configXX);
+        new Chart(document.getElementById('chartXY').getContext('2d'), configXY);
+    });
+</script>
     </div>
 </div>
 </body>
