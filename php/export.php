@@ -14,7 +14,8 @@ $filters = [
     "l.program_name" => isset($_GET['test_program']) ? $_GET['test_program'] : [],
     "l.lot_ID" => isset($_GET['lot']) ? $_GET['lot'] : [],
     "w.wafer_ID" => isset($_GET['wafer']) ? $_GET['wafer'] : [],
-    "tm.Column_Name" => isset($_GET['parameter']) ? $_GET['parameter'] : []
+    "tm.Column_Name" => isset($_GET['parameter']) ? $_GET['parameter'] : [],
+    "p.probing_sequence" => isset($_GET['abbrev']) ? $_GET['abbrev'] : []
 ];
 
 // Prepare SQL filters
@@ -47,6 +48,7 @@ $tsql = "SELECT l.Facility_ID, l.Work_Center, l.Part_Type, l.Program_Name, l.Tes
          JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
          JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
          JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
+         JOIN ProbingSequenceOrder p on p.probing_sequence = w.probing_sequence
          $where_clause
          ORDER BY w.Wafer_ID";
 

@@ -9,7 +9,8 @@ $filters = [
     "l.program_name" => isset($_GET['test_program']) ? $_GET['test_program'] : [],
     "l.lot_ID" => isset($_GET['lot']) ? $_GET['lot'] : [],
     "w.wafer_ID" => isset($_GET['wafer']) ? $_GET['wafer'] : [],
-    "tm.Column_Name" => isset($_GET['parameter']) ? $_GET['parameter'] : []
+    "tm.Column_Name" => isset($_GET['parameter']) ? $_GET['parameter'] : [],
+    "p.probing_sequence" => isset($_GET['abbrev']) ? $_GET['abbrev'] : []
 ];
 
 // Prepare SQL filters
@@ -36,6 +37,7 @@ $count_sql = "SELECT COUNT(*) AS total
               JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
               JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
               JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
+              JOIN ProbingSequenceOrder p on p.probing_sequence = w.probing_sequence
               $where_clause";  // Append WHERE clause if it exists
 
 $count_stmt = sqlsrv_query($conn, $count_sql, $params);
@@ -58,6 +60,7 @@ $tsql = "SELECT l.Facility_ID, l.Work_Center, l.Part_Type, l.Program_Name, l.Tes
          JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
          JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
          JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
+         JOIN ProbingSequenceOrder p on p.probing_sequence = w.probing_sequence
          $where_clause
          ORDER BY w.Wafer_ID";
 
@@ -97,7 +100,7 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
 <div class="flex justify-center items-center h-full">
     <div class="w-full max-w-7xl p-6 rounded-lg shadow-lg bg-white mt-10">
         <div class="mb-4 text-right">
-            <a href="scatter_plot.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-orange-500 text-white rounded mr-4">
+            <a href="scatter_plot.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-orange-500 text-white rounded mr-2">
                 <i class="fa-solid fa-chart-line"></i>
             </a>
             <a href="export.php?<?php echo http_build_query($_GET); ?>" class="px-5 py-2 bg-green-500 text-white rounded">
@@ -129,11 +132,11 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
                             if ($value instanceof DateTime) {
                                 $value = $value->format('Y-m-d H:i:s'); // Adjust format as needed
                             }
-                            echo "<td class='px-6 py-4 whitespace-nowrap'>$value</td>";
+                            echo "<td class='px-6 py-3 whitespace-nowrap'>$value</td>";
                         }
                         echo "</tr>";
                     }
-                    sqlsrv_free_stmt($stmt); // Free the statement here after fetching the data for display
+                    sqlsrv_free_stmt($stmt); // Free the statement here after displaying data
                     ?>
                 </tbody>
             </table>
