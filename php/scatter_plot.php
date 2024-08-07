@@ -84,6 +84,11 @@ while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
 }
 sqlsrv_free_stmt($stmt);
 
+// Sort groupedData by wafer ID
+if ($groupWafer) {
+    ksort($groupedData);
+}
+
 // Calculate the number of distinct wafer IDs
 $numDistinctWafers = count($groupedData);
 ?>
