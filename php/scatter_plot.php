@@ -1,6 +1,15 @@
 <?php
 require __DIR__ . '/../connection.php';
 
+$groupLot = isset($_GET['group_lot']) ? true : false;
+$groupWafer = isset($_GET['group_wafer']) ? true : false;
+
+// Include these values in the $groups array
+$groups = [
+    'lot' => $groupLot,
+    'wafer' => $groupWafer
+];
+
 // Filters from URL parameters
 $filters = [
     "l.Facility_ID" => isset($_GET['facility']) ? $_GET['facility'] : [],
@@ -33,175 +42,118 @@ if (!empty($sql_filters)) {
 // Dynamically construct the column part of the SQL query
 $column_list = !empty($filters['tm.Column_Name']) ? implode(', ', array_map(function($col) { return "d1.$col"; }, $filters['tm.Column_Name'])) : '*';
 
-// Initialize the data and abbrev_map arrays
+// Initialize the data array
 $data = [];
-$abbrev_map = [];
-$abbrev_data = isset($_GET['abbrev']) ? $_GET['abbrev'] : [];
 $xLabel = $filters['tm.Column_Name'][0] ?? 'X';
 $yLabel = $filters['tm.Column_Name'][1] ?? 'Y';
 $xTestName = '';
 $yTestName = '';
 
-if (!empty($abbrev_data)) {
-    // Query to fetch abbrev mapping for all provided probing_sequence values
-    $abbrev_sql = "SELECT p.probing_sequence, p.abbrev
-                   FROM ProbingSequenceOrder p
-                   WHERE p.probing_sequence IN (" . implode(',', array_fill(0, count($abbrev_data), '?')) . ")";
-    $abbrev_stmt = sqlsrv_query($conn, $abbrev_sql, $abbrev_data);
-    if ($abbrev_stmt === false) {
-        die(print_r(sqlsrv_errors(), true));
-    }
+// Query to fetch data for the chart
+$tsql = "SELECT w.Wafer_ID, d1.{$filters['tm.Column_Name'][0]} AS X, d1.{$filters['tm.Column_Name'][1]} AS Y, tm.Test_Name
+         FROM DEVICE_1_CP1_V1_0_001 d1
+         JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
+         JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
+         JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
+         JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
+         JOIN ProbingSequenceOrder p on p.probing_sequence = w.probing_sequence
+         $where_clause";
 
-    // Populate the abbrev_map
-    while ($row = sqlsrv_fetch_array($abbrev_stmt, SQLSRV_FETCH_ASSOC)) {
-        $abbrev_map[$row['probing_sequence']] = $row['abbrev'];
-    }
-    sqlsrv_free_stmt($abbrev_stmt);
-
-    foreach ($abbrev_data as $abbrev) {
-        // Append probing_sequence filter for each abbrev
-        $abbrev_where_clause = $where_clause ? $where_clause . ' AND p.probing_sequence = ?' : 'WHERE p.probing_sequence = ?';
-        $abbrev_params = array_merge($params, [$abbrev]);
-
-        // Query to fetch data for the current abbrev
-        $tsql = "SELECT d1.{$filters['tm.Column_Name'][0]} AS X, d1.{$filters['tm.Column_Name'][1]} AS Y, tm.Test_Name, p.probing_sequence
-                 FROM DEVICE_1_CP1_V1_0_001 d1
-                 JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
-                 JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
-                 JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
-                 JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
-                 JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
-                 $abbrev_where_clause";
-
-        $stmt_abbrev = sqlsrv_query($conn, $tsql, $abbrev_params);
-        if ($stmt_abbrev === false) {
-            die(print_r(sqlsrv_errors(), true));
-        }
-
-        // Fetch and prepare data for Chart.js
-        $data[$abbrev] = [];
-        while ($row = sqlsrv_fetch_array($stmt_abbrev, SQLSRV_FETCH_ASSOC)) {
-            if (!$xTestName) {
-                $xTestName = $row['Test_Name'];
-            } elseif (!$yTestName) {
-                $yTestName = $row['Test_Name'];
-            }
-            $xValue = floatval($row['X']);
-            $yValue = floatval($row['Y']);
-            $data[$abbrev][] = ['x' => $xValue, 'y' => $yValue];
-        }
-        sqlsrv_free_stmt($stmt_abbrev);
-    }
-} else {
-    // No abbrev filter, generate a single unfiltered chart
-    $tsql = "SELECT d1.{$filters['tm.Column_Name'][0]} AS X, d1.{$filters['tm.Column_Name'][1]} AS Y, tm.Test_Name
-             FROM DEVICE_1_CP1_V1_0_001 d1
-             JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
-             JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
-             JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
-             JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
-             $where_clause";
-
-    $stmt = sqlsrv_query($conn, $tsql, $params);
-    if ($stmt === false) {
-        die(print_r(sqlsrv_errors(), true));
-    }
-
-    // Fetch and prepare data for Chart.js
-    $data['all'] = [];
-    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-        if (!$xTestName) {
-            $xTestName = $row['Test_Name'];
-        } elseif (!$yTestName) {
-            $yTestName = $row['Test_Name'];
-        }
-        $xValue = floatval($row['X']);
-        $yValue = floatval($row['Y']);
-        $data['all'][] = ['x' => $xValue, 'y' => $yValue];
-    }
-    sqlsrv_free_stmt($stmt);
+$stmt = sqlsrv_query($conn, $tsql, $params);
+if ($stmt === false) {
+    die(print_r(sqlsrv_errors(), true));
 }
 
+// Fetch and prepare data for Chart.js
+$groupedData = [];
+while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+    if (!$xTestName) {
+        $xTestName = $row['Test_Name'];
+    } elseif (!$yTestName) {
+        $yTestName = $row['Test_Name'];
+    }
+    $waferID = $row['Wafer_ID'];
+    $xValue = floatval($row['X']);
+    $yValue = floatval($row['Y']);
+    
+    if ($groupWafer) {
+        $groupedData[$waferID][] = ['x' => $xValue, 'y' => $yValue];
+    } else {
+        $groupedData['all'][] = ['x' => $xValue, 'y' => $yValue];
+    }
+}
+sqlsrv_free_stmt($stmt);
+
+// Calculate the number of distinct wafer IDs
+$numDistinctWafers = count($groupedData);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Dashboard</title>
+   <title>XY Scatter Plot</title>
    <link rel="stylesheet" href="../src/output.css">
-   <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css" rel="stylesheet" />
    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   <style>
+       .chart-container {
+           overflow: auto;
+           max-height: 75vh;
+           max-width: 100%;
+       }
+       table {
+           width: 100%;
+           border-collapse: collapse;
+       }
+       td {
+           padding: 16px;
+       }
+       canvas{
+        height:300px;
+       }
+   </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-50">
 <?php include('admin_components.php'); ?>
 <div class="p-4 sm:ml-64">
     <div class="p-4 rounded-lg dark:border-gray-700 mt-14">
         <h1 class="text-center text-2xl font-bold mb-4 w-full">XY Scatter Plot</h1>
-        <div class="grid grid-cols-<?php echo !empty($abbrev_data) ? '2' : '1'; ?> gap-4 px-32 max-h-[50rem]">
-          <?php if (!empty($abbrev_data)): ?>
-            <?php foreach ($abbrev_data as $abbrev): ?>
-                <div class="mb-6">
-                    <h2 class="text-center text-xl font-semibold mb-4"><?php echo htmlspecialchars($abbrev_map[$abbrev] ?? $abbrev); ?></h2>
-                    <canvas id="chartXY-<?php echo htmlspecialchars($abbrev); ?>"></canvas>
-                </div>
-            <?php endforeach; ?>
-          <?php else: ?>
-            <div class="mb-6">
-                <h2 class="text-center text-xl font-semibold mb-4">Unfiltered Data</h2>
-                <canvas id="chartXY-all"></canvas>
-            </div>
-          <?php endif; ?>
+        <div class="chart-container">
+            <table>
+                <tbody>
+                    <tr>
+                    <?php
+                    if ($groupWafer) {
+                        foreach ($groupedData as $waferID => $data) {
+                            echo '<td><div class="flex items-center justify-start flex-col"><h2 class="text-center text-xl font-semibold">Wafer ID: ' . $waferID . '</h2>';
+                            echo '<canvas id="chartXY_' . $waferID . '"></canvas></div></td>';
+                        }
+                    } else {
+                        echo '<td><canvas id="chartXY_all"></canvas></td>';
+                    }
+                    ?>
+                    </tr>
+                </tbody>
+            </table>
         </div>
         <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const data = <?php echo json_encode($data); ?>;
+            const groupedData = <?php echo json_encode($groupedData); ?>;
             const xTestName = <?php echo json_encode($xTestName); ?>;
             const yTestName = <?php echo json_encode($yTestName); ?>;
-            
-            <?php if (!empty($abbrev_data)): ?>
-                <?php foreach ($abbrev_data as $abbrev): ?>
-                    new Chart(document.getElementById('chartXY-<?php echo htmlspecialchars($abbrev); ?>').getContext('2d'), {
-                        type: 'scatter',
-                        data: {
-                            datasets: [{
-                                label: xTestName + ' vs. ' + yTestName + ' (<?php echo htmlspecialchars($abbrev_map[$abbrev] ?? $abbrev); ?>)',
-                                data: data[<?php echo json_encode($abbrev); ?>].map(d => ({ x: d.x, y: d.y })),
-                                backgroundColor: 'rgba(192, 192, 75, 0.6)'
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                x: {
-                                    type: 'linear',
-                                    position: 'bottom',
-                                    title: {
-                                        display: true,
-                                        text: xTestName
-                                    }
-                                },
-                                y: {
-                                    type: 'linear',
-                                    title: {
-                                        display: true,
-                                        text: yTestName
-                                    }
-                                }
-                            }
-                        }
-                    });
-                <?php endforeach; ?>
-            <?php else: ?>
-                new Chart(document.getElementById('chartXY-all').getContext('2d'), {
+
+            if (groupedData['all']) {
+                new Chart(document.getElementById('chartXY_all').getContext('2d'), {
                     type: 'scatter',
                     data: {
                         datasets: [{
-                            label: xTestName + ' vs. ' + yTestName + ' (Unfiltered Data)',
-                            data: data['all'].map(d => ({ x: d.x, y: d.y })),
+                            label: xTestName + ' vs. ' + yTestName,
+                            data: groupedData['all'].map(d => ({ x: d.x, y: d.y })),
                             backgroundColor: 'rgba(192, 192, 75, 0.6)'
                         }]
                     },
@@ -225,7 +177,41 @@ if (!empty($abbrev_data)) {
                         }
                     }
                 });
-            <?php endif; ?>
+            } else {
+                for (const waferID in groupedData) {
+                    const data = groupedData[waferID];
+
+                    new Chart(document.getElementById('chartXY_' + waferID).getContext('2d'), {
+                        type: 'scatter',
+                        data: {
+                            datasets: [{
+                                label: xTestName + ' vs. ' + yTestName,
+                                data: data.map(d => ({ x: d.x, y: d.y })),
+                                backgroundColor: 'rgba(192, 192, 75, 0.6)'
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                x: {
+                                    type: 'linear',
+                                    position: 'bottom',
+                                    title: {
+                                        display: true,
+                                        text: xTestName
+                                    }
+                                },
+                                y: {
+                                    type: 'linear',
+                                    title: {
+                                        display: true,
+                                        text: yTestName
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
         });
         </script>
     </div>

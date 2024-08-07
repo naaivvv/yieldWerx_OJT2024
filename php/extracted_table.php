@@ -1,6 +1,14 @@
 <?php
 require __DIR__ . '/../connection.php';
 
+$groupLot = isset($_GET['group_lot']) ? true : false;
+$groupWafer = isset($_GET['group_wafer']) ? true : false;
+
+$groups = [
+    'lot' => $groupLot,
+    'wafer' => $groupWafer
+];
+
 // Filters from selection_criteria.php
 $filters = [
     "l.Facility_ID" => isset($_GET['facility']) ? $_GET['facility'] : [],
@@ -31,7 +39,7 @@ if (!empty($sql_filters)) {
 }
 
 // Count total number of records with filters
-$count_sql = "SELECT COUNT(*) AS total 
+$count_sql = "SELECT COUNT(d2.Die_Sequence) AS total 
               FROM DEVICE_1_CP1_V1_0_001 d1
               JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
               JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
@@ -48,7 +56,7 @@ $total_rows = sqlsrv_fetch_array($count_stmt, SQLSRV_FETCH_ASSOC)['total'];
 sqlsrv_free_stmt($count_stmt); // Free the count statement here
 
 // Dynamically construct the column part of the SQL query
-$column_list = !empty($filters['tm.Column_Name']) ? implode(', ', array_map(function($col) { return "d1.$col"; }, $filters['tm.Column_Name'])) : '*';
+$column_list = !empty($filters['tm.Column_Name']) ? implode(', ', array_map(function($col) { return "d1.$col"; }, $filters['tm.Column_Name'])) : 'd1.*';
 
 // Retrieve all records with filters
 $tsql = "SELECT l.Facility_ID, l.Work_Center, l.Part_Type, l.Program_Name, l.Test_Temprature, l.Lot_ID,
@@ -96,15 +104,17 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
         max-height: 65vh;
     }
 </style>
-
 <div class="flex justify-center items-center h-full">
-    <div class="w-full max-w-7xl p-6 rounded-lg shadow-lg bg-white mt-10">
+    <div class="w-full max-w-7xl p-6 rounded-lg shadow-lg bg-white mt-6">
         <div class="mb-4 text-right">
-            <a href="scatter_plot.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-orange-500 text-white rounded mr-2">
-                <i class="fa-solid fa-chart-line"></i>
+            <a href="selection_page.php" class="px-4 py-2 bg-orange-500 text-white rounded mr-2">
+                <i class="fa-solid fa-list"></i>&nbsp;Selection Criteria
+            </a>
+            <a href="scatter_plot.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
+                <i class="fa-solid fa-chart-line"></i>&nbsp;Scatter Plot
             </a>
             <a href="export.php?<?php echo http_build_query($_GET); ?>" class="px-5 py-2 bg-green-500 text-white rounded">
-                <i class="fa-regular fa-file-excel"></i>
+                <i class="fa-regular fa-file-excel"></i>&nbsp;Export
             </a>
         </div>
         <h1 class="text-start text-2xl font-bold mb-4">Data Extraction [Total: <?php echo $total_rows; ?>]</h1>
