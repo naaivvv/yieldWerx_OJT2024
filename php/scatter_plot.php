@@ -126,18 +126,40 @@ $numDistinctGroups = count($groupedData);
    <style>
        .chart-container {
            overflow: auto;
-           max-height: 75vh;
+           /* max-height: 75vh; */
            max-width: 100%;
        }
        td {
            padding: 16px;
        }
        canvas {
-           height: 200px;
+           height: 400px;
+           width: 450px;
        }
        .-rotate-90 {
             --tw-rotate: -90deg;
             transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+        }
+        .grid-cols-6 {
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+        .grid-cols-7 {
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+        }
+        .grid-cols-8 {
+            grid-template-columns: repeat(8, minmax(0, 1fr));
+        }
+        .grid-cols-9 {
+            grid-template-columns: repeat(9, minmax(0, 1fr));
+        }
+        .grid-cols-10 {
+            grid-template-columns: repeat(10, minmax(0, 1fr));
+        }
+        .grid-cols-11 {
+            grid-template-columns: repeat(11, minmax(0, 1fr));
+        }
+        .grid-cols-12 {
+            grid-template-columns: repeat(12, minmax(0, 1fr));
         }
    </style>
 </head>
@@ -189,7 +211,7 @@ $numDistinctGroups = count($groupedData);
             }
             echo '</div></div>';
         } else {
-            echo '<div class="flex flex-row items-center justify-center w-full">';
+            echo '<div class="flex items-center justify-center w-full">';
             echo '<div><canvas id="chartXY_all"></canvas></div>';
             echo '</div>';
         }
