@@ -12,7 +12,7 @@
 </head>
 <body class="bg-gray-50">
 <?php include('admin_components.php'); ?>
-<div class="p-4 sm:ml-64">
+<div class="p-4">
    <div class="p-4 rounded-lg dark:border-gray-700 mt-14">
 <?php include('selection_criteria.php');?>
    </div>

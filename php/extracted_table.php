@@ -3,10 +3,12 @@ require __DIR__ . '/../connection.php';
 
 $groupLot = isset($_GET['group_lot']) ? true : false;
 $groupWafer = isset($_GET['group_wafer']) ? true : false;
+$groupProbe = isset($_GET['group_probe']) ? true : false;
 
 $groups = [
     'lot' => $groupLot,
-    'wafer' => $groupWafer
+    'wafer' => $groupWafer,
+    'probe' => $groupProbe
 ];
 
 // Filters from selection_criteria.php
@@ -18,7 +20,7 @@ $filters = [
     "l.lot_ID" => isset($_GET['lot']) ? $_GET['lot'] : [],
     "w.wafer_ID" => isset($_GET['wafer']) ? $_GET['wafer'] : [],
     "tm.Column_Name" => isset($_GET['parameter']) ? $_GET['parameter'] : [],
-    "p.probing_sequence" => isset($_GET['abbrev']) ? $_GET['abbrev'] : []
+    "p.abbrev" => isset($_GET['abbrev']) ? $_GET['abbrev'] : []
 ];
 
 // Prepare SQL filters
