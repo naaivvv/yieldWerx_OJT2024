@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const xAxisTitle = isSingleParameter ? 'Count' : xLabel;
+    const xAxisTitle = isSingleParameter ? 'X' : xLabel;
 
     function calculateRange(data, axis) {
         const values = data.map(point => point[axis]);

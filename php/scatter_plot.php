@@ -78,23 +78,39 @@ $groupedData = [];
 while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
     $waferID = $row['Wafer_ID'];
     $abbrev = $row['abbrev'];
-    $count++;
 
     if ($isSingleParameter) {
         $yValue = floatval($row['Y']);
-        $xValue = $count;
+        
         if ($groupWafer && $groupProbe) {
-            $groupedData[$abbrev][$waferID][] = ['x' => $xValue, 'y' => $yValue];
+            if (!isset($groupedData[$abbrev][$waferID])) {
+                $count = 0;
+            }
+            $count++;
+            $groupedData[$abbrev][$waferID][] = ['x' => $count, 'y' => $yValue];
         } elseif ($groupWafer) {
-            $groupedData[$waferID][] = ['x' => $xValue, 'y' => $yValue];
+            if (!isset($groupedData[$waferID])) {
+                $count = 0;
+            }
+            $count++;
+            $groupedData[$waferID][] = ['x' => $count, 'y' => $yValue];
         } elseif ($groupProbe) {
-            $groupedData[$abbrev][] = ['x' => $xValue, 'y' => $yValue];
+            if (!isset($groupedData[$abbrev])) {
+                $count = 0;
+            }
+            $count++;
+            $groupedData[$abbrev][] = ['x' => $count, 'y' => $yValue];
         } else {
-            $groupedData['all'][] = ['x' => $xValue, 'y' => $yValue];
+            if (!isset($groupedData['all'])) {
+                $count = 0;
+            }
+            $count++;
+            $groupedData['all'][] = ['x' => $count, 'y' => $yValue];
         }
     } else {
         $xValue = floatval($row['X']);
         $yValue = floatval($row['Y']);
+        
         if ($groupWafer && $groupProbe) {
             $groupedData[$abbrev][$waferID][] = ['x' => $xValue, 'y' => $yValue];
         } elseif ($groupWafer) {
@@ -106,6 +122,7 @@ while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
         }
     }
 }
+
 sqlsrv_free_stmt($stmt);
 
 $numDistinctGroups = count($groupedData);
