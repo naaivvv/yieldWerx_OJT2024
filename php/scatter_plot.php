@@ -50,14 +50,19 @@ $count = 0;
 
 // Query to fetch data for the chart
 if ($isSingleParameter) {
-    $tsql = "SELECT w.Wafer_ID, d1.$parameter AS Y, p.abbrev
-             FROM DEVICE_1_CP1_V1_0_001 d1
-             JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
-             JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
-             JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
-             JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
-             JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
-             $where_clause";
+    $tsql = "
+            SELECT 
+                w.Wafer_ID, 
+                d1.{$parameter} AS Y, 
+                p.abbrev,
+                ROW_NUMBER() OVER(PARTITION BY w.Wafer_ID, p.abbrev ORDER BY d1.Die_Sequence) AS row_num
+            FROM DEVICE_1_CP1_V1_0_001 d1
+            JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
+            JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
+            JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
+            JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
+            JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
+            $where_clause";
 } else {
     $tsql = "SELECT w.Wafer_ID, d1.{$filters['tm.Column_Name'][0]} AS X, d1.{$filters['tm.Column_Name'][1]} AS Y, p.abbrev
              FROM DEVICE_1_CP1_V1_0_001 d1
@@ -75,6 +80,13 @@ if ($stmt === false) {
 }
 $groupedData = [];
 
+// Initialize global counters for each group
+$globalCounters = [
+    'all' => 0,
+    'wafer' => [],
+    'probe' => []
+];
+
 while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
     $waferID = $row['Wafer_ID'];
     $abbrev = $row['abbrev'];
@@ -83,29 +95,33 @@ while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
         $yValue = floatval($row['Y']);
         
         if ($groupWafer && $groupProbe) {
-            if (!isset($groupedData[$abbrev][$waferID])) {
-                $count = 0;
+            // Increment or initialize the global counter for the combination of abbrev and waferID
+            if (!isset($globalCounters['probe'][$abbrev][$waferID])) {
+                $globalCounters['probe'][$abbrev][$waferID] = count($groupedData[$abbrev][$waferID] ?? []) + 1;
+            } else {
+                $globalCounters['probe'][$abbrev][$waferID]++;
             }
-            $count++;
-            $groupedData[$abbrev][$waferID][] = ['x' => $count, 'y' => $yValue];
+            $groupedData[$abbrev][$waferID][] = ['x' => $globalCounters['probe'][$abbrev][$waferID], 'y' => $yValue];
         } elseif ($groupWafer) {
-            if (!isset($groupedData[$waferID])) {
-                $count = 0;
+            // Increment or initialize the global counter for the waferID
+            if (!isset($globalCounters['wafer'][$waferID])) {
+                $globalCounters['wafer'][$waferID] = count($groupedData[$waferID] ?? []) + 1;
+            } else {
+                $globalCounters['wafer'][$waferID]++;
             }
-            $count++;
-            $groupedData[$waferID][] = ['x' => $count, 'y' => $yValue];
+            $groupedData[$waferID][] = ['x' => $globalCounters['wafer'][$waferID], 'y' => $yValue];
         } elseif ($groupProbe) {
-            if (!isset($groupedData[$abbrev])) {
-                $count = 0;
+            // Increment or initialize the global counter for the abbrev
+            if (!isset($globalCounters['probe'][$abbrev])) {
+                $globalCounters['probe'][$abbrev] = count($groupedData[$abbrev] ?? []) + 1;
+            } else {
+                $globalCounters['probe'][$abbrev]++;
             }
-            $count++;
-            $groupedData[$abbrev][] = ['x' => $count, 'y' => $yValue];
+            $groupedData[$abbrev][] = ['x' => $globalCounters['probe'][$abbrev], 'y' => $yValue];
         } else {
-            if (!isset($groupedData['all'])) {
-                $count = 0;
-            }
-            $count++;
-            $groupedData['all'][] = ['x' => $count, 'y' => $yValue];
+            // Increment the global counter for all data
+            $globalCounters['all']++;
+            $groupedData['all'][] = ['x' => $globalCounters['all'], 'y' => $yValue];
         }
     } else {
         $xValue = floatval($row['X']);
