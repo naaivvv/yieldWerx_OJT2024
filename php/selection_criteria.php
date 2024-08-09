@@ -11,13 +11,20 @@ while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
 sqlsrv_free_stmt($stmt);
 
 // Query to populate filter options from ProbingSequenceOrder
-$filterQuery = "SELECT abbrev, probing_sequence FROM ProbingSequenceOrder";
+$filterQuery = "SELECT DISTINCT p.abbrev,  w.probing_sequence FROM ProbingSequenceOrder p JOIN wafer w on w.probing_sequence = p.probing_sequence ORDER BY p.abbrev ASC";
 $abbrev = [];
 $filterStmt = sqlsrv_query($conn, $filterQuery);
 while ($row = sqlsrv_fetch_array($filterStmt, SQLSRV_FETCH_ASSOC)) {
     $abbrev[] = ['abbrev' => $row['abbrev'], 'probing_sequence' => $row['probing_sequence']];
 }
 sqlsrv_free_stmt($filterStmt);
+
+$columns = [
+    'Facility ID', 'Work Center', 'Part Type', 'Program Name', 'Test Temprature', 'Lot ID',
+    'Wafer ID', 'Probe Count', 'Wafer Start_Time', 'Wafer Finish_Time', 'Unit Number', 'X', 'Y', 'Head Number',
+    'Site Number', 'HBin Number', 'SBin Number', 'Tests Executed', 'Test Time', 
+    'Column Name', 'Test Name',
+];
 ?>
 
 <style>
@@ -32,57 +39,127 @@ sqlsrv_free_stmt($filterStmt);
 <div class="container mx-auto p-6">
     <h1 class="text-center text-2xl font-bold mb-4 w-full">Selection Criteria</h1>
     <form action="dashboard.php" method="GET" id="criteriaForm">
-        <div class="flex flex-row justify-between w-full gap-4">
-        <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 w-1/2">
+    <div class="flex flex-row justify-between w-full gap-4">
+        <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 w-1/3">
                 <h2 class="text-md italic mb-4 w-24 text-gray-500 bg-gray-50 filter-text-header text-center"><i class="fa-solid fa-filter"></i>&nbsp;Filter by</h2>
                 <div class="flex w-full justify-start items-start gap-2">
-                    <button id="dropdownSearchButton" data-dropdown-toggle="dropdownSearch" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800" type="button">
-                        Probe Count
-                        <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                        </svg>
-                    </button>
+                <!-- Probe Count Button and Dropdown -->
+                <button id="dropdownSearchButtonProbe" data-dropdown-toggle="dropdownSearchProbe" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800" type="button">
+                    Probe Count
+                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                    </svg>
+                </button>
 
-                    <!-- Dropdown menu -->
-                    <div id="dropdownSearch" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
-                        <ul class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButton">
-                            <li>
-                                <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                    <input id="select-all-abbrev" type="checkbox" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                                    <label for="select-all-abbrev" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Select All</label>
-                                </div>
-                            </li>
-                            <?php foreach ($abbrev as $item): ?>
-                            <li>
-                                <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                    <input id="checkbox-item-<?= htmlspecialchars($item['abbrev']) ?>" name="abbrev[]" type="checkbox" value="<?= htmlspecialchars($item['abbrev']) ?>" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 filter-checkbox-abbrev">
-                                    <label for="checkbox-item-<?= htmlspecialchars($item['abbrev']) ?>" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"><?= htmlspecialchars($item['abbrev']) ?></label>
-                                </div>
-                            </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
+                <!-- Probe Count Dropdown menu -->
+                <div id="dropdownSearchProbe" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
+                    <ul class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButtonProbe">
+                        <li>
+                            <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                <input id="select-all-abbrev" type="checkbox" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                <label for="select-all-abbrev" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Select All</label>
+                            </div>
+                        </li>
+                        <?php foreach ($abbrev as $item): ?>
+                        <li>
+                            <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                <input id="checkbox-item-<?= htmlspecialchars($item['abbrev']) ?>" name="abbrev[]" type="checkbox" value="<?= htmlspecialchars($item['abbrev']) ?>" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 filter-checkbox-abbrev">
+                                <label for="checkbox-item-<?= htmlspecialchars($item['abbrev']) ?>" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"><?= htmlspecialchars($item['abbrev']) ?></label>
+                            </div>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <!-- Group by -->
-            <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 w-1/2">
-                <h2 class="text-md italic mb-4 w-24 text-gray-500 bg-gray-50 filter-text-header text-center"><i class="fa-solid fa-layer-group"></i>&nbsp;Group by</h2>
-                <div class="flex w-full justify-start items-center gap-2">
-                    <div class="flex items-center me-4">
-                        <input id="lot-checkbox" name="group_lot" type="checkbox" value="1" class="w-4 h-4 text-yellow-400 bg-gray-100 border-gray-300 rounded focus:ring-yellow-500 dark:focus:ring-yellow-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                        <label for="lot-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Lot</label>
-                    </div>
-                    <div class="flex items-center me-4">
-                        <input id="wafer-checkbox" name="group_wafer" type="checkbox" value="1" class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                        <label for="wafer-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Wafer</label>
-                    </div>
-                    <div class="flex items-center me-4">
-                        <input id="probe-checkbox" name="group_probe" type="checkbox" value="1" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                        <label for="probe-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Probe Count</label>
-                    </div>
+
+            <!-- Group by Section -->
+        <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 w-1/3">
+            <h2 class="text-md italic mb-4 w-24 text-gray-500 bg-gray-50 filter-text-header text-center"><i class="fa-solid fa-layer-group"></i>&nbsp;Group by</h2>
+            <div class="flex w-full justify-start items-center gap-2">
+                
+                <!-- X Button and Dropdown -->
+                <button id="dropdownSearchButtonX" data-dropdown-toggle="dropdownSearchX" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800" type="button">
+                    X-Axis
+                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                    </svg>
+                </button>
+
+                <!-- X Dropdown menu -->
+                <div id="dropdownSearchX" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
+                    <ul class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButtonX">
+                        <?php foreach ($columns as $index => $column): ?>
+                        <li>
+                            <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                <input id="checkbox-item-x-<?= $index ?>" name="x" type="radio" value="<?= $index ?>" class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                <label for="checkbox-item-x-<?= $index ?>" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"><?= $column ?></label>
+                            </div>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+
+                <!-- Y Button and Dropdown -->
+                <button id="dropdownSearchButtonY" data-dropdown-toggle="dropdownSearchY" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-yellow-400 rounded-lg hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800" type="button">
+                    Y-Axis
+                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                    </svg>
+                </button>
+
+                <!-- Y Dropdown menu -->
+                <div id="dropdownSearchY" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
+                    <ul class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButtonY">
+                        <?php foreach ($columns as $index => $column): ?>
+                        <li>
+                            <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                <input id="checkbox-item-y-<?= $index ?>" name="y" type="radio" value="<?= $index ?>" class="w-4 h-4 text-yellow-500 bg-gray-100 border-gray-300 rounded focus:ring-yellow-500 dark:focus:ring-yellow-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                <label for="checkbox-item-y-<?= $index ?>" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"><?= $column ?></label>
+                            </div>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
                 </div>
             </div>
+        </div>
+
+        <!-- Sort by Section -->
+        <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 w-1/3">
+            <h2 class="text-md italic mb-4 w-20 text-gray-500 bg-gray-50 filter-text-header text-center"><i class="fa-solid fa-sort"></i>&nbsp;Sort by</h2>
+            <div class="flex w-full justify-start items-center gap-2">
+                <!-- X Button and Dropdown -->
+                <button id="dropdownSearchButtonSort" data-dropdown-toggle="dropdownSearchSort" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-orange-500 rounded-lg hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800" type="button">
+                    Columns
+                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                    </svg>
+                </button>
+
+                <!-- X Dropdown menu -->
+                <div id="dropdownSearchSort" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
+                    <ul class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButtonSort">
+                        <li>
+                            <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                <input id="select-all-sort" type="checkbox" class="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 dark:focus:ring-orange-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                <label for="select-all-sort" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Select All</label>
+                            </div>
+                        </li>
+                        <?php foreach ($columns as $index => $column): ?>
+                        <li>
+                            <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                <input id="checkbox-item-x-<?= $index ?>" name="sort[]" type="checkbox" value="<?= $index ?>" class="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 dark:focus:ring-orange-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 filter-checkbox-sort">
+                                <label for="checkbox-item-x-<?= $index ?>" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"><?= $column ?></label>
+                            </div>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+
         </div>
         <div class="grid grid-cols-3 gap-4 mb-4">
             <div>

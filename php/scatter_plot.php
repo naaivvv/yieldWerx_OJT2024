@@ -12,6 +12,24 @@ $groups = [
     'probe' => $groupProbe
 ];
 
+$xIndex = isset($_GET['x']) ? $_GET['x'] : null;
+$yIndex = isset($_GET['y']) ? $_GET['y'] : null;
+
+$columns = [
+    'l.Facility_ID', 'l.Work_Center', 'l.Part_Type', 'l.Program_Name', 'l.Test_Temprature', 'l.Lot_ID',
+    'w.Wafer_ID', 'p.abbrev', 'w.Wafer_Start_Time', 'w.Wafer_Finish_Time', 'd1.Unit_Number', 'd1.X', 'd1.Y', 'd1.Head_Number',
+    'd1.Site_Number', 'd1.HBin_Number', 'd1.SBin_Number', 'd1.Tests_Executed', 'd1.Test_Time'
+];
+
+
+if (isset($columns[$xIndex])) {
+    $xColumn = $columns[$xIndex];
+}
+
+if (isset($columns[$yIndex])) {
+    $yColumn = $columns[$yIndex];
+}
+
 $filters = [
     "l.Facility_ID" => isset($_GET['facility']) ? $_GET['facility'] : [],
     "l.work_center" => isset($_GET['work_center']) ? $_GET['work_center'] : [],
@@ -172,27 +190,6 @@ $numDistinctGroups = count($groupedData);
        .-rotate-90 {
             --tw-rotate: -90deg;
             transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-        }
-        .grid-cols-6 {
-            grid-template-columns: repeat(6, minmax(0, 1fr));
-        }
-        .grid-cols-7 {
-            grid-template-columns: repeat(7, minmax(0, 1fr));
-        }
-        .grid-cols-8 {
-            grid-template-columns: repeat(8, minmax(0, 1fr));
-        }
-        .grid-cols-9 {
-            grid-template-columns: repeat(9, minmax(0, 1fr));
-        }
-        .grid-cols-10 {
-            grid-template-columns: repeat(10, minmax(0, 1fr));
-        }
-        .grid-cols-11 {
-            grid-template-columns: repeat(11, minmax(0, 1fr));
-        }
-        .grid-cols-12 {
-            grid-template-columns: repeat(12, minmax(0, 1fr));
         }
    </style>
 </head>

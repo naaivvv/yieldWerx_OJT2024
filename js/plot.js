@@ -1,18 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const xAxisTitle = isSingleParameter ? 'X' : xLabel;
 
-    function calculateRange(data, axis) {
-        const values = data.map(point => point[axis]);
-        const min = Math.min(...values);
-        const max = Math.max(...values);
-        return { min, max };
-    }
-
     function createLineChart(ctx, data, label) {
-        const xRange = calculateRange(data, 'x');
-        const yRange = calculateRange(data, 'y');
-        const rangeText = `Range (x): ${xRange.min.toFixed(4)} to ${xRange.max.toFixed(4)}, Range (y): ${yRange.min.toFixed(4)} to ${yRange.max.toFixed(4)}`;
-
         return new Chart(ctx, {
             type: 'line',
             data: {
@@ -42,22 +31,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             text: yLabel
                         }
                     }
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: rangeText
-                    }
                 }
             }
         });
     }
 
     function createScatterChart(ctx, data, label) {
-        const xRange = calculateRange(data, 'x');
-        const yRange = calculateRange(data, 'y');
-        const rangeText = `Range (x): ${xRange.min.toFixed(4)} to ${xRange.max.toFixed(4)}, Range (y): ${yRange.min.toFixed(4)} to ${yRange.max.toFixed(4)}`;
-
         return new Chart(ctx, {
             type: 'scatter',
             data: {
@@ -85,12 +64,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             display: true,
                             text: yLabel
                         }
-                    }
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: rangeText
                     }
                 }
             }

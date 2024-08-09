@@ -112,7 +112,7 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
             <a href="selection_page.php" class="px-4 py-2 bg-orange-500 text-white rounded mr-2">
                 <i class="fa-solid fa-list"></i>&nbsp;Selection Criteria
             </a>
-            <a href="scatter_plot.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
+            <a href="graph.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
                 <i class="fa-solid fa-chart-line"></i>&nbsp;Scatter Plot
             </a>
             <a href="export.php?<?php echo http_build_query($_GET); ?>" class="px-5 py-2 bg-green-500 text-white rounded">
