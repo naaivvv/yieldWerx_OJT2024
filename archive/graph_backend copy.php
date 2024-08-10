@@ -40,21 +40,13 @@ if (!empty($sql_filters)) {
     $where_clause = 'WHERE ' . implode(' AND ', $sql_filters);
 }
 
-// Determine if we are working with one parameter or more
+// Determine if we are working with one parameter or two
 $isSingleParameter = count($filters['tm.Column_Name']) === 1;
-$parameters = $filters['tm.Column_Name'];
+$parameter = $filters['tm.Column_Name'][0] ?? '';
 $data = [];
-$groupedData = [];
-$globalCounters = [
-    'all' => 0,
-    'xcol' => [],
-    'ycol' => []
-];
-
 if ($isSingleParameter) {
-    $parameter = $parameters[0];
-    $xLabel = 'Count';
-    $yLabel = $parameter;
+    $xLabel = 'X';
+    $yLabel = $filters['tm.Column_Name'][0];
 
     // Fetch the test_name corresponding to yLabel
     $testNameQuery = "SELECT test_name FROM TEST_PARAM_MAP WHERE Column_Name = ?";
@@ -62,32 +54,73 @@ if ($isSingleParameter) {
     $testNameY = sqlsrv_fetch_array($testNameStmtY, SQLSRV_FETCH_ASSOC)['test_name'];
     $testNameX = $xLabel;
     sqlsrv_free_stmt($testNameStmtY);
+} else {
+    $xLabel = $filters['tm.Column_Name'][0];
+    $yLabel = $filters['tm.Column_Name'][1];
 
+    // Fetch the test_name corresponding to xLabel and yLabel
+    $testNameQuery = "SELECT test_name FROM TEST_PARAM_MAP WHERE Column_Name = ?";
+    $testNameStmtX = sqlsrv_query($conn, $testNameQuery, [$xLabel]);
+    $testNameX = sqlsrv_fetch_array($testNameStmtX, SQLSRV_FETCH_ASSOC)['test_name'];
+
+    $testNameStmtY = sqlsrv_query($conn, $testNameQuery, [$yLabel]);
+    $testNameY = sqlsrv_fetch_array($testNameStmtY, SQLSRV_FETCH_ASSOC)['test_name'];
+
+    sqlsrv_free_stmt($testNameStmtX);
+    sqlsrv_free_stmt($testNameStmtY);
+}
+$count = 0;
+
+// Query to fetch data for the chart
+if ($isSingleParameter) {
     $tsql = "
-    SELECT 
-        w.Wafer_ID, 
-        d1.{$parameter} AS Y, 
-        " . ($xColumn ? "$xColumn AS xGroup" : "'No xGroup' AS xGroup") . ", 
-        " . ($yColumn ? "$yColumn AS yGroup" : "'No yGroup' AS yGroup") . ",
-        ROW_NUMBER() OVER(PARTITION BY " . ($xColumn ?: "'No xGroup'") . " ORDER BY d1.Die_Sequence) AS row_num
-    FROM DEVICE_1_CP1_V1_0_001 d1
-    JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
-    JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
-    JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
-    JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
-    JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
-    $where_clause";
+        SELECT 
+            w.Wafer_ID, 
+            d1.{$parameter} AS Y, 
+            " . ($xColumn ? "$xColumn AS xGroup" : "'No xGroup' AS xGroup") . ", 
+            " . ($yColumn ? "$yColumn AS yGroup" : "'No yGroup' AS yGroup") . ",
+            ROW_NUMBER() OVER(PARTITION BY " . ($xColumn ?: "'No xGroup'") . " ORDER BY d1.Die_Sequence) AS row_num
+        FROM DEVICE_1_CP1_V1_0_001 d1
+        JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
+        JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
+        JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
+        JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
+        JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
+        $where_clause";
+} else {
+    $tsql = "
+        SELECT 
+            d1.{$filters['tm.Column_Name'][0]} AS X, 
+            d1.{$filters['tm.Column_Name'][1]} AS Y, 
+            " . ($xColumn ? "$xColumn AS xGroup" : "'No xGroup' AS xGroup") . ", 
+            " . ($yColumn ? "$yColumn AS yGroup" : "'No yGroup' AS yGroup") . "
+        FROM DEVICE_1_CP1_V1_0_001 d1
+        JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
+        JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
+        JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
+        JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
+        JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
+        $where_clause";
+}
 
-    $stmt = sqlsrv_query($conn, $tsql, $params);
-    if ($stmt === false) {
-        die(print_r(sqlsrv_errors(), true));
-    }
+$stmt = sqlsrv_query($conn, $tsql, $params);
+if ($stmt === false) {
+    die(print_r(sqlsrv_errors(), true));
+}
 
-    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-        $xGroup = $row['xGroup'];
-        $yGroup = $row['yGroup'];
+$groupedData = [];
+$globalCounters = [
+    'all' => 0,
+    'xcol' => [],
+    'ycol' => []
+];
+
+while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+    $xGroup = $row['xGroup'];
+    $yGroup = $row['yGroup'];
+    if ($isSingleParameter) {
         $yValue = floatval($row['Y']);
-
+        
         if ($xColumn && $yColumn) {
             // Increment or initialize the global counter for the combination of abbrev and waferID
             if (!isset($globalCounters['ycol'][$yGroup][$xGroup])) {
@@ -117,71 +150,23 @@ if ($isSingleParameter) {
             $globalCounters['all']++;
             $groupedData['all'][] = ['x' => $globalCounters['all'], 'y' => $yValue];
         }
-    }
+    } else {
+        $xValue = floatval($row['X']);
+        $yValue = floatval($row['Y']);
 
-    sqlsrv_free_stmt($stmt);
-} else {
-    $combinations = [];
-    foreach ($parameters as $i => $xParam) {
-        for ($j = $i + 1; $j < count($parameters); $j++) {
-            $combinations[] = [$xParam, $parameters[$j]];
+        if ($xColumn && $yColumn) {
+            $groupedData[$yGroup][$xGroup][] = ['x' => $xValue, 'y' => $yValue];
+        } elseif ($xColumn) {
+            $groupedData[$xGroup][] = ['x' => $xValue, 'y' => $yValue];
+        } elseif ($yColumn) {
+            $groupedData[$yGroup][] = ['x' => $xValue, 'y' => $yValue];
+        } else {
+            $groupedData['all'][] = ['x' => $xValue, 'y' => $yValue];
         }
-    }
-
-    foreach ($combinations as $combination) {
-        $xLabel = $combination[0];
-        $yLabel = $combination[1];
-
-        // Fetch the test_name corresponding to xLabel and yLabel
-        $testNameQuery = "SELECT test_name FROM TEST_PARAM_MAP WHERE Column_Name = ?";
-        $testNameStmtX = sqlsrv_query($conn, $testNameQuery, [$xLabel]);
-        $testNameX = sqlsrv_fetch_array($testNameStmtX, SQLSRV_FETCH_ASSOC)['test_name'];
-
-        $testNameStmtY = sqlsrv_query($conn, $testNameQuery, [$yLabel]);
-        $testNameY = sqlsrv_fetch_array($testNameStmtY, SQLSRV_FETCH_ASSOC)['test_name'];
-
-        sqlsrv_free_stmt($testNameStmtX);
-        sqlsrv_free_stmt($testNameStmtY);
-
-        $tsql = "
-        SELECT 
-            d1.{$xLabel} AS X, 
-            d1.{$yLabel} AS Y, 
-            " . ($xColumn ? "$xColumn AS xGroup" : "'No xGroup' AS xGroup") . ", 
-            " . ($yColumn ? "$yColumn AS yGroup" : "'No yGroup' AS yGroup") . "
-        FROM DEVICE_1_CP1_V1_0_001 d1
-        JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
-        JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
-        JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
-        JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
-        JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
-        $where_clause";
-
-        $stmt = sqlsrv_query($conn, $tsql, $params);
-        if ($stmt === false) {
-            die(print_r(sqlsrv_errors(), true));
-        }
-
-        while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-            $xGroup = $row['xGroup'];
-            $yGroup = $row['yGroup'];
-            $xValue = floatval($row['X']);
-            $yValue = floatval($row['Y']);
-
-            if ($xColumn && $yColumn) {
-                $groupedData[$yGroup][$xGroup][] = ['x' => $xValue, 'y' => $yValue];
-            } elseif ($xColumn) {
-                $groupedData[$xGroup][] = ['x' => $xValue, 'y' => $yValue];
-            } elseif ($yColumn) {
-                $groupedData[$yGroup][] = ['x' => $xValue, 'y' => $yValue];
-            } else {
-                $data[] = ['x' => $xValue, 'y' => $yValue];
-            }
-        }
-
-        sqlsrv_free_stmt($stmt);
-        $numDistinctGroups = count($groupedData);
     }
 }
 
+sqlsrv_free_stmt($stmt);
+
+$numDistinctGroups = count($groupedData);
 ?>

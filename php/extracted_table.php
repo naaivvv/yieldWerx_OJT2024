@@ -1,14 +1,13 @@
 <?php
 require __DIR__ . '/../connection.php';
 
-$groupLot = isset($_GET['group_lot']) ? true : false;
-$groupWafer = isset($_GET['group_wafer']) ? true : false;
-$groupProbe = isset($_GET['group_probe']) ? true : false;
+$sort = isset($_GET['sort']) ? $_GET['sort'] : null;
+$order = isset($_GET['order']) ? $_GET['order'] : null;
 
-$groups = [
-    'lot' => $groupLot,
-    'wafer' => $groupWafer,
-    'probe' => $groupProbe
+$columnsOrder = [
+    'l.Facility_ID', 'l.Work_Center', 'l.Part_Type', 'l.Program_Name', 'l.Test_Temprature', 'l.Lot_ID',
+    'w.Wafer_ID', 'p.abbrev', 'w.Wafer_Start_Time', 'w.Wafer_Finish_Time', 'd1.Unit_Number', 'd1.X', 'd1.Y', 'd1.Head_Number',
+    'd1.Site_Number', 'd1.HBin_Number', 'd1.SBin_Number', 'd1.Tests_Executed', 'd1.Test_Time'
 ];
 
 // Filters from selection_criteria.php
@@ -60,6 +59,21 @@ sqlsrv_free_stmt($count_stmt); // Free the count statement here
 // Dynamically construct the column part of the SQL query
 $column_list = !empty($filters['tm.Column_Name']) ? implode(', ', array_map(function($col) { return "d1.$col"; }, $filters['tm.Column_Name'])) : 'd1.*';
 
+// Build the ORDER BY clause
+$order_by_clause = '';
+if ($sort !== null && is_array($sort) && count($sort) > 0) {
+    $sort_columns = [];
+    foreach ($sort as $index) {
+        if (isset($columnsOrder[$index])) {
+            $sort_columns[] = $columnsOrder[$index];
+        }
+    }
+    if (!empty($sort_columns)) {
+        $order_direction = $order == 1 ? 'DESC' : 'ASC';
+        $order_by_clause = 'ORDER BY ' . implode(', ', $sort_columns) . " $order_direction";
+    }
+}
+
 // Retrieve all records with filters
 $tsql = "SELECT l.Facility_ID, l.Work_Center, l.Part_Type, l.Program_Name, l.Test_Temprature, l.Lot_ID,
                 w.Wafer_ID, w.Wafer_Start_Time, w.Wafer_Finish_Time, d1.Unit_Number, d1.X, d1.Y, d1.Head_Number,
@@ -72,7 +86,7 @@ $tsql = "SELECT l.Facility_ID, l.Work_Center, l.Part_Type, l.Program_Name, l.Tes
          JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
          JOIN ProbingSequenceOrder p on p.probing_sequence = w.probing_sequence
          $where_clause
-         ORDER BY w.Wafer_ID";
+         $order_by_clause";
 
 $stmt = sqlsrv_query($conn, $tsql, $params);
 if ($stmt === false) {
@@ -142,13 +156,14 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
                         foreach ($all_columns as $column) {
                             $value = isset($row[$column]) ? $row[$column] : '';
                             if ($value instanceof DateTime) {
-                                $value = $value->format('Y-m-d H:i:s'); // Adjust format as needed
+                                $value = $value->format('Y-m-d H:i:s');
+                            } elseif (is_numeric($value) && floor($value) != $value) {
+                                $value = number_format($value, 2);
                             }
-                            echo "<td class='px-6 py-3 whitespace-nowrap'>$value</td>";
+                            echo "<td class='px-6 py-4 whitespace-nowrap'>$value</td>";
                         }
                         echo "</tr>";
                     }
-                    sqlsrv_free_stmt($stmt); // Free the statement here after displaying data
                     ?>
                 </tbody>
             </table>
