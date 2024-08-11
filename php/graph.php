@@ -215,8 +215,6 @@ foreach ($combinations as $index => $combination) {
     const hasXColumn = <?php echo json_encode(isset($xColumn)); ?>;
     const hasYColumn = <?php echo json_encode(isset($yColumn)); ?>;
     const isSingleParameter = <?php echo json_encode($isSingleParameter); ?>;
-    const combinations = <?php echo json_encode($combinations); ?>;
-    console.log(combinations);
 </script>
 <script src="../js/chart_dynamic.js"></script>
 </body>
