@@ -89,7 +89,6 @@ if ($isSingleParameter) {
         $yValue = floatval($row['Y']);
 
         if ($xColumn && $yColumn) {
-
             if (!isset($globalCounters['ycol'][$yGroup][$xGroup])) {
                 $globalCounters['ycol'][$yGroup][$xGroup] = count($groupedData[$yGroup][$xGroup] ?? []) + 1;
             } else {
@@ -97,13 +96,12 @@ if ($isSingleParameter) {
             }
             $groupedData[$yGroup][$xGroup][] = ['x' => $globalCounters['ycol'][$yGroup][$xGroup], 'y' => $yValue];
         } elseif ($xColumn && !$yColumn) {
-
-            if (!isset($globalCounters['xcol'][$xGroup])) {
-                $globalCounters['xcol'][$xGroup] = count($groupedData[$xGroup] ?? []) + 1;
+            if (!isset($globalCounters['xcol'][$yGroup][$xGroup])) {
+                $globalCounters['xcol'][$yGroup][$xGroup] = count($groupedData[$yGroup][$xGroup] ?? []) + 1;
             } else {
-                $globalCounters['xcol'][$xGroup]++;
+                $globalCounters['xcol'][$yGroup][$xGroup]++;
             }
-            $groupedData[$xGroup][] = ['x' => $globalCounters['xcol'][$xGroup], 'y' => $yValue];
+            $groupedData[$xGroup][$yGroup][] = ['x' => $globalCounters['xcol'][$yGroup][$xGroup], 'y' => $yValue];
         } elseif (!$xColumn && $yColumn) {
 
             if (!isset($globalCounters['ycol'][$yGroup])) {
@@ -171,7 +169,7 @@ if ($isSingleParameter) {
             if ($xColumn && $yColumn) {
                 $groupedData[$yGroup][$xGroup][] = ['x' => $xValue, 'y' => $yValue];
             } elseif ($xColumn && !$yColumn) {
-                $groupedData[$xGroup][] = ['x' => $xValue, 'y' => $yValue];
+                $groupedData[$xGroup][$yGroup][] = ['x' => $xValue, 'y' => $yValue];
             } elseif (!$xColumn && $yColumn) {
                 $groupedData[$yGroup][] = ['x' => $xValue, 'y' => $yValue];
             } else {
@@ -180,8 +178,8 @@ if ($isSingleParameter) {
         }
 
         sqlsrv_free_stmt($stmt);
-        $numDistinctGroups = count($groupedData);
     }
 }
+$numDistinctGroups = count($groupedData);
 
 ?>

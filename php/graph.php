@@ -134,6 +134,9 @@ foreach ($combinations as $index => $combination) {
         </div>
     </div>
 </div>
+<script> 
+    console.log(<?php echo json_encode($groupedData); ?>);
+</script>
 <!-- Iterate until here -->
 <?php
     }
@@ -171,7 +174,7 @@ foreach ($combinations as $index => $combination) {
             } elseif (isset($xColumn) && !isset($yColumn)) {
                 // Only X parameter is set
                 echo '<div class="flex flex-row items-center justify-center w-full">';
-                echo '<div class="grid gap-2 grid-cols-1">';
+                echo '<div class="grid gap-2 grid-cols-' . $numDistinctGroups . '">';
                 foreach ($groupedData as $xGroup => $data) {
                     echo '<div class="flex items-center justify-center flex-col">';
                     echo '<canvas id="chartXY_' . $xGroup . '"></canvas>';
@@ -212,9 +215,8 @@ foreach ($combinations as $index => $combination) {
     const hasXColumn = <?php echo json_encode(isset($xColumn)); ?>;
     const hasYColumn = <?php echo json_encode(isset($yColumn)); ?>;
     const isSingleParameter = <?php echo json_encode($isSingleParameter); ?>;
-    console.log("xColumn = " + xColumn);
-    console.log("yColumn = " +yColumn);
-    console.log(groupedData);
+    const combinations = <?php echo json_encode($combinations); ?>;
+    console.log(combinations);
 </script>
 <script src="../js/chart_dynamic.js"></script>
 </body>
