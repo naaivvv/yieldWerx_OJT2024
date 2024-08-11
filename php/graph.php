@@ -6,7 +6,7 @@ include('graph_backend.php');
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>XY Scatter Plot</title>
+   <title>Graphs</title>
    <link rel="stylesheet" href="../src/output.css">
    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css" rel="stylesheet" />
    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
@@ -56,6 +56,7 @@ include('graph_backend.php');
 
 <?php
 if(!$isSingleParameter){
+echo '<h1 class="text-center text-2xl font-bold w-full mb-6">XY Scatter Plot</h1>';
 foreach ($combinations as $index => $combination) {
     $xLabel = $combination[0];
     $yLabel = $combination[1];
@@ -78,9 +79,7 @@ foreach ($combinations as $index => $combination) {
             <div class="mb-4 text-sm italic">
                 <?php 
                 echo 'Combination of <b>' . $testNameX . '</b>';
-                if (isset($yColumn)) {
-                    echo ' and <b>' . $testNameY . '</b>';
-                }
+                echo ' and <b>' . $testNameY . '</b>';
                 ?>
             </div>
             <?php
@@ -139,15 +138,14 @@ foreach ($combinations as $index => $combination) {
 <?php
     }
 } else { ?>
+<h1 class="text-center text-2xl font-bold w-full mb-6">XY Line Chart</h1>
  <div class="p-4">
     <div class="dark:border-gray-700 flex flex-col items-center">
         <div class="max-w-fit p-6 border-b-2 border-2">
             <div class="mb-4 text-sm italic">
                 <?php 
                 echo 'Combination of <b>' . $testNameX . '</b>';
-                if (isset($yColumn)) {
-                    echo ' and <b>' . $testNameY . '</b>';
-                }
+                echo ' and <b>' . $testNameY . '</b>';
                 ?>
             </div>
             <?php
@@ -173,7 +171,7 @@ foreach ($combinations as $index => $combination) {
             } elseif (isset($xColumn) && !isset($yColumn)) {
                 // Only X parameter is set
                 echo '<div class="flex flex-row items-center justify-center w-full">';
-                echo '<div class="grid gap-2 grid-cols-' . $numDistinctGroups . '">';
+                echo '<div class="grid gap-2 grid-cols-1">';
                 foreach ($groupedData as $xGroup => $data) {
                     echo '<div class="flex items-center justify-center flex-col">';
                     echo '<canvas id="chartXY_' . $xGroup . '"></canvas>';
@@ -209,9 +207,14 @@ foreach ($combinations as $index => $combination) {
     const groupedData = <?php echo json_encode($groupedData); ?>;
     const xLabel = '<?php echo $testNameX; ?>';
     const yLabel = '<?php echo $testNameY; ?>';
+    const xColumn = <?php echo json_encode($xColumn); ?>;
+    const yColumn = <?php echo json_encode($yColumn); ?>;
     const hasXColumn = <?php echo json_encode(isset($xColumn)); ?>;
     const hasYColumn = <?php echo json_encode(isset($yColumn)); ?>;
     const isSingleParameter = <?php echo json_encode($isSingleParameter); ?>;
+    console.log("xColumn = " + xColumn);
+    console.log("yColumn = " +yColumn);
+    console.log(groupedData);
 </script>
 <script src="../js/chart_dynamic.js"></script>
 </body>

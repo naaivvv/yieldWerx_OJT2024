@@ -89,23 +89,23 @@ if ($isSingleParameter) {
         $yValue = floatval($row['Y']);
 
         if ($xColumn && $yColumn) {
-            // Increment or initialize the global counter for the combination of abbrev and waferID
+
             if (!isset($globalCounters['ycol'][$yGroup][$xGroup])) {
                 $globalCounters['ycol'][$yGroup][$xGroup] = count($groupedData[$yGroup][$xGroup] ?? []) + 1;
             } else {
                 $globalCounters['ycol'][$yGroup][$xGroup]++;
             }
             $groupedData[$yGroup][$xGroup][] = ['x' => $globalCounters['ycol'][$yGroup][$xGroup], 'y' => $yValue];
-        } elseif ($xColumn) {
-            // Increment or initialize the global counter for the waferID
+        } elseif ($xColumn && !$yColumn) {
+
             if (!isset($globalCounters['xcol'][$xGroup])) {
                 $globalCounters['xcol'][$xGroup] = count($groupedData[$xGroup] ?? []) + 1;
             } else {
                 $globalCounters['xcol'][$xGroup]++;
             }
             $groupedData[$xGroup][] = ['x' => $globalCounters['xcol'][$xGroup], 'y' => $yValue];
-        } elseif ($yColumn) {
-            // Increment or initialize the global counter for the abbrev
+        } elseif (!$xColumn && $yColumn) {
+
             if (!isset($globalCounters['ycol'][$yGroup])) {
                 $globalCounters['ycol'][$yGroup] = count($groupedData[$yGroup] ?? []) + 1;
             } else {
@@ -113,7 +113,7 @@ if ($isSingleParameter) {
             }
             $groupedData[$yGroup][] = ['x' => $globalCounters['ycol'][$yGroup], 'y' => $yValue];
         } else {
-            // Increment the global counter for all data
+
             $globalCounters['all']++;
             $groupedData['all'][] = ['x' => $globalCounters['all'], 'y' => $yValue];
         }
@@ -132,7 +132,7 @@ if ($isSingleParameter) {
         $xLabel = $combination[0];
         $yLabel = $combination[1];
 
-        // Fetch the test_name corresponding to xLabel and yLabel
+
         $testNameQuery = "SELECT test_name FROM TEST_PARAM_MAP WHERE Column_Name = ?";
         $testNameStmtX = sqlsrv_query($conn, $testNameQuery, [$xLabel]);
         $testNameX = sqlsrv_fetch_array($testNameStmtX, SQLSRV_FETCH_ASSOC)['test_name'];
@@ -170,12 +170,12 @@ if ($isSingleParameter) {
 
             if ($xColumn && $yColumn) {
                 $groupedData[$yGroup][$xGroup][] = ['x' => $xValue, 'y' => $yValue];
-            } elseif ($xColumn) {
+            } elseif ($xColumn && !$yColumn) {
                 $groupedData[$xGroup][] = ['x' => $xValue, 'y' => $yValue];
-            } elseif ($yColumn) {
+            } elseif (!$xColumn && $yColumn) {
                 $groupedData[$yGroup][] = ['x' => $xValue, 'y' => $yValue];
             } else {
-                $data[] = ['x' => $xValue, 'y' => $yValue];
+                $groupedData['all'][] = ['x' => $xValue, 'y' => $yValue];
             }
         }
 

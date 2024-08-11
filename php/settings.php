@@ -26,7 +26,6 @@
     </li>
   </ol>
 </nav>
-<h1 class="text-center text-2xl font-bold w-full mb-6">XY Scatter Plot</h1>
             <div class="fixed top-24 right-4">
                 <div class="flex w-full justify-center items-center gap-2">
                 <!-- Probe Count Button and Dropdown -->
@@ -45,7 +44,7 @@
                         <li>
                             <div class="flex items-center justify-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
                             <div class="flex flex-col items-end w-full">
-                            <label for="marginRange" class="text-md font-semibold mb-2">Adjust Margin (%)</label>
+                            <label for="marginRange" class="text-md font-semibold mb-2">Adjust Range Margin (%)</label>
                             <input type="range" id="marginRange" min="0" max="100" value="10" step="1" class="w-48 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
                             <span id="rangeValue" class="text-sm font-semibold mt-2">5%</span>
                             </div>
