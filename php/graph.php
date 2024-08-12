@@ -203,6 +203,9 @@ foreach ($combinations as $index => $combination) {
         </div>
     </div>
 </div>
+<script> 
+    console.log(<?php echo json_encode($groupedData); ?>);
+</script>
 <?php }
 ?>
 
@@ -216,6 +219,6 @@ foreach ($combinations as $index => $combination) {
     const hasYColumn = <?php echo json_encode(isset($yColumn)); ?>;
     const isSingleParameter = <?php echo json_encode($isSingleParameter); ?>;
 </script>
-<script src="../js/chart_dynamic.js"></script>
+<script src="../js/chart_scatter.js"></script>
 </body>
 </html>

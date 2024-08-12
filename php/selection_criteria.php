@@ -136,7 +136,7 @@ $columns = [
             <div class="flex w-full justify-start items-center gap-2">
                 <!-- Sort Button and Dropdown -->
                 <button id="dropdownSearchButtonSort" data-dropdown-toggle="dropdownSearchSort" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-orange-500 rounded-lg hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800" type="button">
-                    Columns
+                    X-Axis
                     <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                     </svg>
@@ -144,27 +144,25 @@ $columns = [
 
                 <!-- Sort Dropdown menu -->
                 <div id="dropdownSearchSort" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
-                    <ul class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButtonSort">
+                    <ul class="h-18 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButtonSort">
                         <li>
                             <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                <input id="select-all-sort" type="checkbox" class="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 dark:focus:ring-orange-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                                <label for="select-all-sort" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Select All</label>
+                                <input id="checkbox-item-x-0" name="order-x" type="radio" value="0" class="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 dark:focus:ring-orange-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                <label for="checkbox-item-x-0" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Ascending</label>
                             </div>
                         </li>
-                        <?php foreach ($columns as $index => $column): ?>
                         <li>
                             <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                <input id="checkbox-item-x-<?= $index ?>" name="sort[]" type="checkbox" value="<?= $index ?>" class="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 dark:focus:ring-orange-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 filter-checkbox-sort">
-                                <label for="checkbox-item-x-<?= $index ?>" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"><?= $column ?></label>
+                                <input id="checkbox-item-x-1" name="order-x" type="radio" value="1" class="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 dark:focus:ring-orange-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                <label for="checkbox-item-x-1" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Descending</label>
                             </div>
                         </li>
-                        <?php endforeach; ?>
                     </ul>
                 </div>
 
                 <!-- ASC or DESC Button and Dropdown -->
                 <button id="dropdownSearchButtonOrder" data-dropdown-toggle="dropdownSearchOrder" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-cyan-700 rounded-lg hover:bg-cyan-800 focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800" type="button">
-                    Order
+                    Y-Axis
                     <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                     </svg>
@@ -175,13 +173,13 @@ $columns = [
                     <ul class="h-18 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButtonOrder">
                         <li>
                             <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                <input id="checkbox-item-x-0" name="order" type="radio" value="0" class="w-4 h-4 text-cyan-600 bg-gray-100 border-gray-300 rounded focus:ring-cyan-500 dark:focus:ring-cyan-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                <input id="checkbox-item-x-0" name="order-y" type="radio" value="0" class="w-4 h-4 text-cyan-600 bg-gray-100 border-gray-300 rounded focus:ring-cyan-500 dark:focus:ring-cyan-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                 <label for="checkbox-item-x-0" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Ascending</label>
                             </div>
                         </li>
                         <li>
                             <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                <input id="checkbox-item-x-1" name="order" type="radio" value="1" class="w-4 h-4 text-cyan-600 bg-gray-100 border-gray-300 rounded focus:ring-cyan-500 dark:focus:ring-cyan-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                <input id="checkbox-item-x-1" name="order-y" type="radio" value="1" class="w-4 h-4 text-cyan-600 bg-gray-100 border-gray-300 rounded focus:ring-cyan-500 dark:focus:ring-cyan-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                 <label for="checkbox-item-x-1" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Descending</label>
                             </div>
                         </li>
@@ -195,7 +193,7 @@ $columns = [
         <div class="grid grid-cols-3 gap-4 mb-4">
             <div>
                 <label for="facility" class="block text-sm font-medium text-gray-700">Facility</label>
-                <select id="facility" name="facility[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                <select id="facility" name="facility[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                     <?php foreach ($facilities as $facility): ?>
                         <option value="<?= $facility ?>"><?= $facility ?></option>
                     <?php endforeach; ?>
@@ -204,50 +202,59 @@ $columns = [
 
             <div>
                 <label for="work_center" class="block text-sm font-medium text-gray-700">Work Center</label>
-                <select id="work_center" name="work_center[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                <select id="work_center" name="work_center[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                     <!-- Options will be populated based on facility selection -->
                 </select>
             </div>
 
             <div>
                 <label for="device_name" class="block text-sm font-medium text-gray-700">Device Name</label>
-                <select id="device_name" name="device_name[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                <select id="device_name" name="device_name[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                     <!-- Options will be populated based on work center selection -->
                 </select>
             </div>
 
             <div>
                 <label for="test_program" class="block text-sm font-medium text-gray-700">Test Program</label>
-                <select id="test_program" name="test_program[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                <select id="test_program" name="test_program[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                     <!-- Options will be populated based on device name selection -->
                 </select>
             </div>
 
             <div>
                 <label for="lot" class="block text-sm font-medium text-gray-700">Lot</label>
-                <select id="lot" name="lot[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                <select id="lot" name="lot[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                     <!-- Options will be populated based on test program selection -->
                 </select>
             </div>
 
             <div>
                 <label for="wafer" class="block text-sm font-medium text-gray-700">Wafer</label>
-                <select id="wafer" name="wafer[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                <select id="wafer" name="wafer[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                     <!-- Options will be populated based on lot selection -->
                 </select>
             </div>
 
             <div class="col-span-3">
                 <label for="parameter" class="block text-sm font-medium text-gray-700">Parameter</label>
-                <select id="parameter" name="parameter[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                <select id="parameter" name="parameter[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                     <!-- Options will be populated based on wafer selection -->
                 </select>
             </div>
         </div>
+
         <div class="text-center w-full flex justify-start gap-4">
-            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg"><i class="fa-solid fa-play"></i>&nbsp;Execute</button>
-            <button type="button" id="resetButton" class="px-4 py-2 bg-red-500 text-white rounded-lg"><i class="fa-solid fa-delete-left"></i>&nbsp;Reset</button>
+
+            <!-- Modal toggle -->
+            <button data-modal-target="select-modal" data-modal-toggle="select-modal" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+            Submit&nbsp;<i class="fa-solid fa-arrow-right"></i>
+            </button>
+
+            <!-- <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg"><i class="fa-solid fa-play"></i>&nbsp;Execute</button> -->
+            <button type="button" id="resetButton" class="px-4 py-2 bg-red-500 text-white rounded-lg">Reset&nbsp;<i class="fa-solid fa-delete-left"></i></button>
         </div>
+
+        <?php include('chart_type_modal.php'); ?>
     </form>
 </div>
 <script src="../js/selection.js"></script>

@@ -1,21 +1,17 @@
 <?php
 require __DIR__ . '/../connection.php';
 
-$sort = isset($_GET['sort']) ? $_GET['sort'] : null;
-$order = isset($_GET['order']) ? $_GET['order'] : null;
+$orderX = isset($_GET['order-x']) ? $_GET['order-x'] : null;
+$orderY = isset($_GET['order-y']) ? $_GET['order-y'] : null;
 
-$columnsOrder = [
-    'l.Facility_ID', 'l.Work_Center', 'l.Part_Type', 'l.Program_Name', 'l.Test_Temprature', 'l.Lot_ID',
-    'w.Wafer_ID', 'p.abbrev', 'w.Wafer_Start_Time', 'w.Wafer_Finish_Time', 'd1.Unit_Number', 'd1.X', 'd1.Y', 'd1.Head_Number',
-    'd1.Site_Number', 'd1.HBin_Number', 'd1.SBin_Number', 'd1.Tests_Executed', 'd1.Test_Time'
-];
+$chart = isset($_GET['chart']) ? $_GET['chart'] : null;
 
 // Filters from selection_criteria.php
 $filters = [
     "l.Facility_ID" => isset($_GET['facility']) ? $_GET['facility'] : [],
     "l.work_center" => isset($_GET['work_center']) ? $_GET['work_center'] : [],
     "l.part_type" => isset($_GET['device_name']) ? $_GET['device_name'] : [],
-    "l.program_name" => isset($_GET['test_program']) ? $_GET['test_program'] : [],
+    "tm.Table_Name" => isset($_GET['test_program']) ? $_GET['test_program'] : [],
     "l.lot_ID" => isset($_GET['lot']) ? $_GET['lot'] : [],
     "w.wafer_ID" => isset($_GET['wafer']) ? $_GET['wafer'] : [],
     "tm.Column_Name" => isset($_GET['parameter']) ? $_GET['parameter'] : [],
@@ -41,8 +37,8 @@ if (!empty($sql_filters)) {
 
 // Count total number of records with filters
 $count_sql = "SELECT COUNT(d2.Die_Sequence) AS total 
-              FROM DEVICE_1_CP1_V1_0_001 d1
-              JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
+              FROM WAFER w
+              JOIN DEVICE_1_CP1_V1_0_001 d1 ON w.Wafer_Sequence = d1.Wafer_Sequence
               JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
               JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
               JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
@@ -59,34 +55,17 @@ sqlsrv_free_stmt($count_stmt); // Free the count statement here
 // Dynamically construct the column part of the SQL query
 $column_list = !empty($filters['tm.Column_Name']) ? implode(', ', array_map(function($col) { return "d1.$col"; }, $filters['tm.Column_Name'])) : 'd1.*';
 
-// Build the ORDER BY clause
-$order_by_clause = '';
-if ($sort !== null && is_array($sort) && count($sort) > 0) {
-    $sort_columns = [];
-    foreach ($sort as $index) {
-        if (isset($columnsOrder[$index])) {
-            $sort_columns[] = $columnsOrder[$index];
-        }
-    }
-    if (!empty($sort_columns)) {
-        $order_direction = $order == 1 ? 'DESC' : 'ASC';
-        $order_by_clause = 'ORDER BY ' . implode(', ', $sort_columns) . " $order_direction";
-    }
-}
-
 // Retrieve all records with filters
-$tsql = "SELECT l.Facility_ID, l.Work_Center, l.Part_Type, l.Program_Name, l.Test_Temprature, l.Lot_ID,
+$tsql = "SELECT l.Facility_ID, l.Work_Center, l.Part_Type, tm.Table_Name, l.Test_Temprature, l.Lot_ID,
                 w.Wafer_ID, w.Wafer_Start_Time, w.Wafer_Finish_Time, d1.Unit_Number, d1.X, d1.Y, d1.Head_Number,
                 d1.Site_Number, d1.HBin_Number, d1.SBin_Number, d1.Tests_Executed, d1.Test_Time, 
                 tm.Column_Name, tm.Test_Name, $column_list
-         FROM DEVICE_1_CP1_V1_0_001 d1
-         JOIN WAFER w ON w.Wafer_Sequence = d1.Wafer_Sequence
+         FROM WAFER w 
+         JOIN DEVICE_1_CP1_V1_0_001 d1 ON w.Wafer_Sequence = d1.Wafer_Sequence
          JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
          JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
-         JOIN DEVICE_1_CP1_V1_0_002 d2 ON d1.Die_Sequence = d2.Die_Sequence
          JOIN ProbingSequenceOrder p on p.probing_sequence = w.probing_sequence
-         $where_clause
-         $order_by_clause";
+         $where_clause";
 
 $stmt = sqlsrv_query($conn, $tsql, $params);
 if ($stmt === false) {
@@ -104,7 +83,7 @@ sqlsrv_free_stmt($stmt); // Free the statement here after fetching the mapping
 
 // Merge static columns with dynamic columns and replace with test names
 $columns = [
-    'Facility_ID', 'Work_Center', 'Part_Type', 'Program_Name', 'Test_Temprature', 'Lot_ID',
+    'Facility_ID', 'Work_Center', 'Part_Type', 'Table_Name', 'Test_Temprature', 'Lot_ID',
     'Wafer_ID', 'Wafer_Start_Time', 'Wafer_Finish_Time', 'Unit_Number', 'X', 'Y', 'Head_Number',
     'Site_Number', 'HBin_Number', 'SBin_Number', 'Tests_Executed', 'Test_Time'
 ];
@@ -126,9 +105,15 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
             <a href="selection_page.php" class="px-4 py-2 bg-orange-500 text-white rounded mr-2">
                 <i class="fa-solid fa-list"></i>&nbsp;Selection Criteria
             </a>
-            <a href="graph.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
-                <i class="fa-solid fa-chart-line"></i>&nbsp;Scatter Plot
-            </a>
+            <?php if ($chart == 1): ?>
+                <a href="graph.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
+                    <i class="fa-solid fa-chart-area"></i>&nbsp;XY Scatter Plot
+                </a>
+            <?php else: ?>
+                <a href="line_chart.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
+                    <i class="fa-solid fa-chart-line"></i>&nbsp;Line Chart
+                </a>
+            <?php endif; ?>
             <a href="export.php?<?php echo http_build_query($_GET); ?>" class="px-5 py-2 bg-green-500 text-white rounded">
                 <i class="fa-regular fa-file-excel"></i>&nbsp;Export
             </a>
