@@ -40,17 +40,17 @@ $columns = [
         background-color: rgb(14 116 144 / var(--tw-bg-opacity)) /* #0e7490 */;
     }
 
-    .p-12 {
+    .px-12 {
         padding: 3rem /* 48px */;
     }
 </style>
 
-<div class="container mx-auto p-12 bg-white rounded-md shadow-md">
+<div class="container mx-auto px-12 py-6 bg-white rounded-md shadow-md">
     <h1 class="text-center text-2xl font-bold mb-6 w-full">Selection Criteria</h1>
     <form action="dashboard.php" method="GET" id="criteriaForm">
     <div class="flex flex-row justify-between w-full gap-4">
         <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 w-1/3">
-                <h2 class="text-md italic mb-4 w-24 text-gray-500 bg-gray-50 filter-text-header text-center"><i class="fa-solid fa-filter"></i>&nbsp;Filter by</h2>
+                <h2 class="text-md italic mb-4 w-24 text-gray-500 bg-white filter-text-header text-center"><i class="fa-solid fa-filter"></i>&nbsp;Filter by</h2>
                 <div class="flex w-full justify-start items-start gap-2">
                 <!-- Probe Count Button and Dropdown -->
                 <button id="dropdownSearchButtonProbe" data-dropdown-toggle="dropdownSearchProbe" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800" type="button">
@@ -85,7 +85,7 @@ $columns = [
 
             <!-- Group by Section -->
         <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 w-1/3">
-            <h2 class="text-md italic mb-4 w-24 text-gray-500 bg-gray-50 filter-text-header text-center"><i class="fa-solid fa-layer-group"></i>&nbsp;Group by</h2>
+            <h2 class="text-md italic mb-4 w-24 text-gray-500 bg-white filter-text-header text-center"><i class="fa-solid fa-layer-group"></i>&nbsp;Group by</h2>
             <div class="flex w-full justify-start items-center gap-2">
                 
                 <!-- X Button and Dropdown -->
@@ -136,7 +136,7 @@ $columns = [
 
         <!-- Sort by Section -->
         <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 w-1/3">
-            <h2 class="text-md italic mb-4 w-20 text-gray-500 bg-gray-50 filter-text-header text-center"><i class="fa-solid fa-sort"></i>&nbsp;Sort by</h2>
+            <h2 class="text-md italic mb-4 w-20 text-gray-500 bg-white filter-text-header text-center"><i class="fa-solid fa-sort"></i>&nbsp;Sort by</h2>
             <div class="flex w-full justify-start items-center gap-2">
                 <!-- Sort Button and Dropdown -->
                 <button id="dropdownSearchButtonSort" data-dropdown-toggle="dropdownSearchSort" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-orange-500 rounded-lg hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800" type="button">
