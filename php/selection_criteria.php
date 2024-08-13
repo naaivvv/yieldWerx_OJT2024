@@ -39,10 +39,14 @@ $columns = [
         --tw-bg-opacity: 1;
         background-color: rgb(14 116 144 / var(--tw-bg-opacity)) /* #0e7490 */;
     }
+
+    .p-12 {
+        padding: 3rem /* 48px */;
+    }
 </style>
 
-<div class="container mx-auto">
-    <h1 class="text-center text-2xl font-bold mb-4 w-full">Selection Criteria</h1>
+<div class="container mx-auto p-12 bg-white rounded-md shadow-md">
+    <h1 class="text-center text-2xl font-bold mb-6 w-full">Selection Criteria</h1>
     <form action="dashboard.php" method="GET" id="criteriaForm">
     <div class="flex flex-row justify-between w-full gap-4">
         <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 w-1/3">
