@@ -1,6 +1,28 @@
 <?php
 require __DIR__ . '/../connection.php';
 
+// Check if the form was submitted and save the selected values in the session
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    if (isset($_GET['abbrev'])) {
+        $_SESSION['abbrev'] = $_GET['abbrev'];
+    }
+    if (isset($_GET['x'])) {
+        $_SESSION['x'] = $_GET['x'];
+    }
+    if (isset($_GET['y'])) {
+        $_SESSION['y'] = $_GET['y'];
+    }
+    if (isset($_GET['order-x'])) {
+        $_SESSION['order-x'] = $_GET['order-x'];
+    }
+}
+
+// Fetch previously selected values from the session, if any
+$selectedAbbrev = isset($_SESSION['abbrev']) ? $_SESSION['abbrev'] : [];
+$selectedX = isset($_SESSION['x']) ? $_SESSION['x'] : null;
+$selectedY = isset($_SESSION['y']) ? $_SESSION['y'] : null;
+$selectedOrderX = isset($_SESSION['order-x']) ? $_SESSION['order-x'] : null;
+
 // Query to populate the initial facility options
 $query = "SELECT DISTINCT Facility_ID FROM lot";
 $facilities = [];
