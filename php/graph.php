@@ -48,16 +48,28 @@ include('graph_backend.php');
         .ml-16 {
             margin-left: 4rem /* 64px */;
         }
+        .max-w-5xl {
+            max-width: 64rem /* 1024px */;
+        }
    </style>
 </head>
 <body class="bg-gray-50">
 <?php include('admin_components.php'); ?>
 <?php include('settings.php'); ?>
 
+<script>const groupedData = <?php echo json_encode($groupedData); ?>;</script>
+
+
+<h1 class="text-center text-2xl font-bold w-full mb-6">XY Scatter Plot</h1>
+<div class="max-w-5xl p-4 my-4 flex items-center justify-center mx-auto">
+    <div class="w-full">
+        <?php include('received_parameters.php'); ?>
+    </div>
+</div>
 <?php
-if(!$isSingleParameter){
-echo '<h1 class="text-center text-2xl font-bold w-full mb-6">XY Scatter Plot</h1>';
-foreach ($combinations as $index => $combination) {
+foreach ($combinations as $combination) {
+    $combinationKey = implode('_', $combination);
+    $data = $groupedData[$combinationKey];
     $xLabel = $combination[0];
     $yLabel = $combination[1];
 
@@ -75,7 +87,7 @@ foreach ($combinations as $index => $combination) {
 <!-- Iterate this layout -->
 <div class="p-4">
     <div class="dark:border-gray-700 flex flex-col items-center">
-        <div class="max-w-fit p-6 border-b-2 border-2">
+        <div class="max-w-fit p-6 border-b-2 border-2 bg-white shadow-md rounded-md">
             <div class="mb-4 text-sm italic">
                 <?php 
                 echo 'Combination of <b>' . $testNameX . '</b>';
@@ -85,16 +97,17 @@ foreach ($combinations as $index => $combination) {
             <?php
             if (isset($xColumn) && isset($yColumn)) {
                 // Both X and Y parameters are set
-                $yGroupKeys = array_keys($groupedData);
+                $yGroupKeys = array_keys($data);
                 $lastYGroup = end($yGroupKeys);
-                foreach ($groupedData as $yGroup => $xGroupData) {
+                foreach ($data as $yGroup => $xGroupData) {
                     echo '<div class="flex flex-row items-center justify-center w-full">';
                     echo '<div><h2 class="text-center text-xl font-semibold mb-4 -rotate-90">' . $yGroup . '</h2></div>';
                     echo '<div class="grid gap-2 grid-cols-' . count($xGroupData) . '">';
 
-                    foreach ($xGroupData as $xGroup => $data) {
+                    foreach ($xGroupData as $xGroup => $chartData) {
+                        $chartId = "chartXY_{$combinationKey}_{$yGroup}_{$xGroup}";
                         echo '<div class="flex items-center justify-center flex-col">';
-                        echo '<canvas id="chartXY_' . $yGroup . '_' . $xGroup . '"></canvas>';
+                        echo "<canvas id='{$chartId}'></canvas>";
                         if ($yGroup === $lastYGroup) {
                             echo '<h3 class="text-center text-lg font-semibold">' . $xGroup . '</h3>';
                         }
@@ -102,122 +115,54 @@ foreach ($combinations as $index => $combination) {
                     }
                     echo '</div></div>';
                 }
-            } elseif (isset($xColumn) && !isset($yColumn)) {
+            } elseif (isset($xColumn)) {
                 // Only X parameter is set
                 echo '<div class="flex flex-row items-center justify-center w-full">';
-                echo '<div class="grid gap-2 grid-cols-' . $numDistinctGroups . '">';
-                foreach ($groupedData as $xGroup => $data) {
+                echo '<div class="grid gap-2 grid-cols-' . count($data) . '">';
+                foreach ($data as $xGroup => $chartData) {
+                    $chartId = "chartXY_{$combinationKey}_{$xGroup}";
                     echo '<div class="flex items-center justify-center flex-col">';
-                    echo '<canvas id="chartXY_' . $xGroup . '"></canvas>';
+                    echo "<canvas id='{$chartId}'></canvas>";
                     echo '<h3 class="text-center text-lg font-semibold">' . $xGroup . '</h3></div>';
                 }
                 echo '</div></div>';
-            } elseif (!isset($xColumn) && isset($yColumn)) {
+            } elseif (isset($yColumn)) {
                 // Only Y parameter is set
                 echo '<div class="flex flex-row items-center justify-center w-full">';
                 echo '<div class="grid gap-2 grid-cols-1">';
-                foreach ($groupedData as $yGroup => $data) {
+                foreach ($data as $yGroup => $chartData) {
+                    $chartId = "chartXY_{$combinationKey}_{$yGroup}";
                     echo '<div class="flex flex-row justify-center items-center">';
                     echo '<div class="text-center">
                         <h2 class="text-center text-xl font-semibold mb-4 -rotate-90">' . $yGroup . '</h2></div>';
-                    echo '<canvas id="chartXY_' . $yGroup . '"></canvas>';
+                        echo "<canvas id='{$chartId}'></canvas>";
                     echo '</div>';
                 }
                 echo '</div></div>';
             } else {
                 // Neither X nor Y parameters are set
+                $chartId = "chartXY_{$combinationKey}_all";
                 echo '<div class="flex items-center justify-center w-full">';
-                echo '<div><canvas id="chartXY_all"></canvas></div>';
+                echo "<div><canvas id='{$chartId}'></canvas></div>";
                 echo '</div>';
             }
             ?>
         </div>
     </div>
 </div>
-<script> 
-    console.log(<?php echo json_encode($groupedData); ?>);
-</script>
 <!-- Iterate until here -->
 <?php
     }
-} else { ?>
-<h1 class="text-center text-2xl font-bold w-full mb-6">XY Line Chart</h1>
- <div class="p-4">
-    <div class="dark:border-gray-700 flex flex-col items-center">
-        <div class="max-w-fit p-6 border-b-2 border-2">
-            <div class="mb-4 text-sm italic">
-                <?php 
-                echo 'Combination of <b>' . $testNameX . '</b>';
-                echo ' and <b>' . $testNameY . '</b>';
-                ?>
-            </div>
-            <?php
-            if (isset($xColumn) && isset($yColumn)) {
-                // Both X and Y parameters are set
-                $yGroupKeys = array_keys($groupedData);
-                $lastYGroup = end($yGroupKeys);
-                foreach ($groupedData as $yGroup => $xGroupData) {
-                    echo '<div class="flex flex-row items-center justify-center w-full">';
-                    echo '<div><h2 class="text-center text-xl font-semibold mb-4 -rotate-90">' . $yGroup . '</h2></div>';
-                    echo '<div class="grid gap-2 grid-cols-' . count($xGroupData) . '">';
-
-                    foreach ($xGroupData as $xGroup => $data) {
-                        echo '<div class="flex items-center justify-center flex-col">';
-                        echo '<canvas id="chartXY_' . $yGroup . '_' . $xGroup . '"></canvas>';
-                        if ($yGroup === $lastYGroup) {
-                            echo '<h3 class="text-center text-lg font-semibold">' . $xGroup . '</h3>';
-                        }
-                        echo '</div>';
-                    }
-                    echo '</div></div>';
-                }
-            } elseif (isset($xColumn) && !isset($yColumn)) {
-                // Only X parameter is set
-                echo '<div class="flex flex-row items-center justify-center w-full">';
-                echo '<div class="grid gap-2 grid-cols-' . $numDistinctGroups . '">';
-                foreach ($groupedData as $xGroup => $data) {
-                    echo '<div class="flex items-center justify-center flex-col">';
-                    echo '<canvas id="chartXY_' . $xGroup . '"></canvas>';
-                    echo '<h3 class="text-center text-lg font-semibold">' . $xGroup . '</h3></div>';
-                }
-                echo '</div></div>';
-            } elseif (!isset($xColumn) && isset($yColumn)) {
-                // Only Y parameter is set
-                echo '<div class="flex flex-row items-center justify-center w-full">';
-                echo '<div class="grid gap-2 grid-cols-1">';
-                foreach ($groupedData as $yGroup => $data) {
-                    echo '<div class="flex flex-row justify-center items-center">';
-                    echo '<div class="text-center">
-                        <h2 class="text-center text-xl font-semibold mb-4 -rotate-90">' . $yGroup . '</h2></div>';
-                    echo '<canvas id="chartXY_' . $yGroup . '"></canvas>';
-                    echo '</div>';
-                }
-                echo '</div></div>';
-            } else {
-                // Neither X nor Y parameters are set
-                echo '<div class="flex items-center justify-center w-full">';
-                echo '<div><canvas id="chartXY_all"></canvas></div>';
-                echo '</div>';
-            }
-            ?>
-        </div>
-    </div>
-</div>
-<script> 
-    console.log(<?php echo json_encode($groupedData); ?>);
-</script>
-<?php }
 ?>
 
 <script>
-    const groupedData = <?php echo json_encode($groupedData); ?>;
     const xLabel = '<?php echo $testNameX; ?>';
     const yLabel = '<?php echo $testNameY; ?>';
     const xColumn = <?php echo json_encode($xColumn); ?>;
     const yColumn = <?php echo json_encode($yColumn); ?>;
     const hasXColumn = <?php echo json_encode(isset($xColumn)); ?>;
     const hasYColumn = <?php echo json_encode(isset($yColumn)); ?>;
-    const isSingleParameter = <?php echo json_encode($isSingleParameter); ?>;
+    console.log(groupedData);
 </script>
 <script src="../js/chart_scatter.js"></script>
 </body>

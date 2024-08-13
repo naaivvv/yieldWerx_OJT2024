@@ -1,8 +1,20 @@
 <?php
 require __DIR__ . '/../connection.php';
 
+$xIndex = isset($_GET['x']) ? $_GET['x'] : null;
+$yIndex = isset($_GET['y']) ? $_GET['y'] : null;
+
 $orderX = isset($_GET['order-x']) ? $_GET['order-x'] : null;
 $orderY = isset($_GET['order-y']) ? $_GET['order-y'] : null;
+
+$columns = [
+    'l.Facility_ID', 'l.Work_Center', 'l.Part_Type', 'l.Program_Name', 'l.Test_Temprature', 'l.Lot_ID',
+    'w.Wafer_ID', 'p.abbrev', 'w.Wafer_Start_Time', 'w.Wafer_Finish_Time', 'd1.Unit_Number', 'd1.X', 'd1.Y', 'd1.Head_Number',
+    'd1.Site_Number', 'd1.HBin_Number', 'd1.SBin_Number', 'd1.Tests_Executed', 'd1.Test_Time'
+];
+
+$xColumn = $xIndex !== null && isset($columns[$xIndex]) ? $columns[$xIndex] : null;
+$yColumn = $yIndex !== null && isset($columns[$yIndex]) ? $columns[$yIndex] : null;
 
 $chart = isset($_GET['chart']) ? $_GET['chart'] : null;
 
@@ -11,7 +23,7 @@ $filters = [
     "l.Facility_ID" => isset($_GET['facility']) ? $_GET['facility'] : [],
     "l.work_center" => isset($_GET['work_center']) ? $_GET['work_center'] : [],
     "l.part_type" => isset($_GET['device_name']) ? $_GET['device_name'] : [],
-    "tm.Table_Name" => isset($_GET['test_program']) ? $_GET['test_program'] : [],
+    "l.Program_Name" => isset($_GET['test_program']) ? $_GET['test_program'] : [],
     "l.lot_ID" => isset($_GET['lot']) ? $_GET['lot'] : [],
     "w.wafer_ID" => isset($_GET['wafer']) ? $_GET['wafer'] : [],
     "tm.Column_Name" => isset($_GET['parameter']) ? $_GET['parameter'] : [],
@@ -35,6 +47,18 @@ if (!empty($sql_filters)) {
     $where_clause = 'WHERE ' . implode(' AND ', $sql_filters);
 }
 
+$orderDirectionX = $orderX == 1 ? 'DESC' : 'ASC';
+$orderDirectionY = $orderY == 1 ? 'DESC' : 'ASC';
+
+$orderByClause = '';
+if ($xColumn && $yColumn) {
+    $orderByClause = "ORDER BY $xColumn $orderDirectionX, $yColumn $orderDirectionY";
+} elseif ($xColumn && !$yColumn) {
+    $orderByClause = "ORDER BY $xColumn $orderDirectionX";
+} elseif (!$xColumn && $yColumn) {
+    $orderByClause = "ORDER BY $yColumn $orderDirectionY";
+}
+
 // Count total number of records with filters
 $count_sql = "SELECT COUNT(d2.Die_Sequence) AS total 
               FROM WAFER w
@@ -56,7 +80,7 @@ sqlsrv_free_stmt($count_stmt); // Free the count statement here
 $column_list = !empty($filters['tm.Column_Name']) ? implode(', ', array_map(function($col) { return "d1.$col"; }, $filters['tm.Column_Name'])) : 'd1.*';
 
 // Retrieve all records with filters
-$tsql = "SELECT l.Facility_ID, l.Work_Center, l.Part_Type, tm.Table_Name, l.Test_Temprature, l.Lot_ID,
+$tsql = "SELECT l.Facility_ID, l.Work_Center, l.Part_Type, l.Program_Name, l.Test_Temprature, l.Lot_ID,
                 w.Wafer_ID, w.Wafer_Start_Time, w.Wafer_Finish_Time, d1.Unit_Number, d1.X, d1.Y, d1.Head_Number,
                 d1.Site_Number, d1.HBin_Number, d1.SBin_Number, d1.Tests_Executed, d1.Test_Time, 
                 tm.Column_Name, tm.Test_Name, $column_list
@@ -65,7 +89,8 @@ $tsql = "SELECT l.Facility_ID, l.Work_Center, l.Part_Type, tm.Table_Name, l.Test
          JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
          JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
          JOIN ProbingSequenceOrder p on p.probing_sequence = w.probing_sequence
-         $where_clause";
+         $where_clause
+         $orderByClause";
 
 $stmt = sqlsrv_query($conn, $tsql, $params);
 if ($stmt === false) {
@@ -98,7 +123,15 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
         overflow-x: auto;
         max-height: 65vh;
     }
+    .max-w-5xl {
+            max-width: 64rem /* 1024px */;
+        }
 </style>
+<div class="max-w-5xl p-4 my-4 flex items-center justify-center mx-auto">
+    <div class="w-full">
+        <?php include('received_parameters.php'); ?>
+    </div>
+</div>
 <div class="flex justify-center items-center h-full">
     <div class="w-full max-w-7xl p-6 rounded-lg shadow-lg bg-white mt-6">
         <div class="mb-4 text-right">

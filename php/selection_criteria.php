@@ -2,7 +2,7 @@
 require __DIR__ . '/../connection.php';
 
 // Query to populate the initial facility options
-$query = "SELECT Facility_ID FROM lot";
+$query = "SELECT DISTINCT Facility_ID FROM lot";
 $facilities = [];
 $stmt = sqlsrv_query($conn, $query);
 while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {

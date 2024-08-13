@@ -12,17 +12,17 @@ switch ($type) {
         $query = "SELECT DISTINCT Part_Type FROM lot WHERE Work_Center IN ('" . implode("','", $value) . "')";
         break;
     case 'test_program':
-        $query = "SELECT DISTINCT tm.Table_Name
+        $query = "SELECT DISTINCT l.Program_Name
                     FROM lot l
                     JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
                     WHERE Part_Type IN ('" . implode("','", $value) . "')
-                    ORDER BY tm.Table_Name ASC";
+                    ORDER BY l.Program_Name ASC";
         break;
     case 'lot':
         $query = "SELECT DISTINCT l.Lot_ID
                     FROM lot l
                     JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
-                    WHERE tm.Table_Name IN ('" . implode("','", $value) . "')";
+                    WHERE l.Program_Name IN ('" . implode("','", $value) . "')";
         break;
     case 'wafer':
         $query = "SELECT DISTINCT wafer.Wafer_ID 

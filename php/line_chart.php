@@ -47,19 +47,27 @@ include('line_chart_backend.php');
         .ml-16 {
             margin-left: 4rem;
         }
+        .max-w-5xl {
+            max-width: 64rem /* 1024px */;
+        }
    </style>
 </head>
 <body class="bg-gray-50">
 <?php include('admin_components.php'); ?>
 <?php include('settings.php'); ?>
 <script>const groupedData = <?php echo json_encode($groupedData); ?>;</script>
-<h1 class="text-center text-2xl font-bold w-full mb-6">XY Line Chart</h1>
+<h1 class="text-center text-2xl font-bold w-full mb-6">Line Chart</h1>
 <!-- Iterate and generate chart canvases -->
+<div class="max-w-5xl p-4 my-4 flex items-center justify-center mx-auto">
+    <div class="w-full">
+        <?php include('received_parameters.php'); ?>
+    </div>
+</div>
 <?php
 foreach ($groupedData as $parameter => $data) {
     echo '<div class="p-4">';
     echo '<div class="dark:border-gray-700 flex flex-col items-center">';
-    echo '<div class="max-w-fit p-6 border-b-2 border-2">';
+    echo '<div class="max-w-fit p-6 border-b-2 border-2 bg-white shadow-md rounded-md">';
     echo '<div class="mb-4 text-sm italic">';
     echo 'Series of <b>' . $testNameY . '</b>';
     echo '</div>';

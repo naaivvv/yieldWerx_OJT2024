@@ -8,7 +8,7 @@ $orderX = isset($_GET['order-x']) ? $_GET['order-x'] : null;
 $orderY = isset($_GET['order-y']) ? $_GET['order-y'] : null;
 
 $columns = [
-    'l.Facility_ID', 'l.Work_Center', 'l.Part_Type', 'tm.Table_Name', 'l.Test_Temprature', 'l.Lot_ID',
+    'l.Facility_ID', 'l.Work_Center', 'l.Part_Type', 'l.Program_Name', 'l.Test_Temprature', 'l.Lot_ID',
     'w.Wafer_ID', 'p.abbrev', 'w.Wafer_Start_Time', 'w.Wafer_Finish_Time', 'd1.Unit_Number', 'd1.X', 'd1.Y', 'd1.Head_Number',
     'd1.Site_Number', 'd1.HBin_Number', 'd1.SBin_Number', 'd1.Tests_Executed', 'd1.Test_Time'
 ];
@@ -20,7 +20,7 @@ $filters = [
     "l.Facility_ID" => isset($_GET['facility']) ? $_GET['facility'] : [],
     "l.work_center" => isset($_GET['work_center']) ? $_GET['work_center'] : [],
     "l.part_type" => isset($_GET['device_name']) ? $_GET['device_name'] : [],
-    "tm.Table_Name" => isset($_GET['test_program']) ? $_GET['test_program'] : [],
+    "l.Program_Name" => isset($_GET['test_program']) ? $_GET['test_program'] : [],
     "l.lot_ID" => isset($_GET['lot']) ? $_GET['lot'] : [],
     "w.wafer_ID" => isset($_GET['wafer']) ? $_GET['wafer'] : [],
     "tm.Column_Name" => isset($_GET['parameter']) ? $_GET['parameter'] : [],
