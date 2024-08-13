@@ -39,9 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         } else {
-            const data = dataGroups['all'];
-            allXValues = allXValues.concat(extractValues(data, 'x'));
-            allYValues = allYValues.concat(extractValues(data, 'y'));
+            for (const combination in dataGroups) {
+                    const data = dataGroups[combination]['all'];
+                    allXValues = allXValues.concat(extractValues(data, 'x'));
+                    allYValues = allYValues.concat(extractValues(data, 'y'));
+            }
         }
 
         const minXValue = allXValues.length > 0 ? Math.min(...allXValues) : 0;
@@ -122,11 +124,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else if (hasXColumn) {
                 for (const xGroup in groupedData[combination]) {
-                    const chartId = `chartXY_${combination}_${xGroup}`;
-                    const canvasElement = document.getElementById(chartId);
-                    if (canvasElement) {
-                        const ctx = canvasElement.getContext('2d');
-                        createChartFunc(ctx, groupedData[combination][xGroup], `${xGroup}`, minX, maxX, minY, maxY);
+                    for (const yGroup in groupedData[combination][xGroup]) {
+                        const chartId = `chartXY_${combination}_${xGroup}`;
+                        const canvasElement = document.getElementById(chartId);
+                        if (canvasElement) {
+                            const ctx = canvasElement.getContext('2d');
+                            createChartFunc(ctx, groupedData[combination][xGroup][yGroup], `${xGroup}`, minX, maxX, minY, maxY);
+                        }
                     }
                 }
             } else if (hasYColumn) {
@@ -143,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const canvasElement = document.getElementById(chartId);
                 if (canvasElement) {
                     const ctx = canvasElement.getContext('2d');
+                    console.log(groupedData[combination]['all']);
                     createChartFunc(ctx, groupedData[combination]['all'], 'Line Chart', minX, maxX, minY, maxY);
                 }
             }

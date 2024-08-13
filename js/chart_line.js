@@ -39,9 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         } else {
-            const data = dataGroups['all'];
-            allXValues = allXValues.concat(extractValues(data, 'x'));
-            allYValues = allYValues.concat(extractValues(data, 'y'));
+            for (const parameter in dataGroups) {
+                const data = dataGroups[parameter]['all'];
+                allXValues = allXValues.concat(extractValues(data, 'x'));
+                allYValues = allYValues.concat(extractValues(data, 'y'));
+            }
         }
 
         const minXValue = allXValues.length > 0 ? Math.min(...allXValues) : 0;
@@ -147,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const canvasElement = document.getElementById(chartId);
                     if (canvasElement) {
                         const ctx = canvasElement.getContext('2d');
+                        console.log(groupedData[parameter]['all']);
                         createChartFunc(ctx, groupedData[parameter]['all'], 'Line Chart', minX, maxX, minY, maxY);
                     }
                 }
