@@ -58,7 +58,7 @@
    ![Screenshot 2024-08-14 230820](https://github.com/user-attachments/assets/0a55b205-64c7-4b55-8e2b-1f00d41af48a)
    ![Screenshot 2024-08-14 231159](https://github.com/user-attachments/assets/b6a52d8b-ee3e-4774-854e-cb3232e55975)
    
-   *Note: The PHP version presented below is 8.1, therefore, php_pdo_sqlsrv_81_ts & php_sqlsrv_81_ts*
+   *Note: The PHP version presented in step number 2 is 8.1, therefore, php_pdo_sqlsrv_81_ts & php_sqlsrv_81_ts was chose*
    
 5. Insert the files as extension in php.ini
  
