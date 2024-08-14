@@ -42,7 +42,7 @@
 
 ### Installation Steps
 
-7. Clone the repository
+7. Clone the repository inside C:\xampp\htdocs\
 
    ```bash
    git clone https://github.com/naaivvv/WireDesk.git
@@ -66,3 +66,13 @@
    DB_PASSWORD=
 
    ```
+10. Launch the frontend asset of the system on the terminal
+
+   ```bash
+   npm run dev
+   ```
+11. Visit the application
+
+    ```bash
+    [http://localhost:8000](http://localhost/yieldwerx_OJT2024/PHP/selection_page.php)
+    ```
