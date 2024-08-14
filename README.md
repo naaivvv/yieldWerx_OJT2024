@@ -9,12 +9,12 @@
 
 # Languages and Tools
 ## Frontend
-- Tailwind Css
+- Tailwind CSS 3
 - Flowbite
-- Html
+- HTML
 
 ## Backend
-- Php 8
+- PHP 8
 - Javascript
 
 ## Database
@@ -24,11 +24,14 @@
 - Git
 - Github
 - ODBC driver
-- composer
+- Composer
+- XAMPP
+- SSMS
  
 ## Requirements
 - Node.js
 - Composer
-- php 8
+- PHP 8
 - ODBC driver
-- chart.js
+- XAMPP
+- SSMS
