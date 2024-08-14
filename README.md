@@ -62,13 +62,13 @@
 
 
 
-7. Clone the repository inside C:\xampp\htdocs\
+5. Clone the repository inside C:\xampp\htdocs\
 
    ```bash
    git clone https://github.com/naaivvv/WireDesk.git
    ```
 
-8. Install the dependencies
+6. Install the dependencies
 
    ```bash
    composer install
@@ -78,7 +78,7 @@
    npm install
    ```
    
-9. In the (.env file), add database information to connect to the database
+7. In the (.env file), add database information to connect to the database
 
    ```env
    DB_SERVERNAME=SERVERNAME/SQLEXPRESS
@@ -87,13 +87,13 @@
    DB_PASSWORD=
    ```
    
-10. Launch the frontend asset of the system
+8. Launch the frontend asset of the system
 
    ```bash
    npm run dev
    ```
 
-11. Visit the application
+9. Visit the application
 
     ```bash
     http://localhost/yieldwerx_OJT2024/PHP/selection_page.php
