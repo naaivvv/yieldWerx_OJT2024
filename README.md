@@ -78,7 +78,7 @@
    npm install
    ```
    
-9. In the .env file, add database information to connect to the database
+9. In the (.env file), add database information to connect to the database
 
    ```env
    DB_SERVERNAME=SERVERNAME/SQLEXPRESS
