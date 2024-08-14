@@ -85,7 +85,6 @@
    DB_DATABASE=yielWerx_OJT2024
    DB_USERNAME=
    DB_PASSWORD=
-
    ```
    
 10. Launch the frontend asset of the system
