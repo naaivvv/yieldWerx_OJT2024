@@ -41,6 +41,19 @@
 - SQL Server Management Studio 20
 
 ### Installation Steps
+1. Connect PHP to Microsoft SQL Server
+
+   ``` bash
+   https://www.youtube.com/watch?v=XLTkcB_T8Mo
+   ```
+   
+2. Transfer php_pdo_sqlsrv and php_sqlsrv files to php ext folder
+
+3. Insert the files as extension in php.ini
+
+4. Establish connection in VS Code
+
+
 
 7. Clone the repository inside C:\xampp\htdocs\
 
