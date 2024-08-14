@@ -77,6 +77,7 @@
    ```bash
    npm install
    ```
+   
 9. In the .env file, add database information to connect to the database
 
    ```env
@@ -86,11 +87,13 @@
    DB_PASSWORD=
 
    ```
+   
 10. Launch the frontend asset of the system
 
    ```bash
    npm run dev
    ```
+
 11. Visit the application
 
     ```bash
