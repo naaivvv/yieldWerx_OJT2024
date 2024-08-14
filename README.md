@@ -69,7 +69,7 @@
 10. Launch the frontend asset of the system on the terminal
 
    ```bash
-   npm run dev
+    npm run dev
    ```
 11. Visit the application
 
