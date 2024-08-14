@@ -1,9 +1,9 @@
 # Features
--Utilizes the Repository Pattern and Services for maintainability.
--Follows clean code and Separation of Concerns principles.
--Optimizes database performance by avoiding the N+1 problem.
--Implements a responsive design to ensure a good user experience on all devices.
--Uses reusable components and layouts to avoid duplication of code.
+- Utilizes the Repository Pattern and Services for maintainability
+- Follows clean code and Separation of Concerns principles
+- Optimizes database performance by avoiding the N+1 problem.
+- Implements a responsive design to ensure a good user experience on all devices
+- Uses reusable components and layouts to avoid duplication of code
 
 # Languages and Tools
 ## Frontend
