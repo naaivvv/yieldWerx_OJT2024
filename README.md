@@ -65,7 +65,7 @@
 5. Clone the repository inside C:\xampp\htdocs\
 
    ```bash
-   git clone https://github.com/naaivvv/WireDesk.git
+   git clone https://github.com/naaivvv/yieldWerx_OJT2024
    ```
 
 6. Install the dependencies
