@@ -66,10 +66,10 @@
    DB_PASSWORD=
 
    ```
-10. Launch the frontend asset of the system on the terminal
+10. Launch the frontend asset of the system
 
    ```bash
-    npm run dev
+   npm run dev
    ```
 11. Visit the application
 
