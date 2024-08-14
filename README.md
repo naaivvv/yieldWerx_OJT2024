@@ -48,8 +48,15 @@
    ```
    
 2. Transfer php_pdo_sqlsrv and php_sqlsrv files to php ext folder
+   ``` bash
+   ![image](https://github.com/user-attachments/assets/8ec568d3-223e-41a9-9c0f-ce184697ea3b)
+   ![image](https://github.com/user-attachments/assets/93c55b12-024c-4930-b692-7787b7ccd1ea)
+   ```
 
 3. Insert the files as extension in php.ini
+ ``` bash
+ ![image](https://github.com/user-attachments/assets/43a677e6-dd9a-42ef-86fd-d392b32205d6)
+ ```
 
 4. Establish connection in VS Code
 
