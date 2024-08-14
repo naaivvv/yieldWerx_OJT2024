@@ -7,7 +7,7 @@
 
 # Languages and Tools
 ## Frontend
--Tailwind Css
+- Tailwind Css
 
 ## Backend
 - php 8
