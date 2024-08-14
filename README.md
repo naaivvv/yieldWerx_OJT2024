@@ -47,18 +47,16 @@
    https://www.youtube.com/watch?v=XLTkcB_T8Mo
    ```
    
-2. Transfer php_pdo_sqlsrv and php_sqlsrv files to php ext folder
-   
-   ![image](https://github.com/user-attachments/assets/8ec568d3-223e-41a9-9c0f-ce184697ea3b)
-   ![image](https://github.com/user-attachments/assets/93c55b12-024c-4930-b692-7787b7ccd1ea)
-   
-
-3. Make sure the PHP version matches the php_pdo_sqlsrv and php_sqlsrv
+2. Make sure the PHP version matches the php_pdo_sqlsrv and php_sqlsrv
    
    ![Screenshot 2024-08-14 231159](https://github.com/user-attachments/assets/b6a52d8b-ee3e-4774-854e-cb3232e55975)
    ![Screenshot 2024-08-14 232231](https://github.com/user-attachments/assets/3718ead7-6584-4839-8f6b-6898b977604d)
+ 
+
+3. Transfer php_pdo_sqlsrv and php_sqlsrv files to php ext folder
    
-   *Note: The PHP version presented in step number 2 is 8.1, therefore, php_pdo_sqlsrv_81_ts & php_sqlsrv_81_ts was chose*
+    ![image](https://github.com/user-attachments/assets/8ec568d3-223e-41a9-9c0f-ce184697ea3b)
+    ![image](https://github.com/user-attachments/assets/93c55b12-024c-4930-b692-7787b7ccd1ea)
    
    
 5. Insert the files as extension in php.ini
