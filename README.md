@@ -74,5 +74,5 @@
 11. Visit the application
 
     ```bash
-    [http://localhost:8000](http://localhost/yieldwerx_OJT2024/PHP/selection_page.php)
+    http://localhost/yieldwerx_OJT2024/PHP/selection_page.php
     ```
