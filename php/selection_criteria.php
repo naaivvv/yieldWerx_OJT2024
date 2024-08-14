@@ -46,6 +46,9 @@ $columns = [
     'Wafer ID', 'Probe Count', 'Wafer Start_Time', 'Wafer Finish_Time', 'Unit Number', 'X', 'Y', 'Head Number',
     'Site Number', 'HBin Number', 'SBin Number', 'Column Name', 'Test Name',
 ];
+
+// Sort the columns array alphabetically
+sort($columns);
 ?>
 
 <style>
