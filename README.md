@@ -1,3 +1,5 @@
+# YieldWerx Data Extraction and Analytics System
+
 # Features
 - Utilizes the Repository Pattern and Services for maintainability
 - Follows clean code and Separation of Concerns principles
@@ -37,3 +39,21 @@
 - Microsoft Drivers for PHP for SQL Server
 - XAMPP
 - SQL Server Management Studio 20
+
+### Installation Steps
+
+7. Clone the repository
+
+   ```bash
+   git clone https://github.com/naaivvv/WireDesk.git
+   ```
+
+8. Install the dependencies
+
+   ```bash
+   composer install
+   ```
+
+   ```bash
+   npm install
+   ```
