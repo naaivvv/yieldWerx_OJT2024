@@ -18,20 +18,22 @@
 - Javascript
 
 ## Database
-- SQL Server Management Studio 20
+- MSSQL
 
 ## Tools
 - Git
 - Github
 - ODBC driver
+- Microsoft Drivers for PHP for SQL Server
 - Composer
 - XAMPP
-- SSMS
+- SQL Server Management Studio 20
  
 ## Requirements
 - Node.js
 - Composer
 - PHP 8
 - ODBC driver
+- Microsoft Drivers for PHP for SQL Server
 - XAMPP
-- SSMS
+- SQL Server Management Studio 20
