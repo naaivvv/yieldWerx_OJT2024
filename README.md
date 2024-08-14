@@ -1,5 +1,4 @@
 # Features
-
 -Utilizes the Repository Pattern and Services for maintainability.
 -Follows clean code and Separation of Concerns principles.
 -Optimizes database performance by avoiding the N+1 problem.
