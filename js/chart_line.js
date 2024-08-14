@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const canvasElement = document.getElementById(chartId);
                             if (canvasElement) {
                                 const ctx = canvasElement.getContext('2d');
-                                createChartFunc(ctx, groupedData[parameter][yGroup][xGroup], `${xGroup}`, minX, maxX, minY, maxY);
+                                createChartFunc(ctx, groupedData[parameter][yGroup][xGroup], `${xGroup} vs ${yGroup}`, minX, maxX, minY, maxY);
                             }
                         }
                     }
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const canvasElement = document.getElementById(chartId);
                         if (canvasElement) {
                             const ctx = canvasElement.getContext('2d');
-                            createChartFunc(ctx, groupedData[parameter][yGroup], yGroup, minX, maxX, minY, maxY);
+                            createChartFunc(ctx, groupedData[parameter][yGroup], `${yGroup}`, minX, maxX, minY, maxY);
                         }
                     }
                 } else {
