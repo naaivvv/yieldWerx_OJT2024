@@ -57,3 +57,12 @@
    ```bash
    npm install
    ```
+9. In the .env file in the backend, add database information to connect to the database
+
+   ```env
+   DB_SERVERNAME=SERVERNAME/SQLEXPRESS
+   DB_DATABASE=yielWerx_OJT2024
+   DB_USERNAME=
+   DB_PASSWORD=
+
+   ```
