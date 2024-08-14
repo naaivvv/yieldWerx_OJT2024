@@ -53,22 +53,29 @@
    ![image](https://github.com/user-attachments/assets/93c55b12-024c-4930-b692-7787b7ccd1ea)
    
 
-3. Insert the files as extension in php.ini
+3. Make sure the PHP version matches the php_pdo_sqlsrv and php_sqlsrv
+   ``` bash
+   ![Screenshot 2024-08-14 230820](https://github.com/user-attachments/assets/0a55b205-64c7-4b55-8e2b-1f00d41af48a)
+   ![Screenshot 2024-08-14 231159](https://github.com/user-attachments/assets/b6a52d8b-ee3e-4774-854e-cb3232e55975)
+   ```
+   *Note: The PHP version presented below is 8.1, therefore, php_pdo_sqlsrv_81_ts & php_sqlsrv_81_ts*
+   
+4. Insert the files as extension in php.ini
  
  ![image](https://github.com/user-attachments/assets/43a677e6-dd9a-42ef-86fd-d392b32205d6)
  
 
-4. Establish connection in VS Code
+5. Establish connection in VS Code
 
 
 
-5. Clone the repository inside C:\xampp\htdocs\
+6. Clone the repository inside C:\xampp\htdocs\
 
    ```bash
    git clone https://github.com/naaivvv/yieldWerx_OJT2024
    ```
 
-6. Install the dependencies
+7. Install the dependencies
 
    ```bash
    composer install
@@ -78,7 +85,7 @@
    npm install
    ```
    
-7. In the (.env file), add database information to connect to the database
+8. In the (.env file), add database information to connect to the database
 
    ```env
    DB_SERVERNAME=SERVERNAME/SQLEXPRESS
@@ -87,13 +94,13 @@
    DB_PASSWORD=
    ```
    
-8. Launch the frontend asset of the system
+9. Launch the frontend asset of the system
 
    ```bash
    npm run dev
    ```
 
-9. Visit the application
+10. Visit the application
 
     ```bash
     http://localhost/yieldwerx_OJT2024/PHP/selection_page.php
