@@ -41,14 +41,40 @@
 - SQL Server Management Studio 20
 
 ### Installation Steps
+1. Connect PHP to Microsoft SQL Server
 
-7. Clone the repository inside C:\xampp\htdocs\
+   ``` bash
+   https://www.youtube.com/watch?v=XLTkcB_T8Mo
+   ```
+   
+2. Make sure the PHP version matches the php_pdo_sqlsrv and php_sqlsrv
+   
+   ![Screenshot 2024-08-14 231159](https://github.com/user-attachments/assets/b6a52d8b-ee3e-4774-854e-cb3232e55975)
+   ![Screenshot 2024-08-14 232231](https://github.com/user-attachments/assets/3718ead7-6584-4839-8f6b-6898b977604d)
+ 
+
+3. Transfer php_pdo_sqlsrv and php_sqlsrv files to php ext folder
+   
+    ![image](https://github.com/user-attachments/assets/8ec568d3-223e-41a9-9c0f-ce184697ea3b)
+    ![image](https://github.com/user-attachments/assets/93c55b12-024c-4930-b692-7787b7ccd1ea)
+   
+   
+5. Insert the files as extension in php.ini
+ 
+ ![image](https://github.com/user-attachments/assets/43a677e6-dd9a-42ef-86fd-d392b32205d6)
+ 
+
+5. Establish connection in VS Code
+
+
+
+6. Clone the repository inside C:\xampp\htdocs\
 
    ```bash
-   git clone https://github.com/naaivvv/WireDesk.git
+   git clone https://github.com/naaivvv/yieldWerx_OJT2024
    ```
 
-8. Install the dependencies
+7. Install the dependencies
 
    ```bash
    composer install
@@ -57,21 +83,23 @@
    ```bash
    npm install
    ```
-9. In the .env file, add database information to connect to the database
+   
+8. In the (.env file), add database information to connect to the database
 
    ```env
    DB_SERVERNAME=SERVERNAME/SQLEXPRESS
    DB_DATABASE=yielWerx_OJT2024
    DB_USERNAME=
    DB_PASSWORD=
-
    ```
-10. Launch the frontend asset of the system
+   
+9. Launch the frontend asset of the system
 
    ```bash
    npm run dev
    ```
-11. Visit the application
+
+10. Visit the application
 
     ```bash
     http://localhost/yieldwerx_OJT2024/PHP/selection_page.php
