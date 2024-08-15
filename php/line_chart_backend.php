@@ -7,14 +7,16 @@ $yIndex = isset($_GET['y']) ? $_GET['y'] : null;
 $orderX = isset($_GET['order-x']) ? $_GET['order-x'] : null;
 $orderY = isset($_GET['order-y']) ? $_GET['order-y'] : null;
 
-$columns = [
-    'l.Facility_ID', 'l.Work_Center', 'l.Part_Type', 'l.Program_Name', 'l.Test_Temprature', 'l.Lot_ID',
-    'w.Wafer_ID', 'p.abbrev', 'w.Wafer_Start_Time', 'w.Wafer_Finish_Time', 'd1.Unit_Number', 'd1.X', 'd1.Y', 'd1.Head_Number',
-    'd1.Site_Number', 'd1.HBin_Number', 'd1.SBin_Number'
+$columnsGroup = [
+    'l.Facility_ID', 'd1.Head_Number', 'd1.HBin_Number', 'l.Lot_ID', 'l.Part_Type', 'p.abbrev', 
+    'd1.SBin_Number', 'd1.Site_Number', 'l.Test_Temprature', 'd1.Test_Time', 'd1.Tests_Executed',
+    'd1.Unit_Number', 'w.Wafer_Finish_Time', 'w.Wafer_ID', 'w.Wafer_Start_Time', 'l.Work_Center', 
+    'd1.X', 'd1.Y', 'l.Program_Name'
 ];
 
-$xColumn = $xIndex !== null && isset($columns[$xIndex]) ? $columns[$xIndex] : null;
-$yColumn = $yIndex !== null && isset($columns[$yIndex]) ? $columns[$yIndex] : null;
+
+$xColumn = $xIndex !== null && isset($columnsGroup[$xIndex]) ? $columnsGroup[$xIndex] : null;
+$yColumn = $yIndex !== null && isset($columnsGroup[$yIndex]) ? $columnsGroup[$yIndex] : null;
 
 $filters = [
     "l.Facility_ID" => isset($_GET['facility']) ? $_GET['facility'] : [],
@@ -132,5 +134,5 @@ foreach ($parameters as $parameter) {
 }
 
 $numDistinctGroups = count($groupedData);
-
+sort($columnsGroup);
 ?>

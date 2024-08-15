@@ -11,10 +11,10 @@
     <div class="p-5 border border-gray-200 dark:border-gray-700 dark:bg-gray-900 text-sm grid grid-cols-2">
       <div>
         <?php if ($xIndex !== null): ?>
-          <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Group by (X):</b> <?php echo preg_replace('/^[^\.]*\./', '', $columns[$xIndex]); ?></p>
+          <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Group by (X):</b> <?php echo preg_replace('/^[^\.]*\./', '', $columnsGroup[$xIndex]); ?></p>
         <?php endif; ?>
         <?php if ($yIndex !== null): ?>
-          <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Group by (Y):</b> <?php echo preg_replace('/^[^\.]*\./', '', $columns[$yIndex]); ?></p>
+          <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Group by (Y):</b> <?php echo preg_replace('/^[^\.]*\./', '', $columnsGroup[$yIndex]); ?></p>
         <?php endif; ?>
         <?php if ($orderX !== null): ?>
           <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Order by (X):</b> <?php echo $orderX == 0 ? 'Ascending' : 'Descending'; ?></p>
