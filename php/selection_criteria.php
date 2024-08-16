@@ -42,9 +42,9 @@ while ($row = sqlsrv_fetch_array($filterStmt, SQLSRV_FETCH_ASSOC)) {
 sqlsrv_free_stmt($filterStmt);
 
 $columns = [
-    'Facility ID', 'Head Number', 'HBin Number', 'Lot ID', 'Part Type', 'Probe Count', 'Program Name',
-    'SBin Number', 'Site Number', 'Test Temperature', 'Test Time', 'Tests Executed', 'Unit Number',
-    'Wafer Finish Time', 'Wafer ID', 'Wafer Start Time', 'Work Center', 'X', 'Y',
+    'Facility ID', 'Work Center', 'Part Type', 'Program Name', 'Test Temprature', 'Lot ID',
+    'Wafer ID', 'Probe Count', 'Wafer Start Time', 'Wafer Finish Time', 'Unit Number', 'X', 'Y', 'Head Number',
+    'Site Number', 'HBin Number', 'SBin Number', 'Tests Executed', 'Test Time',
 ];
 ?>
 
