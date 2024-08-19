@@ -2,21 +2,22 @@ document.addEventListener('DOMContentLoaded', () => {
     function getMinMaxWithMargin(dataGroups, marginPercentage = 0.05) {
         let allXValues = [];
         let allYValues = [];
-
+    
         function extractValues(data, key) {
             if (Array.isArray(data)) {
-                return data.flatMap(d => d[key] !== undefined ? [d[key]] : []);
+                return data.map(d => d[key]).filter(value => value !== undefined);
             }
             return [];
         }
-
+    
+        // Loop through the dataGroups to extract all X and Y values
         if (hasXColumn && !hasYColumn) {
             for (const combination in dataGroups) {
                 for (const xGroup in dataGroups[combination]) {
                     for (const yGroup in dataGroups[combination][xGroup]) {
                         const data = dataGroups[combination][xGroup][yGroup];
-                        allXValues = allXValues.concat(extractValues(data, 'x'));
-                        allYValues = allYValues.concat(extractValues(data, 'y'));
+                        allXValues.push(...extractValues(data, 'x'));
+                        allYValues.push(...extractValues(data, 'y'));
                     }
                 }
             }
@@ -24,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
             for (const combination in dataGroups) {
                 for (const yGroup in dataGroups[combination]) {
                     const data = dataGroups[combination][yGroup];
-                    allXValues = allXValues.concat(extractValues(data, 'x'));
-                    allYValues = allYValues.concat(extractValues(data, 'y'));
+                    allXValues.push(...extractValues(data, 'x'));
+                    allYValues.push(...extractValues(data, 'y'));
                 }
             }
         } else if (hasXColumn && hasYColumn) {
@@ -33,27 +34,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (const yGroup in dataGroups[combination]) {
                     for (const xGroup in dataGroups[combination][yGroup]) {
                         const data = dataGroups[combination][yGroup][xGroup];
-                        allXValues = allXValues.concat(extractValues(data, 'x'));
-                        allYValues = allYValues.concat(extractValues(data, 'y'));
+                        allXValues.push(...extractValues(data, 'x'));
+                        allYValues.push(...extractValues(data, 'y'));
                     }
                 }
             }
         } else {
             for (const combination in dataGroups) {
-                    const data = dataGroups[combination]['all'];
-                    allXValues = allXValues.concat(extractValues(data, 'x'));
-                    allYValues = allYValues.concat(extractValues(data, 'y'));
+                const data = dataGroups[combination]['all'];
+                allXValues.push(...extractValues(data, 'x'));
+                allYValues.push(...extractValues(data, 'y'));
             }
         }
-
-        const minXValue = allXValues.length > 0 ? Math.min(...allXValues) : 0;
-        const maxXValue = allXValues.length > 0 ? Math.max(...allXValues) : 0;
-        const minYValue = allYValues.length > 0 ? Math.min(...allYValues) : 0;
-        const maxYValue = allYValues.length > 0 ? Math.max(...allYValues) : 0;
-
+    
+        // Compute min and max values iteratively
+        function getMinMax(arr) {
+            if (arr.length === 0) return { min: 0, max: 0 };
+            
+            let min = arr[0];
+            let max = arr[0];
+            
+            for (let i = 1; i < arr.length; i++) {
+                if (arr[i] < min) min = arr[i];
+                if (arr[i] > max) max = arr[i];
+            }
+            
+            return { min, max };
+        }
+    
+        const { min: minXValue, max: maxXValue } = getMinMax(allXValues);
+        const { min: minYValue, max: maxYValue } = getMinMax(allYValues);
+    
         const xMargin = (maxXValue - minXValue) * marginPercentage;
         const yMargin = (maxYValue - minYValue) * marginPercentage;
-
+    
         return {
             minX: minXValue - xMargin,
             maxX: maxXValue + xMargin,
@@ -61,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             maxY: maxYValue + yMargin
         };
     }
+    
 
     function calculateCorrelation(data) {
         const n = data.length;
@@ -127,6 +142,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             enabled: true,
                             mode: 'xy'
                         },
+                        zoom: {
+                            enabled: true,
+                            mode: 'xy',
+                            pinch: {
+                                enabled: true // Enable zoom via wheel
+                            }
+                        }
                     }
                 }
             }

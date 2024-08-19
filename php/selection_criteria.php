@@ -15,13 +15,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['order-x'])) {
         $_SESSION['order-x'] = $_GET['order-x'];
     }
+    if (isset($_GET['facility'])) {
+        $_SESSION['facility'] = $_GET['facility'];
+    }
+    if (isset($_GET['work_center'])) {
+        $_SESSION['work_center'] = $_GET['work_center'];
+    }
+    if (isset($_GET['device_name'])) {
+        $_SESSION['device_name'] = $_GET['device_name'];
+    }
+    if (isset($_GET['test_program'])) {
+        $_SESSION['test_program'] = $_GET['test_program'];
+    }
+    if (isset($_GET['lot'])) {
+        $_SESSION['lot'] = $_GET['lot'];
+    }
+    if (isset($_GET['wafer'])) {
+        $_SESSION['wafer'] = $_GET['wafer'];
+    }
+    if (isset($_GET['parameter'])) {
+        $_SESSION['parameter'] = $_GET['parameter'];
+    }
 }
 
 // Fetch previously selected values from the session, if any
-$selectedAbbrev = isset($_SESSION['abbrev']) ? $_SESSION['abbrev'] : [];
-$selectedX = isset($_SESSION['x']) ? $_SESSION['x'] : null;
-$selectedY = isset($_SESSION['y']) ? $_SESSION['y'] : null;
-$selectedOrderX = isset($_SESSION['order-x']) ? $_SESSION['order-x'] : null;
+$selectedAbbrev = $_SESSION['abbrev'] ?? [];
+$selectedX = $_SESSION['x'] ?? null;
+$selectedY = $_SESSION['y'] ?? null;
+$selectedOrderX = $_SESSION['order-x'] ?? null;
+$selectedFacility = $_SESSION['facility'] ?? [];
+$selectedWorkCenter = $_SESSION['work_center'] ?? [];
+$selectedDeviceName = $_SESSION['device_name'] ?? [];
+$selectedTestProgram = $_SESSION['test_program'] ?? [];
+$selectedLot = $_SESSION['lot'] ?? [];
+$selectedWafer = $_SESSION['wafer'] ?? [];
+$selectedParameter = $_SESSION['parameter'] ?? [];
 
 // Query to populate the initial facility options
 $query = "SELECT DISTINCT Facility_ID FROM lot";
@@ -42,11 +70,12 @@ while ($row = sqlsrv_fetch_array($filterStmt, SQLSRV_FETCH_ASSOC)) {
 sqlsrv_free_stmt($filterStmt);
 
 $columns = [
-    'Facility ID', 'Work Center', 'Part Type', 'Program Name', 'Test Temprature', 'Lot ID',
-    'Wafer ID', 'Probe Count', 'Wafer Start Time', 'Wafer Finish Time', 'Unit Number', 'X', 'Y', 'Head Number',
-    'Site Number', 'HBin Number', 'SBin Number', 'Tests Executed', 'Test Time',
+    'Facility ID', 'Head Number', 'HBin Number', 'Lot ID', 'Part Type', 'Probe Count', 'Program Name',
+    'SBin Number', 'Site Number', 'Test Temperature', 'Test Time', 'Tests Executed', 'Unit Number',
+    'Wafer Finish Time', 'Wafer ID', 'Wafer Start Time', 'Work Center', 'X', 'Y',
 ];
 ?>
+
 
 <style>
     .filter-text-header{
