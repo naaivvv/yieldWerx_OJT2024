@@ -114,7 +114,7 @@ $count_sql = "SELECT COUNT(w.wafer_ID) AS total
               JOIN ProbingSequenceOrder p on p.probing_sequence = w.probing_sequence
               $where_clause";  // Append WHERE clause if it exists
 
-echo "<pre>$count_sql</pre>";
+// echo "<pre>$count_sql</pre>";
 $count_stmt = sqlsrv_query($conn, $count_sql, $params);
 if ($count_stmt === false) {
     die('Query failed: ' . print_r(sqlsrv_errors(), true));
@@ -141,7 +141,7 @@ $tsql = "SELECT l.Facility_ID, l.Work_Center, l.Part_Type, l.Program_Name, l.Tes
          JOIN ProbingSequenceOrder p on p.probing_sequence = w.probing_sequence
          $where_clause
          $orderByClause";
-echo "<pre>$tsql</pre>";
+// echo "<pre>$tsql</pre>";
 $stmt = sqlsrv_query($conn, $tsql, $params);
 if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
