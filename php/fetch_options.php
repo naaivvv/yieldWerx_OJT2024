@@ -1,14 +1,14 @@
 <?php
 require __DIR__ . '/../connection.php';
 
-// Get values from GET parameters
-$facilityIDValue = $_GET['facility'] ?? null;
-$workCenterValue = $_GET['work_center'] ?? null;
-$deviceNameValue = $_GET['device_name'] ?? null;
-$testProgramValue = $_GET['test_program'] ?? null;
-$lotIDValue = $_GET['lot'] ?? null;
-$waferIDValue = $_GET['wafer'] ?? null;
-$parameterType = $_GET['parameter'] ?? null;
+// Get values from GET parameters or session
+$facilityIDValue = $_GET['facility'] ?? $_SESSION['facility'] ?? null;
+$workCenterValue = $_GET['work_center'] ?? $_SESSION['work_center'] ?? null;
+$deviceNameValue = $_GET['device_name'] ?? $_SESSION['device_name'] ?? null;
+$testProgramValue = $_GET['test_program'] ?? $_SESSION['test_program'] ?? null;
+$lotIDValue = $_GET['lot'] ?? $_SESSION['lot'] ?? null;
+$waferIDValue = $_GET['wafer'] ?? $_SESSION['wafer'] ?? null;
+$parameterType = $_GET['parameter'] ?? $_SESSION['parameter'] ?? null;
 $type = $_GET['type'];
 
 switch ($type) {
@@ -44,8 +44,9 @@ switch ($type) {
                   JOIN wafer w ON w.Lot_Sequence = tm.Lot_Sequence 
                   JOIN lot l ON l.Lot_Sequence = w.Lot_Sequence 
                   WHERE w.Wafer_ID IN ('" . implode("','", $waferIDValue) . "') 
-
-                  AND tm.Column_Name LIKE 'T%'";
+                    ORDER BY tm.Column_Name ASC
+                  ";
+                  
         break;
     default:
         $query = "";
