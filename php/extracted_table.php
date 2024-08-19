@@ -1,52 +1,7 @@
 <?php
 require __DIR__ . '/../connection.php';
 
-$xIndex = isset($_GET['x']) ? $_GET['x'] : (isset($_SESSION['xIndex']) ? $_SESSION['xIndex'] : null);
-$yIndex = isset($_GET['y']) ? $_GET['y'] : (isset($_SESSION['yIndex']) ? $_SESSION['yIndex'] : null);
-
-$orderX = isset($_GET['order-x']) ? $_GET['order-x'] : (isset($_SESSION['orderX']) ? $_SESSION['orderX'] : null);
-$orderY = isset($_GET['order-y']) ? $_GET['order-y'] : (isset($_SESSION['orderY']) ? $_SESSION['orderY'] : null);
-
-$chart = isset($_GET['chart']) ? $_GET['chart'] : (isset($_SESSION['chart']) ? $_SESSION['chart'] : null);
-
-// Retrieve filters from session if they are not in the current GET request
-$filters = [
-    "l.Facility_ID" => isset($_GET['facility']) ? $_GET['facility'] : (isset($_SESSION['filters']['l.Facility_ID']) ? $_SESSION['filters']['l.Facility_ID'] : []),
-    "l.work_center" => isset($_GET['work_center']) ? $_GET['work_center'] : (isset($_SESSION['filters']['l.work_center']) ? $_SESSION['filters']['l.work_center'] : []),
-    "l.part_type" => isset($_GET['device_name']) ? $_GET['device_name'] : (isset($_SESSION['filters']['l.part_type']) ? $_SESSION['filters']['l.part_type'] : []),
-    "l.Program_Name" => isset($_GET['test_program']) ? $_GET['test_program'] : (isset($_SESSION['filters']['l.Program_Name']) ? $_SESSION['filters']['l.Program_Name'] : []),
-    "l.lot_ID" => isset($_GET['lot']) ? $_GET['lot'] : (isset($_SESSION['filters']['l.lot_ID']) ? $_SESSION['filters']['l.lot_ID'] : []),
-    "w.wafer_ID" => isset($_GET['wafer']) ? $_GET['wafer'] : (isset($_SESSION['filters']['w.wafer_ID']) ? $_SESSION['filters']['w.wafer_ID'] : []),
-    "tm.Column_Name" => isset($_GET['parameter']) ? $_GET['parameter'] : (isset($_SESSION['filters']['tm.Column_Name']) ? $_SESSION['filters']['tm.Column_Name'] : []),
-    "p.abbrev" => isset($_GET['abbrev']) ? $_GET['abbrev'] : (isset($_SESSION['filters']['p.abbrev']) ? $_SESSION['filters']['p.abbrev'] : []),
-];
-
-// Ensure l.Program_Name is cast to an array
-if (!is_array($filters['l.Program_Name'])) {
-    $filters['l.Program_Name'] = (array)$filters['l.Program_Name'];
-}
-
-// Generate placeholders for the number of program names in the filter
-$programNamePlaceholders = implode(',', array_fill(0, count($filters['l.Program_Name']), '?'));
-
-// Update the table SQL to use IN clause for multiple program names
-$table_sql = "SELECT DISTINCT table_name 
-              FROM TEST_PARAM_MAP 
-              WHERE program_name IN ($programNamePlaceholders)";
-
-// Use the array of program names as parameters for the query
-$table_stmt = sqlsrv_query($conn, $table_sql, $filters['l.Program_Name']);
-if ($table_stmt === false) {
-    die('Query failed: ' . print_r(sqlsrv_errors(), true));
-}
-
-// echo "<pre>$table_sql</pre>";
-
-$device_tables = [];
-while ($table_row = sqlsrv_fetch_array($table_stmt, SQLSRV_FETCH_ASSOC)) {
-    $device_tables[] = $table_row['table_name'];
-}
-sqlsrv_free_stmt($table_stmt);
+include_once('parameter_query.php');
 
 // Generate dynamic aliases for the device tables
 $join_clauses = [];
@@ -77,38 +32,6 @@ $columnsGroup = [
     'd1.Unit_Number', 'w.Wafer_Finish_Time', 'w.Wafer_ID', 'w.Wafer_Start_Time', 'l.Work_Center', 
     'd1.X', 'd1.Y', 'l.Program_Name'
 ];
-
-$xColumn = $xIndex !== null && isset($columnsGroup[$xIndex]) ? $columnsGroup[$xIndex] : null;
-$yColumn = $yIndex !== null && isset($columnsGroup[$yIndex]) ? $columnsGroup[$yIndex] : null;
-
-// Prepare SQL filters
-$sql_filters = [];
-$params = [];
-foreach ($filters as $key => $values) {
-    if (!empty($values)) {
-        $placeholders = implode(',', array_fill(0, count($values), '?'));
-        $sql_filters[] = "$key IN ($placeholders)";
-        $params = array_merge($params, $values);
-    }
-}
-
-// Create the WHERE clause if filters exist
-$where_clause = '';
-if (!empty($sql_filters)) {
-    $where_clause = 'WHERE ' . implode(' AND ', $sql_filters);
-}
-
-$orderDirectionX = $orderX == 1 ? 'DESC' : 'ASC';
-$orderDirectionY = $orderY == 1 ? 'DESC' : 'ASC';
-
-$orderByClause = '';
-if ($xColumn && $yColumn) {
-    $orderByClause = "ORDER BY $xColumn $orderDirectionX, $yColumn $orderDirectionY";
-} elseif ($xColumn && !$yColumn) {
-    $orderByClause = "ORDER BY $xColumn $orderDirectionX";
-} elseif (!$xColumn && $yColumn) {
-    $orderByClause = "ORDER BY $yColumn $orderDirectionY";
-}
 
 // Count total number of records with filters
 $count_sql = "SELECT COUNT(w.wafer_ID) AS total 
@@ -191,8 +114,7 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
 <div class="flex justify-center items-center h-full">
     <div class="w-full max-w-7xl p-6 rounded-lg shadow-lg bg-white mt-6">
         <div class="flex justify-between items-center">
-            
-            <form class="flex items-start max-w-sm mb-4">   
+            <form id="search-form" class="flex items-center max-w-sm mb-4">   
                 <label for="simple-search" class="sr-only">Search</label>
                 <div class="relative w-full">
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
