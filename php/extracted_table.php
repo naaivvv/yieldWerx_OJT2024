@@ -21,6 +21,11 @@ $filters = [
     "p.abbrev" => isset($_GET['abbrev']) ? $_GET['abbrev'] : (isset($_SESSION['filters']['p.abbrev']) ? $_SESSION['filters']['p.abbrev'] : []),
 ];
 
+// Ensure l.Program_Name is cast to an array
+if (!is_array($filters['l.Program_Name'])) {
+    $filters['l.Program_Name'] = (array)$filters['l.Program_Name'];
+}
+
 // Generate placeholders for the number of program names in the filter
 $programNamePlaceholders = implode(',', array_fill(0, count($filters['l.Program_Name']), '?'));
 
@@ -185,20 +190,42 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
 </div>
 <div class="flex justify-center items-center h-full">
     <div class="w-full max-w-7xl p-6 rounded-lg shadow-lg bg-white mt-6">
-        <div class="mb-4 text-right">
-            <?php if ($chart == 1): ?>
-                <a href="graph.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
-                    <i class="fa-solid fa-chart-area"></i>&nbsp;XY Scatter Plot
+        <div class="flex justify-between items-center">
+            
+            <form class="flex items-start max-w-sm mb-4">   
+                <label for="simple-search" class="sr-only">Search</label>
+                <div class="relative w-full">
+                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-500 dark:text-gray-400">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+                        </svg>
+
+                    </div>
+                    <input type="text" id="simple-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search here..." required />
+                </div>
+                <button type="submit" class="p-2.5 ms-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                    <span class="sr-only">Search</span>
+                </button>
+            </form>
+            <div class="mb-4 text-right">
+                <?php if ($chart == 1): ?>
+                    <a href="graph.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
+                        <i class="fa-solid fa-chart-area"></i>&nbsp;XY Scatter Plot
+                    </a>
+                <?php else: ?>
+                    <a href="line_chart.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
+                        <i class="fa-solid fa-chart-line"></i>&nbsp;Line Chart
+                    </a>
+                <?php endif; ?>
+                <a href="export.php?<?php echo http_build_query($_GET); ?>" class="px-5 py-2 bg-green-500 text-white rounded">
+                    <i class="fa-regular fa-file-excel"></i>&nbsp;Export
                 </a>
-            <?php else: ?>
-                <a href="line_chart.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
-                    <i class="fa-solid fa-chart-line"></i>&nbsp;Line Chart
-                </a>
-            <?php endif; ?>
-            <a href="export.php?<?php echo http_build_query($_GET); ?>" class="px-5 py-2 bg-green-500 text-white rounded">
-                <i class="fa-regular fa-file-excel"></i>&nbsp;Export
-            </a>
+            </div>
         </div>
+       
         <h1 class="text-start text-2xl font-bold mb-4">Data Extraction [Total: <?php echo $total_rows; ?>]</h1>
         <div class="table-container">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">

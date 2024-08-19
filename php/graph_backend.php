@@ -48,6 +48,11 @@ $filters = [
     "p.abbrev" => isset($_GET['abbrev']) ? $_GET['abbrev'] : (isset($_SESSION['abbrev']) ? $_SESSION['abbrev'] : [])
 ];
 
+// Ensure l.Program_Name is cast to an array
+if (!is_array($filters['l.Program_Name'])) {
+    $filters['l.Program_Name'] = (array)$filters['l.Program_Name'];
+}
+
 // Generate placeholders for the number of program names in the filter
 $programNamePlaceholders = implode(',', array_fill(0, count($filters['l.Program_Name']), '?'));
 
