@@ -45,12 +45,23 @@ sqlsrv_free_stmt($table_stmt);
 
 // Generate dynamic aliases for the device tables
 $join_clauses = [];
+$previousAlias = null; // Initialize the previous alias
 $aliasIndex = 1; // Start alias index
 
 foreach ($device_tables as $table) {
     $alias = "d$aliasIndex";
-    $join_clauses[] = "JOIN $table $alias ON w.Wafer_Sequence = $alias.Wafer_Sequence";
-    $aliasIndex++; // Increment alias index for the next table
+
+    // If there is a previous alias, join on Die_Sequence instead of Wafer_Sequence
+    if ($previousAlias) {
+        $join_clauses[] = "JOIN $table $alias ON $previousAlias.Die_Sequence = $alias.Die_Sequence";
+    } else {
+        // For the first table, join on Wafer_Sequence
+        $join_clauses[] = "JOIN $table $alias ON w.Wafer_Sequence = $alias.Wafer_Sequence";
+    }
+
+    // Update the previous alias and increment the index
+    $previousAlias = $alias;
+    $aliasIndex++;
 }
 
 $join_clause = implode(' ', $join_clauses);

@@ -115,12 +115,22 @@ foreach ($parameters as $parameter) {
 
     // Generate dynamic aliases for the device tables
     $join_clauses = [];
+    $previousAlias = null; // Initialize the previous alias
     $aliasIndex = 1; // Start alias index
-    $select_columns = [];
 
     foreach ($device_tables as $table) {
         $alias = "d$aliasIndex";
-        $join_clauses[] = "JOIN $table $alias ON w.Wafer_Sequence = $alias.Wafer_Sequence";
+    
+        // If there is a previous alias, join on Die_Sequence instead of Wafer_Sequence
+        if ($previousAlias) {
+            $join_clauses[] = "JOIN $table $alias ON $previousAlias.Die_Sequence = $alias.Die_Sequence";
+        } else {
+            // For the first table, join on Wafer_Sequence
+            $join_clauses[] = "JOIN $table $alias ON w.Wafer_Sequence = $alias.Wafer_Sequence";
+        }
+    
+        // Update the previous alias and increment the index
+        $previousAlias = $alias;
         $aliasIndex++;
     }
     
