@@ -166,6 +166,8 @@ foreach ($combinations as $combination) {
     const hasXColumn = <?php echo json_encode(isset($xColumn)); ?>;
     const hasYColumn = <?php echo json_encode(isset($yColumn)); ?>;
     console.log(groupedData);
+    console.log("Count data: " + <?php echo json_encode(count($data)); ?>);
+    console.log("Count xgroupdata: " + <?php echo json_encode(count($xGroupData)); ?>);
 </script>
 <script src="../js/chart_scatter.js"></script>
 </body>

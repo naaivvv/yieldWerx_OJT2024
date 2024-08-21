@@ -102,5 +102,5 @@
 10. Visit the application
 
     ```bash
-    http://localhost/yieldwerx_OJT2024/PHP/selection_page.php
+    http://localhost/yieldwerx_OJT2024/PHP/index.php
     ```

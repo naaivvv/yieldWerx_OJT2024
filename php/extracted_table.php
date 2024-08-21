@@ -1,22 +1,55 @@
 <?php
 require __DIR__ . '/../connection.php';
-
 include_once('parameter_query.php');
+
+// Function to check if a column exists in a table
+function columnExists($conn, $tableName, $columnName) {
+    $check_sql = "SELECT 1 
+                  FROM INFORMATION_SCHEMA.COLUMNS 
+                  WHERE TABLE_NAME = ? AND COLUMN_NAME = ?";
+    $params = [$tableName, $columnName];
+    $check_stmt = sqlsrv_query($conn, $check_sql, $params);
+
+    if ($check_stmt === false) {
+        die(print_r(sqlsrv_errors(), true));
+    }
+    
+    $exists = sqlsrv_fetch_array($check_stmt) ? true : false;
+    sqlsrv_free_stmt($check_stmt);
+    
+    return $exists;
+}
 
 // Generate dynamic aliases for the device tables
 $join_clauses = [];
 $previousAlias = null; // Initialize the previous alias
 $aliasIndex = 1; // Start alias index
 
+// This array will store the column alias mappings
+$columnAliasMap = [];
+
 foreach ($device_tables as $table) {
     $alias = "d$aliasIndex";
 
-    // If there is a previous alias, join on Die_Sequence instead of Wafer_Sequence
-    if ($previousAlias) {
-        $join_clauses[] = "JOIN $table $alias ON $previousAlias.Die_Sequence = $alias.Die_Sequence";
+    // Check if the table name ends with '_001'
+    if (substr($table, -4) === '_001') {
+        // Join on Wafer_Sequence
+        $join_clauses[] = "LEFT JOIN $table $alias ON w.Wafer_Sequence = $alias.Wafer_Sequence";
     } else {
-        // For the first table, join on Wafer_Sequence
-        $join_clauses[] = "JOIN $table $alias ON w.Wafer_Sequence = $alias.Wafer_Sequence";
+        // Otherwise, join on Die_Sequence
+        if ($previousAlias) {
+            $join_clauses[] = "LEFT JOIN $table $alias ON $previousAlias.Die_Sequence = $alias.Die_Sequence";
+        } else {
+            // If there is no previous alias, join on Wafer_Sequence (fallback)
+            $join_clauses[] = "LEFT JOIN $table $alias ON w.Wafer_Sequence = $alias.Wafer_Sequence";
+        }
+    }
+
+    // Check and map all column names in the current table to the alias
+    foreach ($filters['tm.Column_Name'] as $columnName) {
+        if (columnExists($conn, $table, $columnName)) {
+            $columnAliasMap[$columnName][] = "$alias.$columnName";
+        }
     }
 
     // Update the previous alias and increment the index
@@ -26,23 +59,34 @@ foreach ($device_tables as $table) {
 
 $join_clause = implode(' ', $join_clauses);
 
-$columnsGroup = [
-    'l.Facility_ID', 'd1.Head_Number', 'd1.HBin_Number', 'l.Lot_ID', 'l.Part_Type', 'p.abbrev', 'l.Program_Name', 
-    'd1.SBin_Number', 'd1.Site_Number', 'l.Test_Temprature', 'd1.Test_Time', 'd1.Tests_Executed',
-    'd1.Unit_Number', 'w.Wafer_Finish_Time', 'w.Wafer_ID', 'w.Wafer_Start_Time', 'l.Work_Center', 
-    'd1.X', 'd1.Y', 'l.Program_Name'
-];
+// Dynamically construct the column part of the SQL query
+$column_list = !empty($filters['tm.Column_Name'])
+    ? implode(', ', array_map(function($col) use ($columnAliasMap) {
+        if (isset($columnAliasMap[$col]) && !empty($columnAliasMap[$col])) {
+            $aliasList = implode(', ', $columnAliasMap[$col]);
+            // If there's only one alias, don't use COALESCE
+            if (count($columnAliasMap[$col]) > 1) {
+                return "COALESCE($aliasList) AS $col";
+            } else {
+                return "$aliasList AS $col";
+            }
+        }
+        return null;
+    }, $filters['tm.Column_Name']))
+    : '*';
+
+// Remove any null entries from $column_list
+$column_list = implode(', ', array_filter(explode(', ', $column_list)));
 
 // Count total number of records with filters
 $count_sql = "SELECT COUNT(w.wafer_ID) AS total 
-              FROM WAFER w
+              FROM LOT l
+              LEFT JOIN WAFER w ON w.Lot_Sequence = l.Lot_Sequence
+              LEFT JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
+              LEFT JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
               $join_clause
-              JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
-              JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
-              JOIN ProbingSequenceOrder p on p.probing_sequence = w.probing_sequence
               $where_clause";  // Append WHERE clause if it exists
 
-// echo "<pre>$count_sql</pre>";
 $count_stmt = sqlsrv_query($conn, $count_sql, $params);
 if ($count_stmt === false) {
     die('Query failed: ' . print_r(sqlsrv_errors(), true));
@@ -50,30 +94,26 @@ if ($count_stmt === false) {
 $total_rows = sqlsrv_fetch_array($count_stmt, SQLSRV_FETCH_ASSOC)['total'];
 sqlsrv_free_stmt($count_stmt); // Free the count statement here
 
-// Dynamically construct the column part of the SQL query
-$column_list = !empty($filters['tm.Column_Name']) 
-    ? implode(', ', array_map(function($col){ 
-        return "$col"; 
-      }, $filters['tm.Column_Name'])) 
-    : '*';
-
 // Retrieve all records with filters
 $tsql = "SELECT l.Facility_ID, l.Work_Center, l.Part_Type, l.Program_Name, l.Test_Temprature, l.Lot_ID,
                 w.Wafer_ID, w.Wafer_Start_Time, w.Wafer_Finish_Time, d1.Unit_Number, d1.X, d1.Y, d1.Head_Number,
                 d1.Site_Number, d1.HBin_Number, d1.SBin_Number,
                 tm.Column_Name, tm.Test_Name, $column_list
-         FROM WAFER w 
-         $join_clause
-         JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
-         JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
-         JOIN ProbingSequenceOrder p on p.probing_sequence = w.probing_sequence
+         FROM LOT l
+        LEFT JOIN WAFER w ON l.Lot_Sequence = w.Lot_Sequence 
+        $join_clause
+        LEFT JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
+        LEFT JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
          $where_clause
          $orderByClause";
+
 // echo "<pre>$tsql</pre>";
 $stmt = sqlsrv_query($conn, $tsql, $params);
 if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
 }
+
+// Continue with the rest of the logic as before
 
 // Create an array to map Column_Name to Test_Name
 $column_to_test_name_map = [];
@@ -96,6 +136,7 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
 }, $all_columns);
 ?>
 
+
 <style>
     .table-container {
         overflow-y: auto;
@@ -114,24 +155,7 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
 <div class="flex justify-center items-center h-full">
     <div class="w-full max-w-7xl p-6 rounded-lg shadow-lg bg-white mt-6">
         <div class="flex justify-between items-center">
-            <form id="search-form" class="flex items-center max-w-sm mb-4">   
-                <label for="simple-search" class="sr-only">Search</label>
-                <div class="relative w-full">
-                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-500 dark:text-gray-400">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-                        </svg>
-
-                    </div>
-                    <input type="text" id="simple-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search here..." required />
-                </div>
-                <button type="submit" class="p-2.5 ms-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                    </svg>
-                    <span class="sr-only">Search</span>
-                </button>
-            </form>
+            <div></div>
             <div class="mb-4 text-right">
                 <?php if ($chart == 1): ?>
                     <a href="graph.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">

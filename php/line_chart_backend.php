@@ -1,37 +1,87 @@
 <?php 
 require __DIR__ . '/../connection.php';
-
 include_once('parameter_query.php');
+
+function columnExists($conn, $tableName, $columnName) {
+    $check_sql = "SELECT 1 
+                  FROM INFORMATION_SCHEMA.COLUMNS 
+                  WHERE TABLE_NAME = ? AND COLUMN_NAME = ?";
+    $params = [$tableName, $columnName];
+    $check_stmt = sqlsrv_query($conn, $check_sql, $params);
+
+    if ($check_stmt === false) {
+        die(print_r(sqlsrv_errors(), true));
+    }
+    
+    $exists = sqlsrv_fetch_array($check_stmt) ? true : false;
+    sqlsrv_free_stmt($check_stmt);
+    
+    return $exists;
+}
 
 $parameters = $filters['tm.Column_Name'];
 $data = [];
 $groupedData = [];
 
-
 foreach ($parameters as $parameter) {
 
-    // Generate dynamic aliases for the device tables
+   // Generate dynamic aliases for the device tables
     $join_clauses = [];
     $previousAlias = null; // Initialize the previous alias
     $aliasIndex = 1; // Start alias index
 
+    // This array will store the column alias mappings
+    $columnAliasMap = [];
+
     foreach ($device_tables as $table) {
         $alias = "d$aliasIndex";
-    
-        // If there is a previous alias, join on Die_Sequence instead of Wafer_Sequence
-        if ($previousAlias) {
-            $join_clauses[] = "JOIN $table $alias ON $previousAlias.Die_Sequence = $alias.Die_Sequence";
+
+        // Check if the table name ends with '_001'
+        if (substr($table, -4) === '_001') {
+            // Join on Wafer_Sequence
+            $join_clauses[] = "LEFT JOIN $table $alias ON w.Wafer_Sequence = $alias.Wafer_Sequence";
         } else {
-            // For the first table, join on Wafer_Sequence
-            $join_clauses[] = "JOIN $table $alias ON w.Wafer_Sequence = $alias.Wafer_Sequence";
+            // Otherwise, join on Die_Sequence
+            if ($previousAlias) {
+                $join_clauses[] = "LEFT JOIN $table $alias ON $previousAlias.Die_Sequence = $alias.Die_Sequence";
+            } else {
+                // If there is no previous alias, join on Wafer_Sequence (fallback)
+                $join_clauses[] = "LEFT JOIN $table $alias ON w.Wafer_Sequence = $alias.Wafer_Sequence";
+            }
         }
-    
+
+        // Check and map all column names in the current table to the alias
+        foreach ($filters['tm.Column_Name'] as $columnName) {
+            if (columnExists($conn, $table, $columnName)) {
+                $columnAliasMap[$columnName][] = "$alias.$columnName";
+            }
+        }
+
         // Update the previous alias and increment the index
         $previousAlias = $alias;
         $aliasIndex++;
     }
-    
+
     $join_clause = implode(' ', $join_clauses);
+    
+    // Dynamically construct the column part of the SQL query with alias or COALESCE
+    $parameterColumn = !empty($columnAliasMap[$parameter])
+        ? (count($columnAliasMap[$parameter]) > 1 ? "COALESCE(" . implode(", ", $columnAliasMap[$parameter]) . ")" : implode(", ", $columnAliasMap[$parameter]))
+        : $parameter;
+    
+    // The full list of columns should use COALESCE where needed
+    $column_list = !empty($filters['tm.Column_Name'])
+        ? implode(', ', array_map(function($col) use ($columnAliasMap) {
+            if (isset($columnAliasMap[$col]) && !empty($columnAliasMap[$col])) {
+                $aliasList = implode(', ', $columnAliasMap[$col]);
+                return count($columnAliasMap[$col]) > 1 ? "COALESCE($aliasList) AS $col" : "$aliasList AS $col";
+            }
+            return null;
+        }, $filters['tm.Column_Name']))
+        : '*';
+    
+    // Remove any null entries from $column_list
+    $column_list = implode(', ', array_filter(explode(', ', $column_list)));
 
     $globalCounters = [
         'all' => 0,
@@ -51,15 +101,15 @@ foreach ($parameters as $parameter) {
     $tsql = "
     SELECT 
         w.Wafer_ID, 
-        $parameter AS Y, 
+        $parameterColumn AS Y, 
         " . ($xColumn ? "$xColumn AS xGroup" : "'No xGroup' AS xGroup") . ", 
         " . ($yColumn ? "$yColumn AS yGroup" : "'No yGroup' AS yGroup") . ",
         ROW_NUMBER() OVER(PARTITION BY " . ($xColumn ?: "'No xGroup'") . " ORDER BY w.Wafer_Sequence) AS row_num
-    FROM WAFER w
-    JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
-    JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
+    FROM LOT l
+    LEFT JOIN WAFER w ON w.Lot_Sequence = l.Lot_Sequence
     $join_clause
-    JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
+    LEFT JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
+    LEFT JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
     $where_clause
     $orderByClause";
 

@@ -29,8 +29,7 @@ switch ($type) {
         $query = "SELECT DISTINCT l.Lot_ID
                     FROM lot l
                     JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
-                    WHERE l.Program_Name = '" . $testProgramValue . "'";
-                    // WHERE l.Program_Name IN ('" . implode("','", $testProgramValue) . "')";
+                    WHERE l.Program_Name IN ('" . implode("','", $testProgramValue) . "')";
         break;
     case 'wafer':
         $query = "SELECT DISTINCT w.Wafer_ID 
