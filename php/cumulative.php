@@ -73,7 +73,7 @@ foreach ($groupedData as $parameter => $data) {
     echo '<div class="dark:border-gray-700 flex flex-col items-center">';
     echo '<div class="max-w-fit p-6 border-b-2 border-2 bg-white shadow-md rounded-md">';
     echo '<div class="mb-4 text-sm italic">';
-    echo 'Series of <b>' . $testNameX . '</b>';
+    echo 'Cumulative Probability Chart of <b>' . $testNameX . '</b>';
     echo '</div>';
 
     if (isset($xColumn) && isset($yColumn)) {
