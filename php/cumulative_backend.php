@@ -156,7 +156,7 @@ foreach ($parameters as $parameter) {
         } elseif ($xColumn && !$yColumn) {
             $globalCounters['xcol'][$xGroup] = ($globalCounters['xcol'][$xGroup] ?? 0) + 1;
             $percentage = ($globalCounters['xcol'][$xGroup] / $tempCounters['xcol'][$xGroup]) * 100;
-            $groupedData[$parameter][$xGroup][] = ['x' => $xValue, 'y' => $percentage];
+            $groupedData[$parameter][$xGroup][$yGroup][] = ['x' => $xValue, 'y' => $percentage];
         } elseif (!$xColumn && $yColumn) {
             $globalCounters['ycol'][$yGroup] = ($globalCounters['ycol'][$yGroup] ?? 0) + 1;
             $percentage = ($globalCounters['ycol'][$yGroup] / $tempCounters['ycol'][$yGroup]) * 100;

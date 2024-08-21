@@ -105,7 +105,7 @@ foreach ($groupedData as $parameter => $data) {
         }
         echo '</div></div>';
     } elseif (isset($yColumn)) {
-        echo '<div class="flex flex-row items-center justify-center w-full">';
+        echo '<div class="flex flex-row items-center justify-center w-full p-2">';
         echo '<div class="grid gap-2 grid-cols-1">';
         foreach ($data as $yGroup => $chartData) {
             $chartId = "chartXY_{$parameter}_{$yGroup}";
