@@ -161,6 +161,10 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
                     <a href="graph.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
                         <i class="fa-solid fa-chart-area"></i>&nbsp;XY Scatter Plot
                     </a>
+                <?php elseif ($chart == 2): ?>
+                    <a href="cumulative.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
+                        <i class="fa-solid fa-chart-column"></i>&nbsp;Cumulative Probability Chart
+                    </a>
                 <?php else: ?>
                     <a href="line_chart.php?<?php echo http_build_query($_GET); ?>" class="px-4 py-2 bg-yellow-400 text-white rounded mr-2">
                         <i class="fa-solid fa-chart-line"></i>&nbsp;Line Chart

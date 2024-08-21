@@ -1,3 +1,5 @@
+
+
 document.addEventListener('DOMContentLoaded', () => {
     function getMinMaxWithMargin(dataGroups, marginPercentage = 0.05) {
         let allXValues = [];
@@ -113,9 +115,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1,
                     pointRadius: 3,
+                    spanGaps: true // enable for a single dataset
                 }]
             },
             options: {
+                options: {
+                    animation: false
+                },
                 scales: {
                     x: {
                         title: {
@@ -195,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const canvasElement = document.getElementById(chartId);
                 if (canvasElement) {
                     const ctx = canvasElement.getContext('2d');
-                    console.log(groupedData[combination]['all']);
+                    console.log(combination);
                     createChartFunc(ctx, groupedData[combination]['all'], 'Scatter Chart', minX, maxX, minY, maxY);
                 }
             }

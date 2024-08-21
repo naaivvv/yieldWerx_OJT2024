@@ -1,5 +1,5 @@
 <?php
-include('line_chart_backend.php');
+include('cumulative_backend.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -138,6 +138,6 @@ foreach ($groupedData as $parameter => $data) {
     const hasYColumn = <?php echo json_encode(isset($yColumn)); ?>;
     console.log(groupedData);
 </script>
-<script src="../js/chart_line.js"></script>
+<script src="../js/chart_cumulative.js"></script>
 </body>
 </html>

@@ -12,7 +12,7 @@ include('graph_backend.php');
    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.0"></script>
+   
    <style>
        .chart-container {
            overflow: auto;
@@ -60,7 +60,8 @@ include('graph_backend.php');
 <?php include('admin_components.php'); ?>
 <?php include('settings.php'); ?>
 
-<script>const groupedData = <?php echo json_encode($groupedData); ?>;</script>
+<script>const groupedData = <?php echo json_encode($groupedData); ?>;
+</script>
 
 
 <h1 class="text-center text-2xl font-bold w-full mb-6">XY Scatter Plot</h1>
@@ -166,8 +167,6 @@ foreach ($combinations as $combination) {
     const hasXColumn = <?php echo json_encode(isset($xColumn)); ?>;
     const hasYColumn = <?php echo json_encode(isset($yColumn)); ?>;
     console.log(groupedData);
-    console.log("Count data: " + <?php echo json_encode(count($data)); ?>);
-    console.log("Count xgroupdata: " + <?php echo json_encode(count($xGroupData)); ?>);
 </script>
 <script src="../js/chart_scatter.js"></script>
 </body>

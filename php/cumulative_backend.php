@@ -1,9 +1,7 @@
 <?php 
-
 require __DIR__ . '/../connection.php';
 include_once('parameter_query.php');
 
-// Function to check if a column exists in a table
 function columnExists($conn, $tableName, $columnName) {
     $check_sql = "SELECT 1 
                   FROM INFORMATION_SCHEMA.COLUMNS 
@@ -21,25 +19,16 @@ function columnExists($conn, $tableName, $columnName) {
     return $exists;
 }
 
-
-// Generate combinations of X and Y parameters
 $parameters = $filters['tm.Column_Name'];
 $data = [];
 $groupedData = [];
 
-$combinations = [];
-foreach ($parameters as $i => $xParam) {
-    for ($j = $i + 1; $j < count($parameters); $j++) {
-        $combinations[] = [$xParam, $parameters[$j]];
-    }
-}
+foreach ($parameters as $parameter) {
 
-foreach ($combinations as $combination) {
-
-    // Generate dynamic aliases for the device tables
+   // Generate dynamic aliases for the device tables
     $join_clauses = [];
-    $previousAlias = null; // Initialize the previous alias
-    $aliasIndex = 1; // Start alias index
+    $previousAlias = null; 
+    $aliasIndex = 1;
 
     // This array will store the column alias mappings
     $columnAliasMap = [];
@@ -74,57 +63,47 @@ foreach ($combinations as $combination) {
     }
 
     $join_clause = implode(' ', $join_clauses);
+    
+    // Dynamically construct the column part of the SQL query with alias or COALESCE
+    $parameterColumn = !empty($columnAliasMap[$parameter])
+        ? (count($columnAliasMap[$parameter]) > 1 ? "COALESCE(" . implode(", ", $columnAliasMap[$parameter]) . ")" : implode(", ", $columnAliasMap[$parameter]))
+        : $parameter;
 
-// Dynamically construct the column part of the SQL query with alias or COALESCE
-$column_list = !empty($filters['tm.Column_Name'])
-    ? implode(', ', array_map(function($col) use ($columnAliasMap) {
-        if (isset($columnAliasMap[$col]) && !empty($columnAliasMap[$col])) {
-            $aliasList = implode(', ', $columnAliasMap[$col]);
-            return count($columnAliasMap[$col]) > 1 ? "COALESCE($aliasList) AS $col" : "$aliasList AS $col";
-        }
-        return null;
-    }, $filters['tm.Column_Name']))
-    : '*';
+        $globalCounters = [
+            'total' => 0,
+            'xcol' => [],
+            'ycol' => [],
+            'all' => 0
+        ];
 
-// Remove any null entries from $column_list
-$column_list = implode(', ', array_filter(explode(', ', $column_list)));
+    // Modify to calculate total counts for each group
+    $tempCounters = [];
 
+    $xLabel = $parameter;
+    $yLabel = 'Percentage %';
 
-    $xLabel = $combination[0];
-    $yLabel = $combination[1];
-    $combinationKey = implode('_', $combination);
-
-    // Generate test names for the labels
     $testNameQuery = "SELECT test_name FROM TEST_PARAM_MAP WHERE Column_Name = ?";
     $testNameStmtX = sqlsrv_query($conn, $testNameQuery, [$xLabel]);
     $testNameX = sqlsrv_fetch_array($testNameStmtX, SQLSRV_FETCH_ASSOC)['test_name'];
-
-    $testNameStmtY = sqlsrv_query($conn, $testNameQuery, [$yLabel]);
-    $testNameY = sqlsrv_fetch_array($testNameStmtY, SQLSRV_FETCH_ASSOC)['test_name'];
-
+    $testNameY = $yLabel;
     sqlsrv_free_stmt($testNameStmtX);
-    sqlsrv_free_stmt($testNameStmtY);
 
-    // Construct the SQL query with dynamic aliasing for X and Y columns
     $tsql = "
     SELECT 
-        " . (isset($columnAliasMap[$xLabel]) ? 
-            (count($columnAliasMap[$xLabel]) > 1 ? "COALESCE(" . implode(', ', $columnAliasMap[$xLabel]) . ") AS X" : "{$columnAliasMap[$xLabel][0]} AS X") 
-            : "{$xLabel} AS X") . ",
-        " . (isset($columnAliasMap[$yLabel]) ? 
-            (count($columnAliasMap[$yLabel]) > 1 ? "COALESCE(" . implode(', ', $columnAliasMap[$yLabel]) . ") AS Y" : "{$columnAliasMap[$yLabel][0]} AS Y") 
-            : "{$yLabel} AS Y") . ", 
+        w.Wafer_ID, 
+        $parameterColumn AS X, 
         " . ($xColumn ? "$xColumn AS xGroup" : "'No xGroup' AS xGroup") . ", 
-        " . ($yColumn ? "$yColumn AS yGroup" : "'No yGroup' AS yGroup") . "
+        " . ($yColumn ? "$yColumn AS yGroup" : "'No yGroup' AS yGroup") . ",
+        ROW_NUMBER() OVER(PARTITION BY " . ($xColumn ?: "'No xGroup'") . " ORDER BY w.Wafer_Sequence) AS row_num
     FROM LOT l
     LEFT JOIN WAFER w ON w.Lot_Sequence = l.Lot_Sequence
     $join_clause
     LEFT JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
     LEFT JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
     $where_clause
-    $orderByClause";
+    $orderByClause, X ASC";
 
-    // echo "<pre>$tsql</pre>";
+    echo "<pre>$tsql</pre>";
     $stmt = sqlsrv_query($conn, $tsql, $params);
     if ($stmt === false) {
         die(print_r(sqlsrv_errors(), true));
@@ -134,21 +113,50 @@ $column_list = implode(', ', array_filter(explode(', ', $column_list)));
         $xGroup = $row['xGroup'];
         $yGroup = $row['yGroup'];
         $xValue = floatval($row['X']);
-        $yValue = floatval($row['Y']);
+
+        $globalCounters['total']++;
 
         if ($xColumn && $yColumn) {
-            $groupedData[$combinationKey][$yGroup][$xGroup][] = ['x' => $xValue, 'y' => $yValue];
+            $tempCounters['ycol'][$yGroup][$xGroup] = ($tempCounters['ycol'][$yGroup][$xGroup] ?? 0) + 1;
         } elseif ($xColumn && !$yColumn) {
-            $groupedData[$combinationKey][$xGroup][$yGroup][] = ['x' => $xValue, 'y' => $yValue];
+            $tempCounters['xcol'][$xGroup] = ($tempCounters['xcol'][$xGroup] ?? 0) + 1;
         } elseif (!$xColumn && $yColumn) {
-            $groupedData[$combinationKey][$yGroup][] = ['x' => $xValue, 'y' => $yValue];
+            $tempCounters['ycol'][$yGroup] = ($tempCounters['ycol'][$yGroup] ?? 0) + 1;
         } else {
-            $groupedData[$combinationKey]['all'][] = ['x' => $xValue, 'y' => $yValue];
+            $tempCounters['all']++;
         }
     }
+    sqlsrv_free_stmt($stmt);
 
+    // Now calculate the percentages based on the total counts
+    $stmt = sqlsrv_query($conn, $tsql, $params);
+    if ($stmt === false) {
+        die(print_r(sqlsrv_errors(), true));
+    }
+
+    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+        $xGroup = $row['xGroup'];
+        $yGroup = $row['yGroup'];
+        $xValue = floatval($row['X']);
+
+        if ($xColumn && $yColumn) {
+            $globalCounters['ycol'][$yGroup][$xGroup] = ($globalCounters['ycol'][$yGroup][$xGroup] ?? 0) + 1;
+            $percentage = ($globalCounters['ycol'][$yGroup][$xGroup] / $tempCounters['ycol'][$yGroup][$xGroup]) * 100;
+            $groupedData[$parameter][$yGroup][$xGroup][] = ['x' => $xValue, 'y' => $percentage];
+        } elseif ($xColumn && !$yColumn) {
+            $globalCounters['xcol'][$xGroup] = ($globalCounters['xcol'][$xGroup] ?? 0) + 1;
+            $percentage = ($globalCounters['xcol'][$xGroup] / $tempCounters['xcol'][$xGroup]) * 100;
+            $groupedData[$parameter][$xGroup][] = ['x' => $xValue, 'y' => $percentage];
+        } elseif (!$xColumn && $yColumn) {
+            $globalCounters['ycol'][$yGroup] = ($globalCounters['ycol'][$yGroup] ?? 0) + 1;
+            $percentage = ($globalCounters['ycol'][$yGroup] / $tempCounters['ycol'][$yGroup]) * 100;
+            $groupedData[$parameter][$yGroup][] = ['x' => $xValue, 'y' => $percentage];
+        } else {
+            $globalCounters['all']++;
+            $percentage = ($globalCounters['all'] / $tempCounters['all']) * 100;
+            $groupedData[$parameter]['all'][] = ['x' => $xValue, 'y' => $percentage];
+        }
+    }
     sqlsrv_free_stmt($stmt);
 }
-
-$numDistinctGroups = count($groupedData);
 ?>

@@ -27,8 +27,8 @@ foreach ($parameters as $parameter) {
 
    // Generate dynamic aliases for the device tables
     $join_clauses = [];
-    $previousAlias = null; // Initialize the previous alias
-    $aliasIndex = 1; // Start alias index
+    $previousAlias = null; 
+    $aliasIndex = 1;
 
     // This array will store the column alias mappings
     $columnAliasMap = [];
@@ -68,20 +68,6 @@ foreach ($parameters as $parameter) {
     $parameterColumn = !empty($columnAliasMap[$parameter])
         ? (count($columnAliasMap[$parameter]) > 1 ? "COALESCE(" . implode(", ", $columnAliasMap[$parameter]) . ")" : implode(", ", $columnAliasMap[$parameter]))
         : $parameter;
-    
-    // The full list of columns should use COALESCE where needed
-    $column_list = !empty($filters['tm.Column_Name'])
-        ? implode(', ', array_map(function($col) use ($columnAliasMap) {
-            if (isset($columnAliasMap[$col]) && !empty($columnAliasMap[$col])) {
-                $aliasList = implode(', ', $columnAliasMap[$col]);
-                return count($columnAliasMap[$col]) > 1 ? "COALESCE($aliasList) AS $col" : "$aliasList AS $col";
-            }
-            return null;
-        }, $filters['tm.Column_Name']))
-        : '*';
-    
-    // Remove any null entries from $column_list
-    $column_list = implode(', ', array_filter(explode(', ', $column_list)));
 
     $globalCounters = [
         'all' => 0,
