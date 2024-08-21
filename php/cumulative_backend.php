@@ -113,7 +113,7 @@ foreach ($parameters as $parameter) {
         $tsql .= " ORDER BY X ASC";
     }
 
-    echo "<pre>$tsql</pre>";
+    // echo "<pre>$tsql</pre>";
     $stmt = sqlsrv_query($conn, $tsql, $params);
     if ($stmt === false) {
         die(print_r(sqlsrv_errors(), true));
