@@ -69,15 +69,19 @@ foreach ($parameters as $parameter) {
         ? (count($columnAliasMap[$parameter]) > 1 ? "COALESCE(" . implode(", ", $columnAliasMap[$parameter]) . ")" : implode(", ", $columnAliasMap[$parameter]))
         : $parameter;
 
-        $globalCounters = [
-            'total' => 0,
-            'xcol' => [],
-            'ycol' => [],
-            'all' => 0
-        ];
+    $globalCounters = [
+        'total' => 0,
+        'all' => 0,
+        'xcol' => [],
+        'ycol' => []
+    ];
 
     // Modify to calculate total counts for each group
-    $tempCounters = [];
+    $tempCounters = [
+        'all' => 0,
+        'xcol' => [],
+        'ycol' => []
+    ];
 
     $xLabel = $parameter;
     $yLabel = 'Percentage %';
@@ -100,8 +104,14 @@ foreach ($parameters as $parameter) {
     $join_clause
     LEFT JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
     LEFT JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
-    $where_clause
-    $orderByClause, X ASC";
+    $where_clause";
+
+    // Check if $orderByClause has data
+    if (!empty($orderByClause)) {
+        $tsql .= " $orderByClause, X ASC";
+    } else {
+        $tsql .= " ORDER BY X ASC";
+    }
 
     echo "<pre>$tsql</pre>";
     $stmt = sqlsrv_query($conn, $tsql, $params);
