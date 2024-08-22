@@ -26,10 +26,6 @@ include('graph_backend.php');
        td {
            padding: 16px;
        }
-       canvas {
-           height: 400px;
-           width: 400px;
-       }
        .-rotate-90 {
             --tw-rotate: -90deg;
             transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -116,7 +112,7 @@ foreach ($combinations as $combination) {
                     foreach ($xGroupData as $xGroup => $chartData) {
                         $chartId = "chartXY_{$combinationKey}_{$yGroup}_{$xGroup}";
                         echo '<div class="flex items-center justify-center flex-col">';
-                        echo "<canvas id='{$chartId}'></canvas>";
+                        echo "<canvas id='{$chartId}' style='width: 300px !important; height: 160px !important;'></canvas>";
                         if ($yGroup === $lastYGroup) {
                             echo '<h3 class="text-center text-lg font-semibold">' . $xGroup . '</h3>';
                         }
@@ -131,7 +127,7 @@ foreach ($combinations as $combination) {
                 foreach ($data as $xGroup => $chartData) {
                     $chartId = "chartXY_{$combinationKey}_{$xGroup}";
                     echo '<div class="flex items-center justify-center flex-col">';
-                    echo "<canvas id='{$chartId}'></canvas>";
+                    echo "<canvas id='{$chartId}' style='width: 300px !important; height: 160px !important;'></canvas>";
                     echo '<h3 class="text-center text-lg font-semibold">' . $xGroup . '</h3></div>';
                 }
                 echo '</div></div>';
@@ -144,7 +140,7 @@ foreach ($combinations as $combination) {
                     echo '<div class="flex flex-row justify-center items-center w-custom">';
                     echo '<div class="text-center">
                         <h2 class="text-center text-xl font-semibold mb-4 -rotate-90">' . $yGroup . '</h2></div>';
-                        echo "<canvas id='{$chartId}'></canvas>";
+                        echo "<canvas id='{$chartId}' style='width: 300px !important; height: 160px !important;'></canvas>";
                     echo '</div>';
                 }
                 echo '</div></div>';
@@ -152,7 +148,7 @@ foreach ($combinations as $combination) {
                 // Neither X nor Y parameters are set
                 $chartId = "chartXY_{$combinationKey}_all";
                 echo '<div class="flex items-center justify-center w-full">';
-                echo "<div><canvas id='{$chartId}'></canvas></div>";
+                echo "<canvas id='{$chartId}' style='width: 300px !important; height: 160px !important;'></canvas></div>";
                 echo '</div>';
             }
             ?>
