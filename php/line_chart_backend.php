@@ -75,15 +75,6 @@ foreach ($parameters as $parameter) {
         'ycol' => []
     ];
 
-    $xLabel = 'Series';
-    $yLabel = $parameter;
-
-    $testNameQuery = "SELECT test_name FROM TEST_PARAM_MAP WHERE Column_Name = ?";
-    $testNameStmtY = sqlsrv_query($conn, $testNameQuery, [$yLabel]);
-    $testNameY = sqlsrv_fetch_array($testNameStmtY, SQLSRV_FETCH_ASSOC)['test_name'];
-    $testNameX = $xLabel;
-    sqlsrv_free_stmt($testNameStmtY);
-
     $tsql = "
     SELECT 
         w.Wafer_ID, 

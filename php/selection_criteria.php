@@ -90,6 +90,10 @@ $columns = [
     .px-12 {
         padding: 3rem /* 48px */;
     }
+    select[multiple] option:checked {
+        background-color: #3b82f6; /* Tailwind's blue-500 */
+        color: white;
+    }
 </style>
 
 <div class="container mx-auto px-12 py-6 bg-white rounded-md shadow-md">

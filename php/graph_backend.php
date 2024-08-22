@@ -149,6 +149,4 @@ $column_list = implode(', ', array_filter(explode(', ', $column_list)));
 
     sqlsrv_free_stmt($stmt);
 }
-
-$numDistinctGroups = count($groupedData);
 ?>

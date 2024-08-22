@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 scales: {
                     x: {
                         title: {
-                            display: true,
+                            display: false,
                             text: xLabel
                         },
                         type: 'linear',
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     y: {
                         title: {
-                            display: true,
+                            display: false,
                             text: yLabel
                         },
                         min: minY,
@@ -143,17 +143,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 },
                 plugins: {
+                    legend: {
+                        display: false 
+                    },
                     zoom: {
                         pan: {
                             enabled: true,
                             mode: 'xy'
-                        },
-                        zoom: {
-                            enabled: true,
-                            mode: 'xy',
-                            pinch: {
-                                enabled: true // Enable zoom via wheel
-                            }
                         }
                     }
                 }

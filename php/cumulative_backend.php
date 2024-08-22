@@ -83,15 +83,6 @@ foreach ($parameters as $parameter) {
         'ycol' => []
     ];
 
-    $xLabel = $parameter;
-    $yLabel = 'Percentage %';
-
-    $testNameQuery = "SELECT test_name FROM TEST_PARAM_MAP WHERE Column_Name = ?";
-    $testNameStmtX = sqlsrv_query($conn, $testNameQuery, [$xLabel]);
-    $testNameX = sqlsrv_fetch_array($testNameStmtX, SQLSRV_FETCH_ASSOC)['test_name'];
-    $testNameY = $yLabel;
-    sqlsrv_free_stmt($testNameStmtX);
-
     $tsql = "
     SELECT 
         w.Wafer_ID, 
