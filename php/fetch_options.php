@@ -39,14 +39,13 @@ switch ($type) {
                   ORDER BY w.Wafer_ID";
         break;
     case 'parameter':
-        $query = "SELECT DISTINCT tm.Column_Name, tm.Test_Name 
-                  FROM TEST_PARAM_MAP tm 
-                  JOIN wafer w ON w.Lot_Sequence = tm.Lot_Sequence 
-                  JOIN lot l ON l.Lot_Sequence = w.Lot_Sequence 
-                  WHERE w.Wafer_ID IN ('" . implode("','", $waferIDValue) . "') 
-                    ORDER BY tm.Column_Name ASC
-                  ";
-                  
+        $query = "SELECT DISTINCT tm.Column_Name, tm.Test_Name, 
+                    CAST(SUBSTRING(tm.Column_Name, 2, LEN(tm.Column_Name)) AS INT) AS Column_Num
+                    FROM TEST_PARAM_MAP tm 
+                    JOIN wafer w ON w.Lot_Sequence = tm.Lot_Sequence 
+                    JOIN lot l ON l.Lot_Sequence = w.Lot_Sequence 
+                    WHERE w.Wafer_ID IN ('" . implode("','", $waferIDValue) . "') 
+                    ORDER BY Column_Num ASC"; 
         break;
     default:
         $query = "";

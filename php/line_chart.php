@@ -8,24 +8,27 @@ include('line_chart_backend.php');
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Graphs</title>
    <link rel="stylesheet" href="../src/output.css">
-   <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css" rel="stylesheet" />
-   <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
+   <!-- <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css" rel="stylesheet" />
+   <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script> -->
+   <link rel="stylesheet" href="../node_modules/flowbite/dist/flowbite.min.css">
+   <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+   <script src="../node_modules/jquery/dist/jquery.js"></script>
+   <script src="../node_modules/jquery/dist/jquery.min.js"></script>
    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.0"></script>
    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8hammerjs@2.0.8"></script>
    <style>
        .chart-container {
-           overflow: auto;
-           max-width: 100%;
-       }
-       td {
-           padding: 16px;
-       }
-       canvas {
-           height: 400px;
-           width: 450px;
-       }
+            overflow-x: auto; /* Enables horizontal scroll when content overflows */
+            width: 100%; /* or set a specific fixed width like 1000px */
+            white-space: nowrap; /* Prevents content from wrapping to a new line */
+            padding: 1rem;
+        }
+
+        .chart-container .grid {
+            display: inline-flex; /* Makes sure the grid layout inside stays inline */
+        }
        .-rotate-90 {
             --tw-rotate: -90deg;
             transform: rotate(var(--tw-rotate));
@@ -69,9 +72,20 @@ include('line_chart_backend.php');
 </div>
 <?php
 foreach ($groupedData as $parameter => $data) {
-    echo '<div class="p-4">';
-    echo '<div class="dark:border-gray-700 flex flex-col items-center">';
-    echo '<div class="max-w-fit p-6 border-b-2 border-2 bg-white shadow-md rounded-md">';
+    $xLabel = 'Series';
+    $yLabel = $parameter;
+
+    $testNameQuery = "SELECT test_name FROM TEST_PARAM_MAP WHERE Column_Name = ?";
+    $testNameStmtY = sqlsrv_query($conn, $testNameQuery, [$yLabel]);
+    $testNameY = sqlsrv_fetch_array($testNameStmtY, SQLSRV_FETCH_ASSOC)['test_name'];
+    $testNameX = $xLabel;
+    sqlsrv_free_stmt($testNameStmtY);
+
+    echo '<div class="p-4 m-6 flex flex-col">';
+    echo '<div class="flex flex-row mx-auto border-b-2 border-2 bg-white shadow-md rounded-md pr-4">';
+    // echo '<div class="w-fit flex-grow-0"><div class="flex items-center justify-center h-full"><div><h2 class="text-center text-xl font-semibold -rotate-90 w-full whitespace-nowrap overflow-hidden text-ellipsis">' . $yLabel . '</h2></div></div></div>';
+    echo '<div class="flex flex-col items-center w-full max-w-7xl">';
+    echo '<div class="p-6 chart-container">';
     echo '<div class="mb-4 text-sm italic">';
     echo 'Series of <b>' . $testNameY . '</b>';
     echo '</div>';
@@ -80,13 +94,13 @@ foreach ($groupedData as $parameter => $data) {
         $yGroupKeys = array_keys($data);
         $lastYGroup = end($yGroupKeys);
         foreach ($data as $yGroup => $xGroupData) {
-            echo '<div class="flex flex-row items-center justify-center w-full">';
+            echo '<div class="flex flex-row items-center">';
             echo '<div><h2 class="text-center text-xl font-semibold mb-4 -rotate-90">' . $yGroup . '</h2></div>';
             echo '<div class="grid gap-2 grid-cols-' . count($xGroupData) . '">';
             foreach ($xGroupData as $xGroup => $chartData) {
                 $chartId = "chartXY_{$parameter}_{$yGroup}_{$xGroup}";
                 echo '<div class="flex items-center justify-center flex-col">';
-                echo "<canvas id='{$chartId}'></canvas>";
+                echo "<canvas id='{$chartId}' style='width: 250px !important; height: 160px !important;'></canvas>";
                 if ($yGroup === $lastYGroup) {
                     echo '<h3 class="text-center text-lg font-semibold">' . $xGroup . '</h3>';
                 }
@@ -95,12 +109,12 @@ foreach ($groupedData as $parameter => $data) {
             echo '</div></div>';
         }
     } elseif (isset($xColumn)) {
-        echo '<div class="flex flex-row items-center justify-center w-full">';
+        echo '<div class="flex flex-row items-center>';
         echo '<div class="grid gap-2 grid-cols-' . count($data) . '">';
         foreach ($data as $xGroup => $chartData) {
             $chartId = "chartXY_{$parameter}_{$xGroup}";
             echo '<div class="flex items-center justify-center flex-col">';
-            echo "<canvas id='{$chartId}'></canvas>";
+            echo "<canvas id='{$chartId}' style='width: 250px !important; height: 160px !important;'></canvas>";
             echo '<h3 class="text-center text-lg font-semibold">' . $xGroup . '</h3></div>';
         }
         echo '</div></div>';
@@ -111,17 +125,18 @@ foreach ($groupedData as $parameter => $data) {
             $chartId = "chartXY_{$parameter}_{$yGroup}";
             echo '<div class="flex flex-row justify-center items-center w-custom">';
             echo '<div class="text-center"><h2 class="text-center text-xl font-semibold mb-4 -rotate-90">' . $yGroup . '</h2></div>';
-            echo "<canvas id='{$chartId}'></canvas>";
+            echo "<canvas id='{$chartId}' style='width: 250px !important; height: 160px !important;'></canvas>";
             echo '</div>';
         }
         echo '</div></div>';
     } else {
         $chartId = "chartXY_{$parameter}_all";
         echo '<div class="flex items-center justify-center w-full">';
-        echo "<div><canvas id='{$chartId}'></canvas></div>";
+        echo "<canvas id='{$chartId}' style='width: 250px !important; height: 160px !important;'></canvas></div>";
         echo '</div>';
     }
 
+    echo '</div>';
     echo '</div>';
     echo '</div>';
     echo '</div>';
@@ -136,7 +151,6 @@ foreach ($groupedData as $parameter => $data) {
     const yColumn = <?php echo json_encode($yColumn); ?>;
     const hasXColumn = <?php echo json_encode(isset($xColumn)); ?>;
     const hasYColumn = <?php echo json_encode(isset($yColumn)); ?>;
-    console.log(groupedData);
 </script>
 <script src="../js/chart_line.js"></script>
 </body>

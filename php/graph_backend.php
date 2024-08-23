@@ -1,114 +1,31 @@
 <?php 
 
 require __DIR__ . '/../connection.php';
+include_once('parameter_query.php');
 
-// Retrieve or set xIndex
-if (isset($_GET['x'])) {
-    $_SESSION['xIndex'] = $_GET['x'];
-}
-$xIndex = isset($_SESSION['xIndex']) ? $_SESSION['xIndex'] : null;
+// Function to check if a column exists in a table
+function columnExists($conn, $tableName, $columnName) {
+    $check_sql = "SELECT 1 
+                  FROM INFORMATION_SCHEMA.COLUMNS 
+                  WHERE TABLE_NAME = ? AND COLUMN_NAME = ?";
+    $params = [$tableName, $columnName];
+    $check_stmt = sqlsrv_query($conn, $check_sql, $params);
 
-// Retrieve or set yIndex
-if (isset($_GET['y'])) {
-    $_SESSION['yIndex'] = $_GET['y'];
-}
-$yIndex = isset($_SESSION['yIndex']) ? $_SESSION['yIndex'] : null;
-
-// Retrieve or set orderX
-if (isset($_GET['order-x'])) {
-    $_SESSION['orderX'] = $_GET['order-x'];
-}
-$orderX = isset($_SESSION['orderX']) ? $_SESSION['orderX'] : null;
-
-// Retrieve or set orderY
-if (isset($_GET['order-y'])) {
-    $_SESSION['orderY'] = $_GET['order-y'];
-}
-$orderY = isset($_SESSION['orderY']) ? $_SESSION['orderY'] : null;
-
-$columnsGroup = [
-    'l.Facility_ID', 'd1.Head_Number', 'd1.HBin_Number', 'l.Lot_ID', 'l.Part_Type', 'p.abbrev', 'l.Program_Name', 
-    'd1.SBin_Number', 'd1.Site_Number', 'l.Test_Temprature', 'd1.Test_Time', 'd1.Tests_Executed',
-    'd1.Unit_Number', 'w.Wafer_Finish_Time', 'w.Wafer_ID', 'w.Wafer_Start_Time', 'l.Work_Center', 
-    'd1.X', 'd1.Y', 'l.Program_Name'
-];
-
-$xColumn = $xIndex !== null && isset($columnsGroup[$xIndex]) ? $columnsGroup[$xIndex] : null;
-$yColumn = $yIndex !== null && isset($columnsGroup[$yIndex]) ? $columnsGroup[$yIndex] : null;
-
-// Retrieve or set filters
-$filters = [
-    "l.Facility_ID" => isset($_GET['facility']) ? $_GET['facility'] : (isset($_SESSION['facility']) ? $_SESSION['facility'] : []),
-    "l.work_center" => isset($_GET['work_center']) ? $_GET['work_center'] : (isset($_SESSION['work_center']) ? $_SESSION['work_center'] : []),
-    "l.part_type" => isset($_GET['device_name']) ? $_GET['device_name'] : (isset($_SESSION['device_name']) ? $_SESSION['device_name'] : []),
-    "l.Program_Name" => isset($_GET['test_program']) ? $_GET['test_program'] : (isset($_SESSION['test_program']) ? $_SESSION['test_program'] : []),
-    "l.lot_ID" => isset($_GET['lot']) ? $_GET['lot'] : (isset($_SESSION['lot']) ? $_SESSION['lot'] : []),
-    "w.wafer_ID" => isset($_GET['wafer']) ? $_GET['wafer'] : (isset($_SESSION['wafer']) ? $_SESSION['wafer'] : []),
-    "tm.Column_Name" => isset($_GET['parameter']) ? $_GET['parameter'] : (isset($_SESSION['parameter']) ? $_SESSION['parameter'] : []),
-    "p.abbrev" => isset($_GET['abbrev']) ? $_GET['abbrev'] : (isset($_SESSION['abbrev']) ? $_SESSION['abbrev'] : [])
-];
-
-// Generate placeholders for the number of program names in the filter
-$programNamePlaceholders = implode(',', array_fill(0, count($filters['l.Program_Name']), '?'));
-
-// Update the table SQL to use IN clause for multiple program names
-$table_sql = "SELECT DISTINCT table_name 
-              FROM TEST_PARAM_MAP 
-              WHERE program_name IN ($programNamePlaceholders)";
-
-// Use the array of program names as parameters for the query
-$table_stmt = sqlsrv_query($conn, $table_sql, $filters['l.Program_Name']);
-if ($table_stmt === false) {
-    die('Query failed: ' . print_r(sqlsrv_errors(), true));
-}
-
-// echo "<pre>$table_sql</pre>";
-
-$device_tables = [];
-while ($table_row = sqlsrv_fetch_array($table_stmt, SQLSRV_FETCH_ASSOC)) {
-    $device_tables[] = $table_row['table_name'];
-}
-sqlsrv_free_stmt($table_stmt);
-
-// Update session with the current filters
-foreach ($filters as $key => $values) {
-    if (!empty($values)) {
-        $_SESSION[str_replace('.', '_', $key)] = $values;
+    if ($check_stmt === false) {
+        die(print_r(sqlsrv_errors(), true));
     }
+    
+    $exists = sqlsrv_fetch_array($check_stmt) ? true : false;
+    sqlsrv_free_stmt($check_stmt);
+    
+    return $exists;
 }
 
-// Prepare SQL filters
-$sql_filters = [];
-$params = [];
-foreach ($filters as $key => $values) {
-    if (!empty($values)) {
-        $placeholders = implode(',', array_fill(0, count($values), '?'));
-        $sql_filters[] = "$key IN ($placeholders)";
-        $params = array_merge($params, $values);
-    }
-}
 
-$where_clause = '';
-if (!empty($sql_filters)) {
-    $where_clause = 'WHERE ' . implode(' AND ', $sql_filters);
-}
-
-$orderDirectionX = $orderX == 1 ? 'DESC' : 'ASC';
-$orderDirectionY = $orderY == 1 ? 'DESC' : 'ASC';
-
-$orderByClause = '';
-if ($xColumn && $yColumn) {
-    $orderByClause = "ORDER BY $xColumn $orderDirectionX, $yColumn $orderDirectionY";
-} elseif ($xColumn && !$yColumn) {
-    $orderByClause = "ORDER BY $xColumn $orderDirectionX";
-} elseif (!$xColumn && $yColumn) {
-    $orderByClause = "ORDER BY $yColumn $orderDirectionY";
-}
-
+// Generate combinations of X and Y parameters
 $parameters = $filters['tm.Column_Name'];
 $data = [];
 $groupedData = [];
-
 
 $combinations = [];
 foreach ($parameters as $i => $xParam) {
@@ -124,35 +41,60 @@ foreach ($combinations as $combination) {
     $previousAlias = null; // Initialize the previous alias
     $aliasIndex = 1; // Start alias index
 
+    // This array will store the column alias mappings
+    $columnAliasMap = [];
+
     foreach ($device_tables as $table) {
         $alias = "d$aliasIndex";
-    
-        // If there is a previous alias, join on Die_Sequence instead of Wafer_Sequence
-        if ($previousAlias) {
-            $join_clauses[] = "JOIN $table $alias ON $previousAlias.Die_Sequence = $alias.Die_Sequence";
+
+        // Check if the table name ends with '_001'
+        if (substr($table, -4) === '_001') {
+            // Join on Wafer_Sequence
+            $join_clauses[] = "LEFT JOIN $table $alias ON w.Wafer_Sequence = $alias.Wafer_Sequence";
         } else {
-            // For the first table, join on Wafer_Sequence
-            $join_clauses[] = "JOIN $table $alias ON w.Wafer_Sequence = $alias.Wafer_Sequence";
+            // Otherwise, join on Die_Sequence
+            if ($previousAlias) {
+                $join_clauses[] = "LEFT JOIN $table $alias ON $previousAlias.Die_Sequence = $alias.Die_Sequence";
+            } else {
+                // If there is no previous alias, join on Wafer_Sequence (fallback)
+                $join_clauses[] = "LEFT JOIN $table $alias ON w.Wafer_Sequence = $alias.Wafer_Sequence";
+            }
         }
-    
+
+        // Check and map all column names in the current table to the alias
+        foreach ($filters['tm.Column_Name'] as $columnName) {
+            if (columnExists($conn, $table, $columnName)) {
+                $columnAliasMap[$columnName][] = "$alias.$columnName";
+            }
+        }
+
         // Update the previous alias and increment the index
         $previousAlias = $alias;
         $aliasIndex++;
     }
-    
+
     $join_clause = implode(' ', $join_clauses);
 
-    $globalCounters = [
-        'all' => 0,
-        'xcol' => [],
-        'ycol' => []
-    ];
+// Dynamically construct the column part of the SQL query with alias or COALESCE
+$column_list = !empty($filters['tm.Column_Name'])
+    ? implode(', ', array_map(function($col) use ($columnAliasMap) {
+        if (isset($columnAliasMap[$col]) && !empty($columnAliasMap[$col])) {
+            $aliasList = implode(', ', $columnAliasMap[$col]);
+            return count($columnAliasMap[$col]) > 1 ? "COALESCE($aliasList) AS $col" : "$aliasList AS $col";
+        }
+        return null;
+    }, $filters['tm.Column_Name']))
+    : '*';
+
+// Remove any null entries from $column_list
+$column_list = implode(', ', array_filter(explode(', ', $column_list)));
+
 
     $xLabel = $combination[0];
     $yLabel = $combination[1];
-
     $combinationKey = implode('_', $combination);
 
+    // Generate test names for the labels
     $testNameQuery = "SELECT test_name FROM TEST_PARAM_MAP WHERE Column_Name = ?";
     $testNameStmtX = sqlsrv_query($conn, $testNameQuery, [$xLabel]);
     $testNameX = sqlsrv_fetch_array($testNameStmtX, SQLSRV_FETCH_ASSOC)['test_name'];
@@ -163,20 +105,26 @@ foreach ($combinations as $combination) {
     sqlsrv_free_stmt($testNameStmtX);
     sqlsrv_free_stmt($testNameStmtY);
 
+    // Construct the SQL query with dynamic aliasing for X and Y columns
     $tsql = "
     SELECT 
-        {$xLabel} AS X, 
-        {$yLabel} AS Y, 
+        " . (isset($columnAliasMap[$xLabel]) ? 
+            (count($columnAliasMap[$xLabel]) > 1 ? "COALESCE(" . implode(', ', $columnAliasMap[$xLabel]) . ") AS X" : "{$columnAliasMap[$xLabel][0]} AS X") 
+            : "{$xLabel} AS X") . ",
+        " . (isset($columnAliasMap[$yLabel]) ? 
+            (count($columnAliasMap[$yLabel]) > 1 ? "COALESCE(" . implode(', ', $columnAliasMap[$yLabel]) . ") AS Y" : "{$columnAliasMap[$yLabel][0]} AS Y") 
+            : "{$yLabel} AS Y") . ", 
         " . ($xColumn ? "$xColumn AS xGroup" : "'No xGroup' AS xGroup") . ", 
         " . ($yColumn ? "$yColumn AS yGroup" : "'No yGroup' AS yGroup") . "
-    FROM wafer w
+    FROM LOT l
+    LEFT JOIN WAFER w ON w.Lot_Sequence = l.Lot_Sequence
     $join_clause
-    JOIN LOT l ON l.Lot_Sequence = w.Lot_Sequence
-    JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
-    JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
+    LEFT JOIN TEST_PARAM_MAP tm ON tm.Lot_Sequence = l.Lot_Sequence
+    LEFT JOIN ProbingSequenceOrder p ON p.probing_sequence = w.probing_sequence
     $where_clause
     $orderByClause";
 
+    // echo "<pre>$tsql</pre>";
     $stmt = sqlsrv_query($conn, $tsql, $params);
     if ($stmt === false) {
         die(print_r(sqlsrv_errors(), true));
@@ -201,6 +149,4 @@ foreach ($combinations as $combination) {
 
     sqlsrv_free_stmt($stmt);
 }
-
-$numDistinctGroups = count($groupedData);
 ?>

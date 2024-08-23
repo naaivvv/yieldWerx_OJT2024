@@ -90,6 +90,10 @@ $columns = [
     .px-12 {
         padding: 3rem /* 48px */;
     }
+    select[multiple] option:checked {
+        background-color: #3b82f6; /* Tailwind's blue-500 */
+        color: white;
+    }
 </style>
 
 <div class="container mx-auto px-12 py-6 bg-white rounded-md shadow-md">
@@ -224,11 +228,22 @@ $columns = [
             </div>
 
             <div class="col-span-3">
-                <label for="parameter" class="block text-sm font-medium text-gray-700 multiple-select">Parameter</label>
-                <select size="5" id="parameter" name="parameter[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
-                    <!-- Options will be populated based on wafer selection -->
-                </select>
+                <div class="flex justify-between gap-5">
+                    <div class="flex flex-1 flex-col">
+                        <label for="parameter" class="block text-sm font-medium text-gray-700 multiple-select">Parameter X</label>
+                        <select size="5" id="parameter" name="parameter[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
+                            <!-- Options will be populated based on wafer selection -->
+                        </select>
+                    </div>
+                    <div class="flex flex-1 flex-col">
+                        <label for="parameter-y" class="block text-sm font-medium text-gray-700 multiple-select">Parameter Y</label>
+                        <select size="5" id="parameter-y" name="parameter-y[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                            <!-- Options will be populated based on wafer selection -->
+                        </select>
+                    </div>
+                </div>
             </div>
+            
         </div>
 
         <div class="text-center w-full flex justify-start gap-4">
@@ -246,102 +261,4 @@ $columns = [
     </form>
 </div>
 <script src="../js/selection.js"></script>
-<script>
-$(document).ready(function() {
-    // Function to fetch options based on previous selection
-    function fetchOptions(selectedValue, targetElement, queryType) {
-        let data = {};
-        switch(queryType) {
-            case 'work_center':
-                data.facility = selectedValue;
-                break;
-            case 'device_name':
-                data.work_center = selectedValue;
-                break;
-            case 'test_program':
-                data.device_name = selectedValue;
-                break;
-            case 'lot':
-                data.test_program = selectedValue;
-                break;
-            case 'wafer':
-                data.lot = selectedValue;
-                break;
-            case 'parameter':
-                data.wafer = selectedValue;
-                break;
-            default:
-                return; // If an invalid queryType is passed, exit the function.
-        }
-        data.type = queryType; // Add the query type to the data object
 
-        $.ajax({
-            url: 'fetch_options.php',
-            method: 'GET',
-            data: data,
-            dataType: 'json',
-            success: function(response) {
-                let options = '';
-                if (queryType === 'parameter') {
-                    $.each(response, function(index, item) {
-                        options += `<option value="${item.value}">${item.display}</option>`;
-                    });
-                } else {
-                    $.each(response, function(index, value) {
-                        options += `<option value="${value}">${value}</option>`;
-                    });
-                }
-                targetElement.html(options);
-            }
-        });
-    }
-
-    // Event listeners for each select element
-    $('#facility').change(function() {
-        const selectedFacility = $(this).val();
-        fetchOptions(selectedFacility, $('#work_center'), 'work_center');
-    });
-
-    $('#work_center').change(function() {
-        const selectedWorkCenter = $(this).val();
-        fetchOptions(selectedWorkCenter, $('#device_name'), 'device_name');
-    });
-
-    $('#device_name').change(function() {
-        const selectedDeviceName = $(this).val();
-        fetchOptions(selectedDeviceName, $('#test_program'), 'test_program');
-    });
-
-    $('#test_program').change(function() {
-        const selectedTestProgram = $(this).val();
-        fetchOptions(selectedTestProgram, $('#lot'), 'lot');
-    });
-
-    $('#lot').change(function() {
-        const selectedLot = $(this).val();
-        fetchOptions(selectedLot, $('#wafer'), 'wafer');
-    });
-
-    $('#wafer').change(function() {
-        const selectedWafer = $(this).val();
-        fetchOptions(selectedWafer, $('#parameter'), 'parameter');
-    });
-
-    $('#parameter').change(function() {
-        const selectedParameters = $(this).val(); 
-
-        if (selectedParameters && selectedParameters.length === 1) {
-            $('#scatter-plot').prop('hidden', true);
-        } else {
-            $('#scatter-plot').prop('hidden', false);
-        }
-    });
-
-    // Reset button functionality
-    $('#resetButton').click(function() {
-        $('#criteriaForm')[0].reset();
-        $('#work_center, #device_name, #test_program, #lot, #wafer, #parameter').html('');
-    });
-});
-
-</script>

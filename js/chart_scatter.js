@@ -1,3 +1,5 @@
+
+
 document.addEventListener('DOMContentLoaded', () => {
     function getMinMaxWithMargin(dataGroups, marginPercentage = 0.05) {
         let allXValues = [];
@@ -107,19 +109,24 @@ document.addEventListener('DOMContentLoaded', () => {
             type: 'scatter',
             data: {
                 datasets: [{
-                    label: `${label} (${correlationText})`,
+                    // label: `${label} (${correlationText})`,
+                    label: `${correlationText}`,
                     data: data,
                     backgroundColor: 'rgba(75, 192, 192, 0.6)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1,
-                    pointRadius: 5,
+                    pointRadius: 2,
+                    spanGaps: true // enable for a single dataset
                 }]
             },
             options: {
+                options: {
+                    animation: false
+                },
                 scales: {
                     x: {
                         title: {
-                            display: true,
+                            display: false,
                             text: xLabel
                         },
                         type: 'linear',
@@ -129,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     y: {
                         title: {
-                            display: true,
+                            display: false,
                             text: yLabel
                         },
                         min: minY,
@@ -137,17 +144,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 },
                 plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        align: 'center',
+                        labels: {
+                            pointStyle: 'line',
+                            usePointStyle: true,
+                            color: 'blue'
+                        }
+
+                    },
                     zoom: {
                         pan: {
                             enabled: true,
                             mode: 'xy'
-                        },
-                        zoom: {
-                            enabled: true,
-                            mode: 'xy',
-                            pinch: {
-                                enabled: true // Enable zoom via wheel
-                            }
                         }
                     }
                 }
@@ -195,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const canvasElement = document.getElementById(chartId);
                 if (canvasElement) {
                     const ctx = canvasElement.getContext('2d');
-                    console.log(groupedData[combination]['all']);
+                    console.log(combination);
                     createChartFunc(ctx, groupedData[combination]['all'], 'Scatter Chart', minX, maxX, minY, maxY);
                 }
             }
