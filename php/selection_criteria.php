@@ -253,7 +253,7 @@ $columns = [
                 </div>
                 <!-- Sort by Section -->
                 <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 w-full">
-                    <h2 class="text-md italic mb-4 w-20 text-blue-500 bg-white filter-text-header text-center"><i class="fa-solid fa-sort"></i>&nbsp;Sort by</h2>
+                    <h2 class="text-md italic mb-4 w-20 text-yellow-400 bg-white filter-text-header text-center"><i class="fa-solid fa-sort"></i>&nbsp;Sort by</h2>
                     <div class="flex w-full justify-start items-center gap-4">
 
                         <div class="w-full">

@@ -22,15 +22,13 @@ function columnExists($conn, $tableName, $columnName) {
 }
 
 
-// Generate combinations of X and Y parameters
-$parameters = $filters['tm.Column_Name'];
 $data = [];
 $groupedData = [];
 
 $combinations = [];
-foreach ($parameters as $i => $xParam) {
-    for ($j = $i + 1; $j < count($parameters); $j++) {
-        $combinations[] = [$xParam, $parameters[$j]];
+foreach ($parameterX as $xParam) {
+    foreach ($parameterY as $yParam) {
+        $combinations[] = [$xParam, $yParam];
     }
 }
 
