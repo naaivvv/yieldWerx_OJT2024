@@ -48,15 +48,50 @@ switch ($type) {
                     WHERE w.Wafer_ID IN ('" . implode("','", $waferIDValue) . "') 
                     ORDER BY Column_Num ASC"; 
         break;
+    case 'probe_sequence':
+            $query = "SELECT DISTINCT p.abbrev 
+                      FROM wafer w 
+                      JOIN ProbingSequenceOrder p ON w.probing_sequence = p.probing_sequence 
+                      WHERE w.Wafer_ID IN ('" . implode("','", $waferIDValue) . "') 
+                      ORDER BY p.abbrev ASC";    
+            break;
+    case 'hbin_number':
+            $query = "SELECT DISTINCT d.HBin_Number 
+                        FROM DEVICE_1_CP1_V1_0_001 d
+                        JOIN wafer w ON d.wafer_sequence = w.wafer_sequence
+                        WHERE w.Wafer_ID IN ('" . implode("','", $waferIDValue) . "') 
+                        ORDER BY d.HBin_Number ASC";     
+            break;
+    case 'sbin_number':
+            $query = "SELECT DISTINCT d.SBin_Number 
+                        FROM DEVICE_1_CP1_V1_0_001 d
+                        JOIN wafer w ON d.wafer_sequence = w.wafer_sequence
+                        WHERE w.Wafer_ID IN ('" . implode("','", $waferIDValue) . "') 
+                        ORDER BY d.SBin_Number ASC";     
+            break;
+    case 'site_number':
+            $query = "SELECT DISTINCT d.Site_Number 
+                        FROM DEVICE_1_CP1_V1_0_001 d
+                        JOIN wafer w ON d.wafer_sequence = w.wafer_sequence
+                        WHERE w.Wafer_ID IN ('" . implode("','", $waferIDValue) . "') 
+                        ORDER BY d.Site_Number ASC";     
+            break;
     default:
         $query = "";
 }
 
-$options = [];
 if ($query) {
     $stmt = sqlsrv_query($conn, $query);
     while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-        if ($type == 'parameter-x' || $type == 'parameter-y') {
+        if ($type == 'hbin_number') {
+            $options[] = ['value' => $row['HBin_Number'], 'display' => $row['HBin_Number']];
+        } elseif ($type == 'sbin_number') {
+            $options[] = ['value' => $row['SBin_Number'], 'display' => $row['SBin_Number']];
+        } elseif ($type == 'site_number') {
+            $options[] = ['value' => $row['Site_Number'], 'display' => $row['Site_Number']];
+        } elseif ($type == 'probe_sequence') {
+            $options[] = ['value' => $row['abbrev'], 'display' => $row['abbrev']];
+        } elseif ($type == 'parameter-x' || $type == 'parameter-y') {
             $options[] = ['value' => $row['Column_Name'], 'display' => $row['Test_Name']];
         } else {
             $options[] = array_values($row)[0];
@@ -64,6 +99,7 @@ if ($query) {
     }
     sqlsrv_free_stmt($stmt);
 }
+
 
 echo json_encode($options);
 

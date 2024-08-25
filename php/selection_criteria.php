@@ -60,65 +60,11 @@ while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
 }
 sqlsrv_free_stmt($stmt);
 
-// Query to populate filter options from ProbingSequenceOrder
-$probeQuery = "SELECT DISTINCT p.abbrev,  w.probing_sequence FROM ProbingSequenceOrder p JOIN wafer w on w.probing_sequence = p.probing_sequence ORDER BY p.abbrev ASC";
-$abbrev = [];
-$filterStmt = sqlsrv_query($conn, $probeQuery);
-while ($row = sqlsrv_fetch_array($filterStmt, SQLSRV_FETCH_ASSOC)) {
-    $abbrev[] = ['abbrev' => $row['abbrev'], 'probing_sequence' => $row['probing_sequence']];
-}
-sqlsrv_free_stmt($filterStmt);
-
-// Query to populate filter options from DEVICE_1_CP1_V1_0_001 table for HBin numbers
-$hbinQuery = "
-    SELECT DISTINCT d.HBin_Number 
-    FROM DEVICE_1_CP1_V1_0_001 d
-    JOIN wafer w ON d.wafer_sequence = w.wafer_sequence
-    WHERE d.HBin_Number IS NOT NULL 
-    ORDER BY d.HBin_Number ASC";
-$hbin = [];
-$hbinStmt = sqlsrv_query($conn, $hbinQuery);
-while ($row = sqlsrv_fetch_array($hbinStmt, SQLSRV_FETCH_ASSOC)) {
-    $hbin[] = ['hbin' => $row['HBin_Number']];
-}
-sqlsrv_free_stmt($hbinStmt);
-
-// Query to populate filter options from DEVICE_1_CP1_V1_0_001 table for SBin numbers
-$sbinQuery = "
-    SELECT DISTINCT d.SBin_Number 
-    FROM DEVICE_1_CP1_V1_0_001 d
-    JOIN wafer w ON d.wafer_sequence = w.wafer_sequence
-    WHERE d.SBin_Number IS NOT NULL 
-    ORDER BY d.SBin_Number ASC";
-$sbin = [];
-$sbinStmt = sqlsrv_query($conn, $sbinQuery);
-while ($row = sqlsrv_fetch_array($sbinStmt, SQLSRV_FETCH_ASSOC)) {
-    $sbin[] = ['sbin' => $row['SBin_Number']];
-}
-sqlsrv_free_stmt($sbinStmt);
-
-// Query to populate filter options from DEVICE_1_CP1_V1_0_001 table for Site numbers
-$siteQuery = "
-    SELECT DISTINCT d.site_Number 
-    FROM DEVICE_1_CP1_V1_0_001 d
-    JOIN wafer w ON d.wafer_sequence = w.wafer_sequence
-    WHERE d.site_Number IS NOT NULL 
-    ORDER BY d.site_Number ASC";
-$site = [];
-$siteStmt = sqlsrv_query($conn, $siteQuery);
-while ($row = sqlsrv_fetch_array($siteStmt, SQLSRV_FETCH_ASSOC)) {
-    $site[] = ['site' => $row['site_Number']];
-}
-sqlsrv_free_stmt($siteStmt);
-
-
-
 $columns = [
     'Facility ID', 'Head Number', 'HBin Number', 'Lot ID', 'Part Type', 'Probe Count', 'Program Name',
     'SBin Number', 'Site Number', 'Test Temperature', 'Test Time', 'Tests Executed', 'Unit Number',
     'Wafer Finish Time', 'Wafer ID', 'Wafer Start Time', 'Work Center', 'X', 'Y',
 ];
-
 ?>
 
 
@@ -146,9 +92,10 @@ $columns = [
 </style>
 <div class="container mx-auto">
     <h1 class="text-center text-2xl font-bold mb-6 w-full">Selection Criteria</h1>
+    <form action="dashboard.php" method="GET" id="criteriaForm">
     <div class="flex flex-row justify-between gap-4">
         <div class="bg-white rounded-lg shadow-lg py-12 px-6 flex-1">
-            <form action="dashboard.php" method="GET" id="criteriaForm">
+
                 <div class="grid grid-cols-3 gap-4 mb-4">
                     <div>
                         <label for="facility" class="block text-sm font-medium text-gray-700 multiple-select">Facility</label>
@@ -297,16 +244,12 @@ $columns = [
                                         <label for="select-all-abbrev" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Select All</label>
                                     </div>
                                 </li>
-                                <?php foreach ($abbrev as $item): ?>
-                                <li>
-                                    <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                        <input id="checkbox-item-<?= htmlspecialchars($item['abbrev']) ?>" name="abbrev[]" type="checkbox" value="<?= htmlspecialchars($item['abbrev']) ?>" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 filter-checkbox-abbrev">
-                                        <label for="checkbox-item-<?= htmlspecialchars($item['abbrev']) ?>" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"><?= htmlspecialchars($item['abbrev']) ?></label>
-                                    </div>
-                                </li>
-                                <?php endforeach; ?>
+                                <!-- This section will be populated dynamically by JavaScript -->
                             </ul>
                         </div>
+
+
+
 
                         <!-- HBin Number Button and Dropdown -->
                         <button id="dropdownSearchButtonHBin" data-dropdown-toggle="dropdownSearchHBin" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-gray-50 border border-gray-300 rounded-lg" type="button">
@@ -325,14 +268,7 @@ $columns = [
                                         <label for="select-all-hbin" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Select All</label>
                                     </div>
                                 </li>
-                                <?php foreach ($hbin as $item): ?>
-                                <li>
-                                    <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                        <input id="checkbox-item-<?= htmlspecialchars($item['hbin']) ?>" name="hbin[]" type="checkbox" value="<?= htmlspecialchars($item['hbin']) ?>" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 filter-checkbox-hbin">
-                                        <label for="checkbox-item-<?= htmlspecialchars($item['hbin']) ?>" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"><?= htmlspecialchars($item['hbin']) ?></label>
-                                    </div>
-                                </li>
-                                <?php endforeach; ?>
+                                <!-- This section will be populated dynamically by JavaScript -->
                             </ul>
                         </div>
                     </div>
@@ -355,14 +291,7 @@ $columns = [
                                     <label for="select-all-sbin" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Select All</label>
                                 </div>
                             </li>
-                            <?php foreach ($sbin as $item): ?>
-                            <li>
-                                <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                    <input id="checkbox-item-<?= htmlspecialchars($item['sbin']) ?>" name="sbin[]" type="checkbox" value="<?= htmlspecialchars($item['sbin']) ?>" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 filter-checkbox-sbin">
-                                    <label for="checkbox-item-<?= htmlspecialchars($item['sbin']) ?>" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"><?= htmlspecialchars($item['sbin']) ?></label>
-                                </div>
-                            </li>
-                            <?php endforeach; ?>
+                            <!-- This section will be populated dynamically by JavaScript -->
                         </ul>
                     </div>
 
@@ -383,23 +312,15 @@ $columns = [
                                     <label for="select-all-site" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Select All</label>
                                 </div>
                             </li>
-                            <?php foreach ($site as $item): ?>
-                            <li>
-                                <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                    <input id="checkbox-item-<?= htmlspecialchars($item['site']) ?>" name="site[]" type="checkbox" value="<?= htmlspecialchars($item['site']) ?>" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 filter-checkbox-site">
-                                    <label for="checkbox-item-<?= htmlspecialchars($item['site']) ?>" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"><?= htmlspecialchars($item['site']) ?></label>
-                                </div>
-                            </li>
-                            <?php endforeach; ?>
+                            <!-- This section will be populated dynamically by JavaScript -->
                         </ul>
                     </div>
                 </div>
 
                 </div>
         </div>
-        </form>
     </div>
-    
 </div>
+</form>
 <script src="../js/selection.js"></script>
 

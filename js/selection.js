@@ -1,5 +1,4 @@
 $(document).ready(function() {
-    // Function to fetch options based on previous selection
     function fetchOptions(selectedValue, targetElement, queryType) {
         let data = {};
         switch(queryType) {
@@ -19,13 +18,17 @@ $(document).ready(function() {
                 data.lot = selectedValue;
                 break;
             case 'parameter-x':
-            case 'parameter-y': // Add this case
+            case 'parameter-y':
+            case 'probe_sequence':
+            case 'hbin_number':
+            case 'sbin_number':
+            case 'site_number':
                 data.wafer = selectedValue;
                 break;
             default:
-                return; // If an invalid queryType is passed, exit the function.
+                return;
         }
-        data.type = queryType; // Add the query type to the data object
+        data.type = queryType;
 
         $.ajax({
             url: 'fetch_options.php',
@@ -34,18 +37,48 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 let options = '';
-                if (queryType === 'parameter-x' || queryType === 'parameter-y') { // Update this condition
+                const queryTypeCheckboxMapping = {
+                    'probe_sequence': 'abbrev[]',
+                    'hbin_number': 'hbin[]',
+                    'sbin_number': 'sbin[]',
+                    'site_number': 'site[]'
+                };
+        
+                // Reusable function to generate checkbox HTML
+                function generateCheckboxHTML(name, item) {
+                    // Extract the base name without the square brackets
+                    const baseName = name.replace(/\[\]$/, '');
+                
+                    return `
+                        <li id="filter-checkbox">
+                            <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                <input id="checkbox-item-${item.value}" name="${name}" type="checkbox" value="${item.value}" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 filter-checkbox-${baseName}">
+                                <label for="checkbox-item-${item.value}" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">${item.display}</label>
+                            </div>
+                        </li>`;
+                }                
+        
+                if (queryType === 'parameter-x' || queryType === 'parameter-y') {
                     $.each(response, function(index, item) {
                         options += `<option value="${item.value}">${item.display}</option>`;
+                    });
+                    targetElement.html(options);
+                } else if (queryTypeCheckboxMapping.hasOwnProperty(queryType)) {
+                    targetElement.find('li').not(':first').remove();
+                    const name = queryTypeCheckboxMapping[queryType];
+        
+                    $.each(response, function(index, item) {
+                        const liElement = generateCheckboxHTML(name, item);
+                        targetElement.append(liElement);
                     });
                 } else {
                     $.each(response, function(index, value) {
                         options += `<option value="${value}">${value}</option>`;
                     });
+                    targetElement.html(options);
                 }
-                targetElement.html(options);
             }
-        });
+        });        
     }
 
     // Event listeners for each select element
@@ -77,7 +110,11 @@ $(document).ready(function() {
     $('#wafer').change(function() {
         const selectedWafer = $(this).val();
         fetchOptions(selectedWafer, $('#parameter-x'), 'parameter-x');
-        fetchOptions(selectedWafer, $('#parameter-y'), 'parameter-y'); // Add this line to populate parameter-y
+        fetchOptions(selectedWafer, $('#parameter-y'), 'parameter-y');
+        fetchOptions(selectedWafer, $('#dropdownSearchProbe ul'), 'probe_sequence');
+        fetchOptions(selectedWafer, $('#dropdownSearchHBin ul'), 'hbin_number');
+        fetchOptions(selectedWafer, $('#dropdownSearchSBin ul'), 'sbin_number');
+        fetchOptions(selectedWafer, $('#dropdownSearchSite ul'), 'site_number');
     });
 
     function updateChartsVisibility() {
@@ -133,7 +170,7 @@ $(document).ready(function() {
     // Reset button functionality
     $('#resetButton').click(function() {
         $('#criteriaForm')[0].reset();
-        $('#work_center, #device_name, #test_program, #lot, #wafer, #parameter-x, #parameter-y, #chart-1, #chart-2, #chart-3').html(''); // Include #parameter-y here
+        $('#work_center, #device_name, #test_program, #lot, #wafer, #parameter-x, #parameter-y, #chart-1, #chart-2, #chart-3, #filter-checkbox').html(''); // Include #parameter-y here
     });
 });
 
