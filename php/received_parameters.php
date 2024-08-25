@@ -35,26 +35,52 @@
           <div class="mx-4 italic text-xs">
             <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Probe Count:</b> <?php echo implode(', ', $filters['p.abbrev']); ?></p>
           </div>
+          <div class="mx-4 italic text-xs">
+            <p class="mb-2 text-gray-500 dark:text-gray-400"><b>HBin Number:</b> <?php echo implode(', ', $filters['d1.HBin_Number']); ?></p>
+          </div>
+          <div class="mx-4 italic text-xs">
+            <p class="mb-2 text-gray-500 dark:text-gray-400"><b>SBin Number:</b> <?php echo implode(', ', $filters['d1.SBin_Number']); ?></p>
+          </div>
+          <div class="mx-4 italic text-xs">
+            <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Site Number:</b> <?php echo implode(', ', $filters['d1.Site_Number']); ?></p>
+          </div>
         <?php endif; ?>
       </div>
       <div>
         <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Selections:</b></p>
         <?php foreach ($filters as $key => $values): ?>
-          <?php if (!empty($values) && $key !== 'p.abbrev'): ?>
+          <?php if (!empty($values) && $key !== 'p.abbrev' && $key !== 'd1.HBin_Number' && $key !== 'd1.SBin_Number' && $key !== 'd1.Site_Number'): ?>
             <div class="mx-4 italic text-xs">
               <?php if ($key === 'tm.Column_Name'): ?>
                 <?php
-                // Query the corresponding Test_Name for each Column_Name in the filters
-                $displayValues = [];
-                foreach ($values as $columnName) {
-                    $testNameQuery = "SELECT test_name FROM TEST_PARAM_MAP WHERE Column_Name = ?";
-                    $stmt = sqlsrv_query($conn, $testNameQuery, [$columnName]);
-                    $testName = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)['test_name'];
-                    $displayValues[] = "$testName";
-                    sqlsrv_free_stmt($stmt);
+                // Separate handling for parameter-x and parameter-y
+                $parameterX = $_SESSION['parameter-x'] ?? [];
+                $parameterY = $_SESSION['parameter-y'] ?? [];
+
+                if (!empty($parameterX)) {
+                    $xTestNames = [];
+                    foreach ($parameterX as $columnName) {
+                        $testNameQuery = "SELECT test_name FROM TEST_PARAM_MAP WHERE Column_Name = ?";
+                        $stmt = sqlsrv_query($conn, $testNameQuery, [$columnName]);
+                        $testName = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)['test_name'];
+                        $xTestNames[] = "$testName";
+                        sqlsrv_free_stmt($stmt);
+                    }
+                    echo '<p class="mb-2 text-gray-500 dark:text-gray-400"><b>Test_Name (X):</b> ' . implode(', ', $xTestNames) . '</p>';
+                }
+
+                if (!empty($parameterY)) {
+                    $yTestNames = [];
+                    foreach ($parameterY as $columnName) {
+                        $testNameQuery = "SELECT test_name FROM TEST_PARAM_MAP WHERE Column_Name = ?";
+                        $stmt = sqlsrv_query($conn, $testNameQuery, [$columnName]);
+                        $testName = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)['test_name'];
+                        $yTestNames[] = "$testName";
+                        sqlsrv_free_stmt($stmt);
+                    }
+                    echo '<p class="mb-2 text-gray-500 dark:text-gray-400"><b>Test_Name (Y):</b> ' . implode(', ', $yTestNames) . '</p>';
                 }
                 ?>
-                <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Test_Name:</b> <?php echo implode(', ', $displayValues); ?></p>
               <?php else: ?>
                 <p class="mb-2 text-gray-500 dark:text-gray-400"><b>
                   <?php 

@@ -33,7 +33,7 @@
   </ol>
 </nav>
 <div class="p-4">
-   <div class="p-4 rounded-lg dark:border-gray-700">
+   <div class="p-4 rounded-lg">
 <?php include('selection_criteria.php');?>
    </div>
 </div>

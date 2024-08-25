@@ -56,6 +56,9 @@ include('cumulative_backend.php');
         .mt-12 {
             margin-top: 3rem /* 48px */;
         }
+        .min-w-custom {
+            min-width: 32rem /* 384px */;
+        }
    </style>
 </head>
 <body class="bg-gray-50">
@@ -82,7 +85,7 @@ foreach ($groupedData as $parameter => $data) {
     sqlsrv_free_stmt($testNameStmtX);
 
     echo '<div class="p-4 m-6 flex flex-col">';
-    echo '<div class="flex flex-row mx-auto border-b-2 border-2 bg-white shadow-md rounded-md pr-4">';
+    echo '<div class="flex flex-row mx-auto border-b-2 border-2 bg-white shadow-md rounded-md pr-4 min-w-custom">';
     // echo '<div class="w-fit flex-grow-0"><div class="flex items-center justify-center h-full"><div><h2 class="text-center text-xl font-semibold -rotate-90 w-full whitespace-nowrap overflow-hidden text-ellipsis">' . $yLabel . '</h2></div></div></div>';
     echo '<div class="flex flex-col items-center w-full max-w-7xl">';
     echo '<div class="p-6 chart-container">';
@@ -132,7 +135,7 @@ foreach ($groupedData as $parameter => $data) {
     } else {
         $chartId = "chartXY_{$parameter}_all";
         echo '<div class="flex items-center justify-center w-full">';
-        echo "<canvas id='{$chartId}' style='width: 250px !important; height: 160px !important;'></canvas></div>";
+        echo "<canvas id='{$chartId}'></canvas></div>";
         echo '</div>';
     }
 

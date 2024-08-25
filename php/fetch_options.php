@@ -8,7 +8,7 @@ $deviceNameValue = $_GET['device_name'] ?? $_SESSION['device_name'] ?? null;
 $testProgramValue = $_GET['test_program'] ?? $_SESSION['test_program'] ?? null;
 $lotIDValue = $_GET['lot'] ?? $_SESSION['lot'] ?? null;
 $waferIDValue = $_GET['wafer'] ?? $_SESSION['wafer'] ?? null;
-$parameterType = $_GET['parameter'] ?? $_SESSION['parameter'] ?? null;
+$parameterType = $_GET['parameter-x'] ?? $_SESSION['parameter-x'] ?? null;
 $type = $_GET['type'];
 
 switch ($type) {
@@ -38,7 +38,8 @@ switch ($type) {
                   WHERE l.Lot_ID IN ('" . implode("','", $lotIDValue) . "')
                   ORDER BY w.Wafer_ID";
         break;
-    case 'parameter':
+    case 'parameter-x':
+    case 'parameter-y':
         $query = "SELECT DISTINCT tm.Column_Name, tm.Test_Name, 
                     CAST(SUBSTRING(tm.Column_Name, 2, LEN(tm.Column_Name)) AS INT) AS Column_Num
                     FROM TEST_PARAM_MAP tm 
@@ -55,7 +56,7 @@ $options = [];
 if ($query) {
     $stmt = sqlsrv_query($conn, $query);
     while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-        if ($type == 'parameter') {
+        if ($type == 'parameter-x' || $type == 'parameter-y') {
             $options[] = ['value' => $row['Column_Name'], 'display' => $row['Test_Name']];
         } else {
             $options[] = array_values($row)[0];

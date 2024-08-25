@@ -25,6 +25,16 @@ $orderY = isset($_SESSION['orderY']) ? $_SESSION['orderY'] : null;
 
 $chart = isset($_GET['chart']) ? $_GET['chart'] : (isset($_SESSION['chart']) ? $_SESSION['chart'] : null);
 
+// Retrieve parameter-x and parameter-y values and store them in the session
+$parameterX = isset($_GET['parameter-x']) ? $_GET['parameter-x'] : (isset($_SESSION['parameter-x']) ? $_SESSION['parameter-x'] : []);
+$parameterY = isset($_GET['parameter-y']) ? $_GET['parameter-y'] : (isset($_SESSION['parameter-y']) ? $_SESSION['parameter-y'] : []);
+
+$_SESSION['parameter-x'] = $parameterX;
+$_SESSION['parameter-y'] = $parameterY;
+
+// Combine parameter-x and parameter-y into a single array for filters and reindex it
+$combinedParameters = array_values(array_unique(array_merge($parameterX, $parameterY)));
+
 $columnsGroup = [
     'l.Facility_ID', 'd1.Head_Number', 'd1.HBin_Number', 'l.Lot_ID', 'l.Part_Type', 'p.abbrev', 'l.Program_Name', 
     'd1.SBin_Number', 'd1.Site_Number', 'l.Test_Temprature', 'd1.Test_Time', 'd1.Tests_Executed',
@@ -43,9 +53,15 @@ $filters = [
     "l.Program_Name" => isset($_GET['test_program']) ? $_GET['test_program'] : (isset($_SESSION['test_program']) ? $_SESSION['test_program'] : []),
     "l.lot_ID" => isset($_GET['lot']) ? $_GET['lot'] : (isset($_SESSION['lot']) ? $_SESSION['lot'] : []),
     "w.wafer_ID" => isset($_GET['wafer']) ? $_GET['wafer'] : (isset($_SESSION['wafer']) ? $_SESSION['wafer'] : []),
-    "tm.Column_Name" => isset($_GET['parameter']) ? $_GET['parameter'] : (isset($_SESSION['parameter']) ? $_SESSION['parameter'] : []),
-    "p.abbrev" => isset($_GET['abbrev']) ? $_GET['abbrev'] : (isset($_SESSION['abbrev']) ? $_SESSION['abbrev'] : [])
+    "tm.Column_Name" => !empty($combinedParameters) ? $combinedParameters : [],
+    "p.abbrev" => isset($_GET['abbrev']) ? $_GET['abbrev'] : (isset($_SESSION['abbrev']) ? $_SESSION['abbrev'] : []),
+    "d1.HBin_Number" => isset($_GET['hbin']) ? $_GET['hbin'] : (isset($_SESSION['hbin']) ? $_SESSION['hbin'] : []),
+    "d1.SBin_Number" => isset($_GET['sbin']) ? $_GET['sbin'] : (isset($_SESSION['sbin']) ? $_SESSION['sbin'] : []),
+    "d1.Site_Number" => isset($_GET['site']) ? $_GET['site'] : (isset($_SESSION['site']) ? $_SESSION['site'] : []) 
 ];
+
+// echo "<pre>" . print_r($filters, true) . "</pre>";
+
 
 // Generate placeholders for the number of program names in the filter
 $programNamePlaceholders = implode(',', array_fill(0, count($filters['l.Program_Name']), '?'));
