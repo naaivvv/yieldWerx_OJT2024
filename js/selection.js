@@ -130,16 +130,16 @@ $(document).ready(function() {
     
         // Hide #cumulative if only parameter-x is selected
         if (selectedX && selectedX.length > 0 && (!selectedY || selectedY.length === 0)) {
-            $('#cumulative').prop('hidden', true);
+            $('#line-chart').prop('hidden', true);
         } else {
-            $('#cumulative').prop('hidden', false);
+            $('#line-chart').prop('hidden', false);
         }
     
         // Hide #line-chart if only parameter-y is selected
         if (selectedY && selectedY.length > 0 && (!selectedX || selectedX.length === 0)) {
-            $('#line-chart').prop('hidden', true);
+            $('#cumulative').prop('hidden', true);
         } else {
-            $('#line-chart').prop('hidden', false);
+            $('#cumulative').prop('hidden', false);
         }
     }
     
