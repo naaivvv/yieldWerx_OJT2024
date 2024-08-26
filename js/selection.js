@@ -23,6 +23,8 @@ $(document).ready(function() {
             case 'hbin_number':
             case 'sbin_number':
             case 'site_number':
+            case 'test_temperature':
+            case 'test_time':
                 data.wafer = selectedValue;
                 break;
             default:
@@ -41,7 +43,9 @@ $(document).ready(function() {
                     'probe_sequence': 'abbrev[]',
                     'hbin_number': 'hbin[]',
                     'sbin_number': 'sbin[]',
-                    'site_number': 'site[]'
+                    'site_number': 'site[]',
+                    'test_temperature': 'temp[]',
+                    'test_time': 'time[]'
                 };
         
                 // Reusable function to generate checkbox HTML
@@ -115,6 +119,8 @@ $(document).ready(function() {
         fetchOptions(selectedWafer, $('#dropdownSearchHBin ul'), 'hbin_number');
         fetchOptions(selectedWafer, $('#dropdownSearchSBin ul'), 'sbin_number');
         fetchOptions(selectedWafer, $('#dropdownSearchSite ul'), 'site_number');
+        fetchOptions(selectedWafer, $('#dropdownSearchTemp ul'), 'test_temperature');
+        fetchOptions(selectedWafer, $('#dropdownSearchTime ul'), 'test_time');
     });
 
     function updateChartsVisibility() {
@@ -192,4 +198,9 @@ document.getElementById('select-all-sbin').addEventListener('change', function(e
 // Site dropdown
 document.getElementById('select-all-site').addEventListener('change', function(e) {
     document.querySelectorAll('.filter-checkbox-site').forEach(checkbox => checkbox.checked = e.target.checked);
+});
+
+// Temp dropdown
+document.getElementById('select-all-temp').addEventListener('change', function(e) {
+    document.querySelectorAll('.filter-checkbox-temp').forEach(checkbox => checkbox.checked = e.target.checked);
 });

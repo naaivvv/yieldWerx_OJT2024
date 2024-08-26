@@ -98,7 +98,13 @@ $columns = [
 
                 <div class="grid grid-cols-3 gap-4 mb-4">
                     <div>
-                        <label for="facility" class="block text-sm font-medium text-gray-700 multiple-select">Facility</label>
+                        <label for="facility" class="block text-md font-medium text-blue-400 multiple-select">
+                        <div class="flex items-center justify-between">Facility
+                            <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
+                            </svg>
+                        </div>
+                        </label>
                         <select size="5" id="facility" name="facility[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                             <?php foreach ($facilities as $facility): ?>
                                 <option value="<?= $facility ?>"><?= $facility ?></option>
@@ -107,35 +113,65 @@ $columns = [
                     </div>
 
                     <div>
-                        <label for="work_center" class="block text-sm font-medium text-gray-700 multiple-select">Work Center</label>
+                    <label for="work_center" class="block text-md font-medium text-blue-500 multiple-select">
+                        <div class="flex items-center justify-between">Work Center
+                            <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
+                            </svg>
+                        </div>
+                        </label>
                         <select size="5" id="work_center" name="work_center[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                             <!-- Options will be populated based on facility selection -->
                         </select>
                     </div>
 
                     <div>
-                        <label for="device_name" class="block text-sm font-medium text-gray-700 multiple-select">Device Name</label>
+                        <label for="device_name" class="block text-md font-medium text-blue-600 multiple-select">
+                        <div class="flex items-center justify-between">Device Name
+                            <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
+                            </svg>
+                        </div>
+                        </label>
                         <select size="5" id="device_name" name="device_name[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                             <!-- Options will be populated based on work center selection -->
                         </select>
                     </div>
 
                     <div>
-                        <label for="test_program" class="block text-sm font-medium text-gray-700 multiple-select">Test Program</label>
+                        <label for="test_program" class="block text-md font-medium text-blue-700 multiple-select">
+                        <div class="flex items-center justify-between">Test Program
+                            <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
+                            </svg>
+                        </div>
+                        </label>
                         <select size="5" id="test_program" name="test_program[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                             <!-- Options will be populated based on device name selection -->
                         </select>
                     </div>
 
                     <div>
-                        <label for="lot" class="block text-sm font-medium text-gray-700 multiple-select">Lot</label>
+                        <label for="lot" class="block text-md font-medium text-blue-800 multiple-select">
+                        <div class="flex items-center justify-between">Lot
+                            <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
+                            </svg>
+                        </div>
+                        </label>
                         <select size="5" id="lot" name="lot[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                             <!-- Options will be populated based on test program selection -->
                         </select>
                     </div>
 
                     <div>
-                        <label for="wafer" class="block text-sm font-medium text-gray-700 multiple-select">Wafer</label>
+                        <label for="wafer" class="block text-md font-medium text-blue-900 multiple-select">
+                        <div class="flex items-center justify-between">Wafer
+                            <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
+                            </svg>
+                        </div>
+                        </label>
                         <select size="5" id="wafer" name="wafer[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                             <!-- Options will be populated based on lot selection -->
                         </select>
@@ -144,13 +180,22 @@ $columns = [
                     <div class="col-span-3">
                         <div class="flex justify-between gap-5">
                             <div class="flex flex-1 flex-col">
-                                <label for="parameter-x" class="block text-sm font-medium text-gray-700 multiple-select">Parameter X</label>
+                                <label for="parameter-x" class="block text-md font-medium text-gray-700 multiple-select">
+                                <div class="flex items-center justify-between">Parameter X
+                                    <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
+                                    </svg>
+                                </div>
+                                </label>
                                 <select size="5" id="parameter-x" name="parameter-x[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
                                     <!-- Options will be populated based on wafer selection -->
                                 </select>
                             </div>
                             <div class="flex flex-1 flex-col">
-                                <label for="parameter-y" class="block text-sm font-medium text-gray-700 multiple-select">Parameter Y</label>
+                                <label for="parameter-y" class="block text-md font-medium text-gray-800 multiple-select">
+                                <div class="flex items-center">Parameter Y
+                                </div>
+                                </label>
                                 <select size="5" id="parameter-y" name="parameter-y[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
                                     <!-- Options will be populated based on wafer selection -->
                                 </select>
@@ -224,7 +269,7 @@ $columns = [
                 <!-- Filter by Section -->
                  
 
-                <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 w-full gap-4">
+                <div class="border-2 border-gray-200 rounded-lg p-4 w-full gap-4">
                         <h2 class="text-md italic mb-4 w-24 text-orange-500 bg-white filter-text-header text-center"><i class="fa-solid fa-filter"></i>&nbsp;Filter by</h2>
                         <div class="flex w-full justify-center items-center gap-2 mb-2">
                         <!-- Probe Count Button and Dropdown -->
@@ -273,7 +318,7 @@ $columns = [
                         </div>
                     </div>
 
-                    <div class="flex w-full justify-center items-center gap-2">
+                    <div class="flex w-full justify-center items-center gap-2 mb-2">
                     <!-- SBin Number Button and Dropdown -->
                     <button id="dropdownSearchButtonSBin" data-dropdown-toggle="dropdownSearchSBin" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-gray-50 border border-gray-300 rounded-lg" type="button">
                         SBin Number
@@ -310,6 +355,50 @@ $columns = [
                                 <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
                                     <input id="select-all-site" type="checkbox" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                     <label for="select-all-site" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Select All</label>
+                                </div>
+                            </li>
+                            <!-- This section will be populated dynamically by JavaScript -->
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="flex w-full justify-center items-center gap-2 mb-2">
+                    <!-- Test Temperature Button and Dropdown -->
+                    <button id="dropdownSearchButtonTemp" data-dropdown-toggle="dropdownSearchTemp" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-gray-50 border border-gray-300 rounded-lg" type="button">
+                        Test Temperature
+                        <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                        </svg>
+                    </button>
+
+                    <!-- Test Temperature Dropdown menu -->
+                    <div id="dropdownSearchTemp" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
+                        <ul class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButtonTemp">
+                            <li>
+                                <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                    <input id="select-all-temp" type="checkbox" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                    <label for="select-all-temp" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Select All</label>
+                                </div>
+                            </li>
+                            <!-- This section will be populated dynamically by JavaScript -->
+                        </ul>
+                    </div>
+
+                    <!-- Test Time Button and Dropdown -->
+                    <button id="dropdownSearchButtonTime" data-dropdown-toggle="dropdownSearchTime" class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-gray-50 border border-gray-300 rounded-lg" type="button">
+                        Test Time
+                        <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                        </svg>
+                    </button>
+
+                    <!-- Test Time Dropdown menu -->
+                    <div id="dropdownSearchTime" class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700">
+                        <ul class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButtonTime">
+                            <li>
+                                <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                    <input id="select-all-time" type="checkbox" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                    <label for="select-all-time" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Select All</label>
                                 </div>
                             </li>
                             <!-- This section will be populated dynamically by JavaScript -->

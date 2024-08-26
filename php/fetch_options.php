@@ -76,6 +76,20 @@ switch ($type) {
                         WHERE w.Wafer_ID IN ('" . implode("','", $waferIDValue) . "') 
                         ORDER BY d.Site_Number ASC";     
             break;
+    case 'test_temperature':
+            $query = "SELECT DISTINCT l.Test_Temprature
+                        FROM lot l
+                        JOIN wafer w ON w.Lot_Sequence = l.Lot_Sequence 
+                        WHERE w.Wafer_ID IN ('" . implode("','", $waferIDValue) . "')
+                        ORDER BY l.Test_Temprature ASC";    
+            break;
+    case 'test_time':
+            $query = "SELECT DISTINCT d.Test_Time 
+                        FROM DEVICE_1_CP1_V1_0_001 d
+                        JOIN wafer w ON d.wafer_sequence = w.wafer_sequence
+                        WHERE w.Wafer_ID IN ('" . implode("','", $waferIDValue) . "') 
+                        ORDER BY d.Test_Time ASC";     
+            break;
     default:
         $query = "";
 }
@@ -89,6 +103,10 @@ if ($query) {
             $options[] = ['value' => $row['SBin_Number'], 'display' => $row['SBin_Number']];
         } elseif ($type == 'site_number') {
             $options[] = ['value' => $row['Site_Number'], 'display' => $row['Site_Number']];
+        } elseif ($type == 'test_temperature') {
+            $options[] = ['value' => $row['Test_Temprature'], 'display' => $row['Test_Temprature']];
+        } elseif ($type == 'test_time') {
+            $options[] = ['value' => $row['Test_Time'], 'display' => $row['Test_Time']];
         } elseif ($type == 'probe_sequence') {
             $options[] = ['value' => $row['abbrev'], 'display' => $row['abbrev']];
         } elseif ($type == 'parameter-x' || $type == 'parameter-y') {

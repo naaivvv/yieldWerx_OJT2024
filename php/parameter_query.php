@@ -57,7 +57,9 @@ $filters = [
     "p.abbrev" => isset($_GET['abbrev']) ? $_GET['abbrev'] : (isset($_SESSION['abbrev']) ? $_SESSION['abbrev'] : []),
     "d1.HBin_Number" => isset($_GET['hbin']) ? $_GET['hbin'] : (isset($_SESSION['hbin']) ? $_SESSION['hbin'] : []),
     "d1.SBin_Number" => isset($_GET['sbin']) ? $_GET['sbin'] : (isset($_SESSION['sbin']) ? $_SESSION['sbin'] : []),
-    "d1.Site_Number" => isset($_GET['site']) ? $_GET['site'] : (isset($_SESSION['site']) ? $_SESSION['site'] : []) 
+    "d1.Site_Number" => isset($_GET['site']) ? $_GET['site'] : (isset($_SESSION['site']) ? $_SESSION['site'] : []),
+    "l.Test_Temprature" => isset($_GET['temp']) ? $_GET['temp'] : (isset($_SESSION['temp']) ? $_SESSION['temp'] : []),
+    "d1.Test_Time" => isset($_GET['time']) ? $_GET['time'] : (isset($_SESSION['time']) ? $_SESSION['time'] : []) 
 ];
 
 // echo "<pre>" . print_r($filters, true) . "</pre>";

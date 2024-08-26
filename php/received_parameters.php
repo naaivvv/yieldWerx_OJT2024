@@ -30,7 +30,7 @@
         <?php if ($orderY !== null): ?>
           <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Order by (Y):</b> <?php echo $orderY == 0 ? 'Ascending' : 'Descending'; ?></p>
         <?php endif; ?>
-        <?php if (!empty($filters['p.abbrev'])): ?>
+
           <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Filters:</b></p>
           <div class="mx-4 italic text-xs">
             <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Probe Count:</b> <?php echo implode(', ', $filters['p.abbrev']); ?></p>
@@ -44,12 +44,18 @@
           <div class="mx-4 italic text-xs">
             <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Site Number:</b> <?php echo implode(', ', $filters['d1.Site_Number']); ?></p>
           </div>
-        <?php endif; ?>
+          <div class="mx-4 italic text-xs">
+            <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Test Temperature:</b> <?php echo implode(', ', $filters['l.Test_Temprature']); ?></p>
+          </div>
+          <div class="mx-4 italic text-xs">
+            <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Test Time:</b> <?php echo implode(', ', $filters['d1.Test_Time']); ?></p>
+          </div>
+  
       </div>
       <div>
         <p class="mb-2 text-gray-500 dark:text-gray-400"><b>Selections:</b></p>
         <?php foreach ($filters as $key => $values): ?>
-          <?php if (!empty($values) && $key !== 'p.abbrev' && $key !== 'd1.HBin_Number' && $key !== 'd1.SBin_Number' && $key !== 'd1.Site_Number'): ?>
+          <?php if (!empty($values) && $key !== 'p.abbrev' && $key !== 'd1.HBin_Number' && $key !== 'd1.SBin_Number' && $key !== 'd1.Site_Number' && $key !== 'l.Test_Temprature' && $key !== 'd1.Test_Time'): ?>
             <div class="mx-4 italic text-xs">
               <?php if ($key === 'tm.Column_Name'): ?>
                 <?php
