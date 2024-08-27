@@ -1,33 +1,33 @@
 <?php 
 // Retrieve or set xIndex
-if (isset($_GET['x'])) {
-    $_SESSION['xIndex'] = $_GET['x'];
+if (isset($_POST['x'])) {
+    $_SESSION['xIndex'] = $_POST['x'];
 }
 $xIndex = isset($_SESSION['xIndex']) ? $_SESSION['xIndex'] : null;
 
 // Retrieve or set yIndex
-if (isset($_GET['y'])) {
-    $_SESSION['yIndex'] = $_GET['y'];
+if (isset($_POST['y'])) {
+    $_SESSION['yIndex'] = $_POST['y'];
 }
 $yIndex = isset($_SESSION['yIndex']) ? $_SESSION['yIndex'] : null;
 
 // Retrieve or set orderX
-if (isset($_GET['order-x'])) {
-    $_SESSION['orderX'] = $_GET['order-x'];
+if (isset($_POST['order-x'])) {
+    $_SESSION['orderX'] = $_POST['order-x'];
 }
 $orderX = isset($_SESSION['orderX']) ? $_SESSION['orderX'] : null;
 
 // Retrieve or set orderY
-if (isset($_GET['order-y'])) {
-    $_SESSION['orderY'] = $_GET['order-y'];
+if (isset($_POST['order-y'])) {
+    $_SESSION['orderY'] = $_POST['order-y'];
 }
 $orderY = isset($_SESSION['orderY']) ? $_SESSION['orderY'] : null;
 
-$chart = isset($_GET['chart']) ? $_GET['chart'] : (isset($_SESSION['chart']) ? $_SESSION['chart'] : null);
+$chart = isset($_POST['chart']) ? $_POST['chart'] : (isset($_SESSION['chart']) ? $_SESSION['chart'] : null);
 
 // Retrieve parameter-x and parameter-y values and store them in the session
-$parameterX = isset($_GET['parameter-x']) ? $_GET['parameter-x'] : (isset($_SESSION['parameter-x']) ? $_SESSION['parameter-x'] : []);
-$parameterY = isset($_GET['parameter-y']) ? $_GET['parameter-y'] : (isset($_SESSION['parameter-y']) ? $_SESSION['parameter-y'] : []);
+$parameterX = isset($_POST['parameter-x']) ? $_POST['parameter-x'] : (isset($_SESSION['parameter-x']) ? $_SESSION['parameter-x'] : []);
+$parameterY = isset($_POST['parameter-y']) ? $_POST['parameter-y'] : (isset($_SESSION['parameter-y']) ? $_SESSION['parameter-y'] : []);
 
 $_SESSION['parameter-x'] = $parameterX;
 $_SESSION['parameter-y'] = $parameterY;
@@ -47,20 +47,21 @@ $yColumn = $yIndex !== null && isset($columnsGroup[$yIndex]) ? $columnsGroup[$yI
 
 // Retrieve or set filters
 $filters = [
-    "l.Facility_ID" => isset($_GET['facility']) ? $_GET['facility'] : (isset($_SESSION['facility']) ? $_SESSION['facility'] : []),
-    "l.work_center" => isset($_GET['work_center']) ? $_GET['work_center'] : (isset($_SESSION['work_center']) ? $_SESSION['work_center'] : []),
-    "l.part_type" => isset($_GET['device_name']) ? $_GET['device_name'] : (isset($_SESSION['device_name']) ? $_SESSION['device_name'] : []),
-    "l.Program_Name" => isset($_GET['test_program']) ? $_GET['test_program'] : (isset($_SESSION['test_program']) ? $_SESSION['test_program'] : []),
-    "l.lot_ID" => isset($_GET['lot']) ? $_GET['lot'] : (isset($_SESSION['lot']) ? $_SESSION['lot'] : []),
-    "w.wafer_ID" => isset($_GET['wafer']) ? $_GET['wafer'] : (isset($_SESSION['wafer']) ? $_SESSION['wafer'] : []),
+    "l.Facility_ID" => isset($_POST['facility']) ? $_POST['facility'] : (isset($_SESSION['facility']) ? $_SESSION['facility'] : []),
+    "l.work_center" => isset($_POST['work_center']) ? $_POST['work_center'] : (isset($_SESSION['work_center']) ? $_SESSION['work_center'] : []),
+    "l.part_type" => isset($_POST['device_name']) ? $_POST['device_name'] : (isset($_SESSION['device_name']) ? $_SESSION['device_name'] : []),
+    "l.Program_Name" => isset($_POST['test_program']) ? $_POST['test_program'] : (isset($_SESSION['test_program']) ? $_SESSION['test_program'] : []),
+    "l.lot_ID" => isset($_POST['lot']) ? $_POST['lot'] : (isset($_SESSION['lot']) ? $_SESSION['lot'] : []),
+    "w.wafer_ID" => isset($_POST['wafer']) ? $_POST['wafer'] : (isset($_SESSION['wafer']) ? $_SESSION['wafer'] : []),
     "tm.Column_Name" => !empty($combinedParameters) ? $combinedParameters : [],
-    "p.abbrev" => isset($_GET['abbrev']) ? $_GET['abbrev'] : (isset($_SESSION['abbrev']) ? $_SESSION['abbrev'] : []),
-    "d1.HBin_Number" => isset($_GET['hbin']) ? $_GET['hbin'] : (isset($_SESSION['hbin']) ? $_SESSION['hbin'] : []),
-    "d1.SBin_Number" => isset($_GET['sbin']) ? $_GET['sbin'] : (isset($_SESSION['sbin']) ? $_SESSION['sbin'] : []),
-    "d1.Site_Number" => isset($_GET['site']) ? $_GET['site'] : (isset($_SESSION['site']) ? $_SESSION['site'] : []),
-    "l.Test_Temprature" => isset($_GET['temp']) ? $_GET['temp'] : (isset($_SESSION['temp']) ? $_SESSION['temp'] : []),
-    "d1.Test_Time" => isset($_GET['time']) ? $_GET['time'] : (isset($_SESSION['time']) ? $_SESSION['time'] : []) 
+    "p.abbrev" => isset($_POST['abbrev']) ? $_POST['abbrev'] : (isset($_SESSION['abbrev']) ? $_SESSION['abbrev'] : []),
+    "d1.HBin_Number" => isset($_POST['hbin']) ? $_POST['hbin'] : (isset($_SESSION['hbin']) ? $_SESSION['hbin'] : []),
+    "d1.SBin_Number" => isset($_POST['sbin']) ? $_POST['sbin'] : (isset($_SESSION['sbin']) ? $_SESSION['sbin'] : []),
+    "d1.Site_Number" => isset($_POST['site']) ? $_POST['site'] : (isset($_SESSION['site']) ? $_SESSION['site'] : []),
+    "l.Test_Temprature" => isset($_POST['temp']) ? $_POST['temp'] : (isset($_SESSION['temp']) ? $_SESSION['temp'] : []),
+    "d1.Test_Time" => isset($_POST['time']) ? $_POST['time'] : (isset($_SESSION['time']) ? $_SESSION['time'] : []) 
 ];
+
 
 // echo "<pre>" . print_r($filters, true) . "</pre>";
 

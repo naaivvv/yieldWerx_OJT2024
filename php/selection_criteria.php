@@ -96,18 +96,18 @@ $columns = [
 </style>
 <div class="container mx-auto">
     <h1 class="text-center text-2xl font-bold mb-6 w-full">Selection Criteria</h1>
-    <form action="dashboard.php" method="GET" id="criteriaForm">
+    <form action="dashboard.php" method="POST" id="criteriaForm">
     <div class="flex flex-row justify-between gap-4">
         <div class="bg-white rounded-lg shadow-lg py-12 px-6 flex-1">
 
                 <div class="grid grid-cols-3 gap-4 mb-4">
-                    <div class="relative">
-                        <label for="facility" class="block text-md font-medium text-blue-400 multiple-select">
+                    <div class="text-gray-800">
+                        <label for="facility" class="block text-md font-medium multiple-select">
                         <div class="flex items-center justify-between">Facility
-                            <button type="button" id="resetFacility" class="bg-transparent text-blue-400 rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
+                            <button type="button" id="resetFacility" class="bg-transparent rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
                         </div>
                         </label>
-                        <select size="5" id="facility" name="facility[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
+                        <select size="5" id="facility" name="facility[]" class="text-gray-900 mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                             <?php foreach ($facilities as $facility): ?>
                                 <option value="<?= $facility ?>"><?= $facility ?></option>
                             <?php endforeach; ?>
@@ -115,80 +115,80 @@ $columns = [
                         
                     </div>
 
-                    <div>
-                    <label for="work_center" class="block text-md font-medium text-blue-500 multiple-select">
+                    <div class="text-gray-600">
+                    <label for="work_center" class="block text-md font-medium multiple-select">
                         <div class="flex items-center justify-between">Work Center
-                            <button type="button" id="resetWorkCenter" class="bg-transparent text-blue-500 rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
+                            <button type="button" id="resetWorkCenter" class="bg-transparent rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
                         </div>
                         </label>
-                        <select size="5" id="work_center" name="work_center[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
+                        <select size="5" id="work_center" name="work_center[]" class="text-gray-900 mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                             <!-- Options will be populated based on facility selection -->
                         </select>
                     </div>
 
-                    <div>
-                        <label for="device_name" class="block text-md font-medium text-blue-600 multiple-select">
+                    <div class="text-blue-900">
+                        <label for="device_name" class="block text-md font-medium multiple-select">
                         <div class="flex items-center justify-between">Device Name
-                            <button type="button" id="resetDeviceName" class="bg-transparent text-blue-600 rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
+                            <button type="button" id="resetDeviceName" class="bg-transparent rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
                         </div>
                         </label>
-                        <select size="5" id="device_name" name="device_name[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
+                        <select size="5" id="device_name" name="device_name[]" class="text-gray-900 mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                             <!-- Options will be populated based on work center selection -->
                         </select>
                     </div>
 
-                    <div>
-                        <label for="test_program" class="block text-md font-medium text-blue-700 multiple-select">
+                    <div class="text-blue-800">
+                        <label for="test_program" class="block text-md font-medium multiple-select">
                         <div class="flex items-center justify-between">Test Program
-                            <button type="button" id="resetTestProgram" class="bg-transparent text-blue-700 rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
+                            <button type="button" id="resetTestProgram" class="bg-transparent rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
                         </div>
                         </label>
-                        <select size="5" id="test_program" name="test_program[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
+                        <select size="5" id="test_program" name="test_program[]" class="text-gray-900 mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                             <!-- Options will be populated based on device name selection -->
                         </select>
                     </div>
 
-                    <div>
-                        <label for="lot" class="block text-md font-medium text-blue-800 multiple-select">
+                    <div class=" text-blue-700">
+                        <label for="lot" class="block text-md font-medium multiple-select">
                         <div class="flex items-center justify-between">Lot
-                            <button type="button" id="resetLot" class="bg-transparent text-blue-800 rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
+                            <button type="button" id="resetLot" class="bg-transparent  rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
                         </div>
                         </label>
-                        <select size="5" id="lot" name="lot[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
+                        <select size="5" id="lot" name="lot[]" class="text-gray-900 mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                             <!-- Options will be populated based on test program selection -->
                         </select>
                     </div>
 
-                    <div>
-                        <label for="wafer" class="block text-md font-medium text-blue-900 multiple-select">
+                    <div class=" text-blue-600">
+                        <label for="wafer" class="block text-md font-medium multiple-select">
                         <div class="flex items-center justify-between">Wafer
-                            <button type="button" id="resetWafer" class="bg-transparent text-blue-900 rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
+                            <button type="button" id="resetWafer" class="bg-transparent rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
                         </div>
                         </label>
-                        <select size="5" id="wafer" name="wafer[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
+                        <select size="5" id="wafer" name="wafer[]" class="text-gray-900 mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
                             <!-- Options will be populated based on lot selection -->
                         </select>
                     </div>
 
                     <div class="col-span-3">
                         <div class="flex justify-between gap-5">
-                            <div class="flex flex-1 flex-col">
-                                <label for="parameter-x" class="block text-md font-medium text-gray-700 multiple-select">
+                            <div class="flex flex-1 flex-col text-blue-500">
+                                <label for="parameter-x" class="block text-md font-medium multiple-select">
                                 <div class="flex items-center justify-between">Parameter X
-                                    <button type="button" id="resetParameterX" class="bg-transparent text-gray-700 rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
+                                    <button type="button" id="resetParameterX" class="bg-transparent rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
                                 </div>
                                 </label>
-                                <select size="5" id="parameter-x" name="parameter-x[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                                <select size="5" id="parameter-x" name="parameter-x[]" class="text-gray-900 mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
                                     <!-- Options will be populated based on wafer selection -->
                                 </select>
                             </div>
-                            <div class="flex flex-1 flex-col">
-                                <label for="parameter-y" class="block text-md font-medium text-gray-800 multiple-select">
+                            <div class="flex flex-1 flex-col text-blue-400">
+                                <label for="parameter-y" class="block text-md font-medium multiple-select">
                                 <div class="flex items-center justify-between">Parameter Y
-                                    <button type="button" id="resetParameterY" class="bg-transparent text-gray-700 rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
+                                    <button type="button" id="resetParameterY" class="bg-transparent rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
                                 </div>
                                 </label>
-                                <select size="5" id="parameter-y" name="parameter-y[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
+                                <select size="5" id="parameter-y" name="parameter-y[]" class="text-gray-900 mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
                                     <!-- Options will be populated based on wafer selection -->
                                 </select>
                             </div>

@@ -259,18 +259,37 @@ $(document).ready(function() {
     });
 
     $('#resetParameterX').click(function() {
-        if (currentAjaxRequest) {
-            currentAjaxRequest.abort(); // Cancel any ongoing AJAX request
-        }
+        $.each(currentAjaxRequests, function(key, request) {
+            if (request) {
+                request.abort();
+            }
+        });
         $('#parameter-x').val([]); // Reset the value of #parameter-x
     });
 
     $('#resetParameterY').click(function() {
-        if (currentAjaxRequest) {
-            currentAjaxRequest.abort(); // Cancel any ongoing AJAX request
-        }
+        $.each(currentAjaxRequests, function(key, request) {
+            if (request) {
+                request.abort();
+            }
+        });
         $('#parameter-y').val([]); // Reset the value of #parameter-y
     });
+
+    $('#criteriaForm').on('submit', function(e) {
+        var selectedValue = $('input[name="chart"]:checked').val();
+        
+        if (selectedValue == '0') {
+            $(this).attr('action', 'line_chart.php');
+        } else if (selectedValue == '1') {
+            $(this).attr('action', 'graph.php');
+        } else if (selectedValue == '2') {
+            $(this).attr('action', 'cumulative.php');
+        } else if (selectedValue == '3') {
+            $(this).attr('action', 'dashboard.php');
+        }
+    });
+
 });
 
 // Probe dropdown
