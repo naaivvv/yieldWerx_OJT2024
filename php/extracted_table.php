@@ -157,9 +157,31 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
         <div class="flex justify-between items-center">
             <div></div>
             <div class="mb-4 text-right">
-                <a href="export.php?<?php echo http_build_query($_GET); ?>" class="px-5 py-2 bg-green-500 text-white rounded">
-                    <i class="fa-regular fa-file-excel"></i>&nbsp;Export
-                </a>
+                <!-- Form to send data to export.php -->
+                <form action="export.php" method="post">
+                    <!-- Pass the SQL query -->
+                    <input type="hidden" name="tsql" value="<?php echo htmlspecialchars($tsql); ?>">
+                    
+                    <!-- Pass headers -->
+                    <input type="hidden" name="headers" value="<?php echo htmlspecialchars(json_encode($headers)); ?>">
+                    
+                    <!-- Pass parameters from parameter_query.php -->
+                    <input type="hidden" name="xIndex" value="<?php echo htmlspecialchars($xIndex); ?>">
+                    <input type="hidden" name="yIndex" value="<?php echo htmlspecialchars($yIndex); ?>">
+                    <input type="hidden" name="orderX" value="<?php echo htmlspecialchars($orderX); ?>">
+                    <input type="hidden" name="orderY" value="<?php echo htmlspecialchars($orderY); ?>">
+                    <input type="hidden" name="parameterX" value="<?php echo htmlspecialchars(json_encode($parameterX)); ?>">
+                    <input type="hidden" name="parameterY" value="<?php echo htmlspecialchars(json_encode($parameterY)); ?>">
+                    <input type="hidden" name="filters" value="<?php echo htmlspecialchars(json_encode($filters)); ?>">
+                    <input type="hidden" name="deviceTables" value="<?php echo htmlspecialchars(json_encode($device_tables)); ?>">
+                    <input type="hidden" name="whereClause" value="<?php echo htmlspecialchars($where_clause); ?>">
+                    <input type="hidden" name="orderByClause" value="<?php echo htmlspecialchars($orderByClause); ?>">
+                    <input type="hidden" name="params" value="<?php echo htmlspecialchars(json_encode($params)); ?>">
+                    
+                    <button type="submit" class="px-5 py-2 bg-green-500 text-white rounded">
+                        <i class="fa-regular fa-file-excel"></i>&nbsp;Export
+                    </button>
+                </form>
             </div>
         </div>
        
