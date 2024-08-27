@@ -178,6 +178,45 @@ $(document).ready(function() {
         $('#criteriaForm')[0].reset();
         $('#work_center, #device_name, #test_program, #lot, #wafer, #parameter-x, #parameter-y, #chart-1, #chart-2, #chart-3, #filter-checkbox').html(''); // Include #parameter-y here
     });
+
+    // Reset facility
+    $('#resetFacility').click(function() {
+        $('#facility').val([]);
+        $('#work_center, #device_name, #test_program, #lot, #wafer, #parameter-x, #parameter-y').html('');
+    });
+
+    $('#resetWorkCenter').click(function() {
+        $('#work_center').val([]);
+        $('#device_name, #test_program, #lot, #wafer, #parameter-x, #parameter-y').html('');
+    });
+
+    $('#resetDeviceName').click(function() {
+        $('#device_name').val([]);
+        $('#test_program, #lot, #wafer, #parameter-x, #parameter-y').html('');
+    });
+
+    $('#resetTestProgram').click(function() {
+        $('#test_program').val([]);
+        $('#lot, #wafer, #parameter-x, #parameter-y').html('');
+    });
+
+    $('#resetLot').click(function() {
+        $('#lot').val([]);
+        $('#wafer, #parameter-x, #parameter-y').html('');
+    });
+
+    $('#resetWafer').click(function() {
+        $('#wafer').val([]);
+        $('#parameter-x, #parameter-y, #filter-checkbox').html('');
+    });
+
+    $('#resetParameterX').click(function() {
+        $('#parameter-x').val([]);
+    });
+
+    $('#resetParameterY').click(function() {
+        $('#parameter-y').val([]);
+    });
 });
 
 // Probe dropdown

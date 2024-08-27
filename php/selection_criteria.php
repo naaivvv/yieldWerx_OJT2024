@@ -97,12 +97,10 @@ $columns = [
         <div class="bg-white rounded-lg shadow-lg py-12 px-6 flex-1">
 
                 <div class="grid grid-cols-3 gap-4 mb-4">
-                    <div>
+                    <div class="relative">
                         <label for="facility" class="block text-md font-medium text-blue-400 multiple-select">
                         <div class="flex items-center justify-between">Facility
-                            <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
-                            </svg>
+                            <button type="button" id="resetFacility" class="bg-transparent text-blue-400 rounded-lg"><i class="fa-solid fa-delete-left"></i></button>
                         </div>
                         </label>
                         <select size="5" id="facility" name="facility[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
@@ -110,14 +108,13 @@ $columns = [
                                 <option value="<?= $facility ?>"><?= $facility ?></option>
                             <?php endforeach; ?>
                         </select>
+                        
                     </div>
 
                     <div>
                     <label for="work_center" class="block text-md font-medium text-blue-500 multiple-select">
                         <div class="flex items-center justify-between">Work Center
-                            <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
-                            </svg>
+                            <button type="button" id="resetWorkCenter" class="bg-transparent text-blue-500 rounded-lg"><i class="fa-solid fa-delete-left"></i></button>
                         </div>
                         </label>
                         <select size="5" id="work_center" name="work_center[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
@@ -128,9 +125,7 @@ $columns = [
                     <div>
                         <label for="device_name" class="block text-md font-medium text-blue-600 multiple-select">
                         <div class="flex items-center justify-between">Device Name
-                            <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
-                            </svg>
+                            <button type="button" id="resetDeviceName" class="bg-transparent text-blue-600 rounded-lg"><i class="fa-solid fa-delete-left"></i></button>
                         </div>
                         </label>
                         <select size="5" id="device_name" name="device_name[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
@@ -141,9 +136,7 @@ $columns = [
                     <div>
                         <label for="test_program" class="block text-md font-medium text-blue-700 multiple-select">
                         <div class="flex items-center justify-between">Test Program
-                            <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
-                            </svg>
+                            <button type="button" id="resetTestProgram" class="bg-transparent text-blue-700 rounded-lg"><i class="fa-solid fa-delete-left"></i></button>
                         </div>
                         </label>
                         <select size="5" id="test_program" name="test_program[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
@@ -154,9 +147,7 @@ $columns = [
                     <div>
                         <label for="lot" class="block text-md font-medium text-blue-800 multiple-select">
                         <div class="flex items-center justify-between">Lot
-                            <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
-                            </svg>
+                            <button type="button" id="resetLot" class="bg-transparent text-blue-800 rounded-lg"><i class="fa-solid fa-delete-left"></i></button>
                         </div>
                         </label>
                         <select size="5" id="lot" name="lot[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
@@ -167,9 +158,7 @@ $columns = [
                     <div>
                         <label for="wafer" class="block text-md font-medium text-blue-900 multiple-select">
                         <div class="flex items-center justify-between">Wafer
-                            <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
-                            </svg>
+                            <button type="button" id="resetWafer" class="bg-transparent text-blue-900 rounded-lg"><i class="fa-solid fa-delete-left"></i></button>
                         </div>
                         </label>
                         <select size="5" id="wafer" name="wafer[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple required>
@@ -182,9 +171,7 @@ $columns = [
                             <div class="flex flex-1 flex-col">
                                 <label for="parameter-x" class="block text-md font-medium text-gray-700 multiple-select">
                                 <div class="flex items-center justify-between">Parameter X
-                                    <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
-                                    </svg>
+                                    <button type="button" id="resetParameterX" class="bg-transparent text-gray-700 rounded-lg"><i class="fa-solid fa-delete-left"></i></button>
                                 </div>
                                 </label>
                                 <select size="5" id="parameter-x" name="parameter-x[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
@@ -193,7 +180,8 @@ $columns = [
                             </div>
                             <div class="flex flex-1 flex-col">
                                 <label for="parameter-y" class="block text-md font-medium text-gray-800 multiple-select">
-                                <div class="flex items-center">Parameter Y
+                                <div class="flex items-center justify-between">Parameter Y
+                                    <button type="button" id="resetParameterY" class="bg-transparent text-gray-700 rounded-lg"><i class="fa-solid fa-delete-left"></i></button>
                                 </div>
                                 </label>
                                 <select size="5" id="parameter-y" name="parameter-y[]" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" multiple>
@@ -213,7 +201,7 @@ $columns = [
                     </button>
 
                     <!-- <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg"><i class="fa-solid fa-play"></i>&nbsp;Execute</button> -->
-                    <button type="button" id="resetButton" class="px-4 py-2 bg-red-500 text-white rounded-lg">Reset&nbsp;<i class="fa-solid fa-delete-left"></i></button>
+                    <button type="button" id="resetButton" class="px-4 py-2 bg-red-500 dark:hover:bg-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 text-white rounded-lg">Reset&nbsp;<i class="fa-solid fa-delete-left"></i></button>
                 </div>
 
                 <?php include('chart_type_modal.php'); ?>
