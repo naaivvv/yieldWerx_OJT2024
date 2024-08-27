@@ -259,16 +259,20 @@ $(document).ready(function() {
     });
 
     $('#resetParameterX').click(function() {
-        if (currentAjaxRequest) {
-            currentAjaxRequest.abort(); // Cancel any ongoing AJAX request
-        }
+        $.each(currentAjaxRequests, function(key, request) {
+            if (request) {
+                request.abort();
+            }
+        });
         $('#parameter-x').val([]); // Reset the value of #parameter-x
     });
 
     $('#resetParameterY').click(function() {
-        if (currentAjaxRequest) {
-            currentAjaxRequest.abort(); // Cancel any ongoing AJAX request
-        }
+        $.each(currentAjaxRequests, function(key, request) {
+            if (request) {
+                request.abort();
+            }
+        });
         $('#parameter-y').val([]); // Reset the value of #parameter-y
     });
 });
