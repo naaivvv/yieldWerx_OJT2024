@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    let currentAjaxRequests = {}; // Store current AJAX requests per query type
+
     function fetchOptions(selectedValue, targetElement, queryType) {
         let data = {};
         switch(queryType) {
@@ -32,7 +34,13 @@ $(document).ready(function() {
         }
         data.type = queryType;
 
-        $.ajax({
+        // Abort any previous request for this query type before sending a new one
+        if (currentAjaxRequests[queryType]) {
+            currentAjaxRequests[queryType].abort();
+        }
+
+        // Send new AJAX request and store it in the currentAjaxRequests object
+        currentAjaxRequests[queryType] = $.ajax({
             url: 'fetch_options.php',
             method: 'GET',
             data: data,
@@ -47,12 +55,9 @@ $(document).ready(function() {
                     'test_temperature': 'temp[]',
                     'test_time': 'time[]'
                 };
-        
-                // Reusable function to generate checkbox HTML
+
                 function generateCheckboxHTML(name, item) {
-                    // Extract the base name without the square brackets
                     const baseName = name.replace(/\[\]$/, '');
-                
                     return `
                         <li id="filter-checkbox">
                             <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
@@ -60,8 +65,8 @@ $(document).ready(function() {
                                 <label for="checkbox-item-${item.value}" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">${item.display}</label>
                             </div>
                         </li>`;
-                }                
-        
+                }
+
                 if (queryType === 'parameter-x' || queryType === 'parameter-y') {
                     $.each(response, function(index, item) {
                         options += `<option value="${item.value}">${item.display}</option>`;
@@ -70,7 +75,7 @@ $(document).ready(function() {
                 } else if (queryTypeCheckboxMapping.hasOwnProperty(queryType)) {
                     targetElement.find('li').not(':first').remove();
                     const name = queryTypeCheckboxMapping[queryType];
-        
+
                     $.each(response, function(index, item) {
                         const liElement = generateCheckboxHTML(name, item);
                         targetElement.append(liElement);
@@ -81,8 +86,16 @@ $(document).ready(function() {
                     });
                     targetElement.html(options);
                 }
+
+                // Clear the current request for this query type after success
+                currentAjaxRequests[queryType] = null;
+            },
+            error: function(jqXHR, textStatus) {
+                if (textStatus !== 'abort') {
+                    console.error(`AJAX request for ${queryType} failed:`, textStatus);
+                }
             }
-        });        
+        });
     }
 
     // Event listeners for each select element
@@ -126,36 +139,33 @@ $(document).ready(function() {
     function updateChartsVisibility() {
         const selectedX = $('#parameter-x').val();
         const selectedY = $('#parameter-y').val();
-    
-        // Show or hide #scatter-plot based on both #parameter-x and #parameter-y selections
+
         if (selectedX && selectedX.length > 0 && selectedY && selectedY.length > 0) {
             $('#scatter-plot').prop('hidden', false);
         } else {
             $('#scatter-plot').prop('hidden', true);
         }
-    
-        // Hide #cumulative if only parameter-x is selected
+
         if (selectedX && selectedX.length > 0 && (!selectedY || selectedY.length === 0)) {
             $('#line-chart').prop('hidden', true);
         } else {
             $('#line-chart').prop('hidden', false);
         }
-    
-        // Hide #line-chart if only parameter-y is selected
+
         if (selectedY && selectedY.length > 0 && (!selectedX || selectedX.length === 0)) {
             $('#cumulative').prop('hidden', true);
         } else {
             $('#cumulative').prop('hidden', false);
         }
     }
-    
+
     $('#parameter-x').change(updateChartsVisibility);
     $('#parameter-y').change(updateChartsVisibility);
-     
+
     function toggleRequired() {
         const parameterX = $('#parameter-x').val();
         const parameterY = $('#parameter-y').val();
-        
+
         if (parameterX.length > 0 || parameterY.length > 0) {
             $('#parameter-x').removeAttr('required');
             $('#parameter-y').removeAttr('required');
@@ -165,57 +175,101 @@ $(document).ready(function() {
         }
     }
 
-    // Call the function on change of either select element
     $('#parameter-x, #parameter-y').change(function() {
         toggleRequired();
     });
 
-    // Initial check
     toggleRequired();
 
-    // Reset button functionality
     $('#resetButton').click(function() {
+        $.each(currentAjaxRequests, function(key, request) {
+            if (request) {
+                request.abort();
+            }
+        });
+
         $('#criteriaForm')[0].reset();
-        $('#work_center, #device_name, #test_program, #lot, #wafer, #parameter-x, #parameter-y, #chart-1, #chart-2, #chart-3, #filter-checkbox').html(''); // Include #parameter-y here
+        $('#work_center, #device_name, #test_program, #lot, #wafer, #parameter-x, #parameter-y, #chart-1, #chart-2, #chart-3, #filter-checkbox').html('');
     });
 
-    // Reset facility
     $('#resetFacility').click(function() {
+        $.each(currentAjaxRequests, function(key, request) {
+            if (request) {
+                request.abort();
+            }
+        });
+
         $('#facility').val([]);
         $('#work_center, #device_name, #test_program, #lot, #wafer, #parameter-x, #parameter-y').html('');
     });
 
     $('#resetWorkCenter').click(function() {
+        $.each(currentAjaxRequests, function(key, request) {
+            if (request) {
+                request.abort();
+            }
+        });
+
         $('#work_center').val([]);
         $('#device_name, #test_program, #lot, #wafer, #parameter-x, #parameter-y').html('');
     });
 
     $('#resetDeviceName').click(function() {
+        $.each(currentAjaxRequests, function(key, request) {
+            if (request) {
+                request.abort();
+            }
+        });
+
         $('#device_name').val([]);
         $('#test_program, #lot, #wafer, #parameter-x, #parameter-y').html('');
     });
 
     $('#resetTestProgram').click(function() {
+        $.each(currentAjaxRequests, function(key, request) {
+            if (request) {
+                request.abort();
+            }
+        });
+
         $('#test_program').val([]);
         $('#lot, #wafer, #parameter-x, #parameter-y').html('');
     });
 
     $('#resetLot').click(function() {
+        $.each(currentAjaxRequests, function(key, request) {
+            if (request) {
+                request.abort();
+            }
+        });
+
         $('#lot').val([]);
         $('#wafer, #parameter-x, #parameter-y').html('');
     });
 
     $('#resetWafer').click(function() {
+        $.each(currentAjaxRequests, function(key, request) {
+            if (request) {
+                request.abort();
+            }
+        });
+
         $('#wafer').val([]);
-        $('#parameter-x, #parameter-y, #filter-checkbox').html('');
+        $('#parameter-x, #parameter-y').html('');
     });
 
     $('#resetParameterX').click(function() {
-        $('#parameter-x').val([]);
+        if (currentAjaxRequest) {
+            currentAjaxRequest.abort(); // Cancel any ongoing AJAX request
+        }
+        $('#parameter-x').val([]); // Reset the value of #parameter-x
     });
 
     $('#resetParameterY').click(function() {
-        $('#parameter-y').val([]);
+        if (currentAjaxRequest) {
+            currentAjaxRequest.abort(); // Cancel any ongoing AJAX request
+        }
+        $('#parameter-y').val([]); // Reset the value of #parameter-y
     });
 });
 
