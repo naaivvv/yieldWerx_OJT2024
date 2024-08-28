@@ -1,15 +1,19 @@
-
-
 document.addEventListener('DOMContentLoaded', () => {
     function getMinMaxWithMargin(dataGroups, marginPercentage = 0.05) {
         let allXValues = [];
         let allYValues = [];
     
-        function extractValues(data, key) {
+        function extractUniqueValues(data, key) {
+            const uniqueValues = new Set();
             if (Array.isArray(data)) {
-                return data.map(d => d[key]).filter(value => value !== undefined);
+                data.forEach(d => {
+                    const value = d[key];
+                    if (value !== undefined) {
+                        uniqueValues.add(value);
+                    }
+                });
             }
-            return [];
+            return Array.from(uniqueValues);
         }
     
         // Loop through the dataGroups to extract all X and Y values
@@ -18,8 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (const xGroup in dataGroups[combination]) {
                     for (const yGroup in dataGroups[combination][xGroup]) {
                         const data = dataGroups[combination][xGroup][yGroup];
-                        allXValues.push(...extractValues(data, 'x'));
-                        allYValues.push(...extractValues(data, 'y'));
+                        allXValues.push(...extractUniqueValues(data, 'x'));
+                        allYValues.push(...extractUniqueValues(data, 'y'));
                     }
                 }
             }
@@ -27,8 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
             for (const combination in dataGroups) {
                 for (const yGroup in dataGroups[combination]) {
                     const data = dataGroups[combination][yGroup];
-                    allXValues.push(...extractValues(data, 'x'));
-                    allYValues.push(...extractValues(data, 'y'));
+                    allXValues.push(...extractUniqueValues(data, 'x'));
+                    allYValues.push(...extractUniqueValues(data, 'y'));
                 }
             }
         } else if (hasXColumn && hasYColumn) {
@@ -36,16 +40,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (const yGroup in dataGroups[combination]) {
                     for (const xGroup in dataGroups[combination][yGroup]) {
                         const data = dataGroups[combination][yGroup][xGroup];
-                        allXValues.push(...extractValues(data, 'x'));
-                        allYValues.push(...extractValues(data, 'y'));
+                        allXValues.push(...extractUniqueValues(data, 'x'));
+                        allYValues.push(...extractUniqueValues(data, 'y'));
                     }
                 }
             }
         } else {
             for (const combination in dataGroups) {
                 const data = dataGroups[combination]['all'];
-                allXValues.push(...extractValues(data, 'x'));
-                allYValues.push(...extractValues(data, 'y'));
+                allXValues.push(...extractUniqueValues(data, 'x'));
+                allYValues.push(...extractUniqueValues(data, 'y'));
             }
         }
     
@@ -78,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
     
-
     function calculateCorrelation(data) {
         const n = data.length;
         if (n === 0) return { r: null, r2: null };
@@ -99,30 +102,57 @@ document.addEventListener('DOMContentLoaded', () => {
     
         return { r, r2 };
     }
-    
 
+    function deduplicateData(data) {
+        const uniquePoints = {};
+        return data.filter(point => {
+            const key = `${point.x},${point.y}`;
+            if (uniquePoints[key]) {
+                return false;
+            } else {
+                uniquePoints[key] = true;
+                return true;
+            }
+        });
+    }
+    
+    function aggregateData(data) {
+        const aggregatedData = {};
+        data.forEach(point => {
+            const key = `${point.x},${point.y}`;
+            if (!aggregatedData[key]) {
+                aggregatedData[key] = { ...point, count: 1 };
+            } else {
+                aggregatedData[key].count += 1;
+                aggregatedData[key].x = (aggregatedData[key].x * (aggregatedData[key].count - 1) + point.x) / aggregatedData[key].count;
+                aggregatedData[key].y = (aggregatedData[key].y * (aggregatedData[key].count - 1) + point.y) / aggregatedData[key].count;
+            }
+        });
+        return Object.values(aggregatedData);
+    }
+    
     function createScatterChart(ctx, data, label, minX, maxX, minY, maxY) {
-        const { r, r2 } = calculateCorrelation(data);
+        const deduplicatedData = deduplicateData(data); // Deduplicate data
+        const aggregatedData = aggregateData(deduplicatedData); // Aggregate similar points
+        
+        const { r, r2 } = calculateCorrelation(aggregatedData);
         const correlationText = `r: ${r.toFixed(2)}, r²: ${r2.toFixed(2)}`;
     
         return new Chart(ctx, {
             type: 'scatter',
             data: {
                 datasets: [{
-                    // label: `${label} (${correlationText})`,
                     label: `${correlationText}`,
-                    data: data,
+                    data: aggregatedData,
                     backgroundColor: 'rgba(75, 192, 192, 0.6)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1,
                     pointRadius: 2,
-                    spanGaps: true // enable for a single dataset
+                    spanGaps: true
                 }]
             },
             options: {
-                options: {
-                    animation: false
-                },
+                animation: false,
                 scales: {
                     x: {
                         title: {
@@ -153,7 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             usePointStyle: true,
                             color: 'blue'
                         }
-
                     },
                     zoom: {
                         pan: {
@@ -166,7 +195,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-
     function createCharts(groupedData, createChartFunc, marginPercentage = 0.05) {
         const { minX, maxX, minY, maxY } = getMinMaxWithMargin(groupedData, marginPercentage);
         for (const combination in groupedData) {
@@ -206,13 +234,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const canvasElement = document.getElementById(chartId);
                 if (canvasElement) {
                     const ctx = canvasElement.getContext('2d');
-                    console.log(combination);
-                    createChartFunc(ctx, groupedData[combination]['all'], 'Scatter Chart', minX, maxX, minY, maxY);
+                    createChartFunc(ctx, groupedData[combination]['all'], `All Data`, minX, maxX, minY, maxY);
                 }
             }
         }
     }
-
+    
     const marginRange = document.getElementById('marginRange');
     const rangeValue = document.getElementById('rangeValue');
 
@@ -228,7 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Recreate charts with the new margin percentage
         createCharts(groupedData, createScatterChart, marginPercentage);
     });
-
-    // Initial chart creation with the default margin
+    
     createCharts(groupedData, createScatterChart);
 });
