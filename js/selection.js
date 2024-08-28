@@ -3,24 +3,37 @@ $(document).ready(function() {
 
     function fetchOptions(selectedValue, targetElement, queryType) {
         let data = {};
+        let loadingSpinner = ''; // Variable to hold the spinner ID
+
         switch(queryType) {
             case 'work_center':
                 data.facility = selectedValue;
+                loadingSpinner = '#loading-spinner-wc';
                 break;
             case 'device_name':
                 data.work_center = selectedValue;
+                loadingSpinner = '#loading-spinner-dn';
                 break;
             case 'test_program':
                 data.device_name = selectedValue;
+                loadingSpinner = '#loading-spinner-tp';
                 break;
             case 'lot':
                 data.test_program = selectedValue;
+                loadingSpinner = '#loading-spinner-l';
                 break;
             case 'wafer':
                 data.lot = selectedValue;
+                loadingSpinner = '#loading-spinner-w';
                 break;
             case 'parameter-x':
+                data.wafer = selectedValue;
+                loadingSpinner = '#loading-spinner-x';
+                break;
             case 'parameter-y':
+                data.wafer = selectedValue;
+                loadingSpinner = '#loading-spinner-y';
+                break;
             case 'probe_sequence':
             case 'hbin_number':
             case 'sbin_number':
@@ -33,6 +46,11 @@ $(document).ready(function() {
                 return;
         }
         data.type = queryType;
+
+        // Show the loading spinner
+        if (loadingSpinner) {
+            $(loadingSpinner).removeClass('hidden');
+        }
 
         // Abort any previous request for this query type before sending a new one
         if (currentAjaxRequests[queryType]) {
@@ -68,6 +86,8 @@ $(document).ready(function() {
                 }
 
                 if (queryType === 'parameter-x' || queryType === 'parameter-y') {
+                    $('#loading-spinner-x').addClass('hidden');
+                    $('#loading-spinner-y').addClass('hidden');
                     $.each(response, function(index, item) {
                         options += `<option value="${item.value}">${item.display}</option>`;
                     });
@@ -87,12 +107,21 @@ $(document).ready(function() {
                     targetElement.html(options);
                 }
 
+                // Hide the loading spinner
+                if (loadingSpinner) {
+                    $(loadingSpinner).addClass('hidden');
+                }
+
                 // Clear the current request for this query type after success
                 currentAjaxRequests[queryType] = null;
             },
             error: function(jqXHR, textStatus) {
                 if (textStatus !== 'abort') {
                     console.error(`AJAX request for ${queryType} failed:`, textStatus);
+                }
+                // Hide the spinner even if the request fails
+                if (loadingSpinner) {
+                    $(loadingSpinner).addClass('hidden');
                 }
             }
         });
