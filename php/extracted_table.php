@@ -169,7 +169,8 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
                     <input type="hidden" name="tsql" value="<?php echo htmlspecialchars($tsql); ?>">
                     
                     <!-- Pass headers -->
-                    <input type="hidden" name="headers" value="<?php echo htmlspecialchars(json_encode($headers)); ?>">
+                    <input type="hidden" name="all_columns" value="<?php echo htmlspecialchars(json_encode($all_columns)); ?>">
+                    <input type="hidden" name="headers" value="<?php echo htmlspecialchars(json_encode($headers)); ?>"> <!-- New input -->
                     
                     <!-- Pass parameters from parameter_query.php -->
                     <input type="hidden" name="xIndex" value="<?php echo htmlspecialchars($xIndex); ?>">

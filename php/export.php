@@ -3,7 +3,8 @@ require __DIR__ . '/../connection.php';
 
 // Retrieve the form data
 $tsql = isset($_POST['tsql']) ? $_POST['tsql'] : null;
-$headers = isset($_POST['headers']) ? json_decode($_POST['headers'], true) : [];
+$all_columns = isset($_POST['all_columns']) ? json_decode($_POST['all_columns'], true) : [];
+$headers = isset($_POST['headers']) ? json_decode($_POST['headers'], true) : [];  // Added to capture headers
 $xIndex = isset($_POST['xIndex']) ? $_POST['xIndex'] : null;
 $yIndex = isset($_POST['yIndex']) ? $_POST['yIndex'] : null;
 $orderX = isset($_POST['orderX']) ? $_POST['orderX'] : null;
@@ -36,13 +37,13 @@ header('Content-Disposition: attachment; filename="export.csv"');
 $output = fopen('php://output', 'w');
 
 // Output the headers
-fputcsv($output, $headers);
+fputcsv($output, $headers);  // Use the headers array
 
 // Output the rows
 while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
     $dataRow = [];
-    foreach ($headers as $header) {
-        $value = isset($row[$header]) ? $row[$header] : '';
+    foreach ($all_columns as $all_column) {
+        $value = isset($row[$all_column]) ? $row[$all_column] : '';
         
         // Check if the value is a DateTime object and format it
         if ($value instanceof DateTime) {
