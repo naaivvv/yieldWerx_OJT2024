@@ -139,19 +139,25 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
 
 <style>
     .table-container {
-        overflow-y: auto;
+        /* overflow-y: auto; */
         overflow-x: auto;
         max-height: 65vh;
     }
     .max-w-5xl {
             max-width: 64rem /* 1024px */;
         }
+
+    .dt-length select:not([size]){
+        width: 5rem;
+    }
 </style>
 <div class="max-w-5xl p-4 my-4 flex items-center justify-center mx-auto">
     <div class="w-full">
         <?php include('received_parameters.php'); ?>
     </div>
 </div>
+
+<!-- Table Container (initially hidden) -->
 <div class="flex justify-center items-center h-full">
     <div class="w-full max-w-7xl p-6 rounded-lg shadow-lg bg-white mt-6">
         <div class="flex justify-between items-center">
@@ -186,8 +192,15 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
         </div>
        
         <h1 class="text-start text-2xl font-bold mb-4">Data Extraction [Total: <?php echo $total_rows; ?>]</h1>
+        <!-- Loading Indicator -->
+        <div id="loading-indicator" class="flex items-center justify-center w-full h-96 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-3 py-1 text-xs font-medium leading-none text-center text-blue-800 bg-blue-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
+                loading...
+            </div>
+        </div>
+        <div id="table-container" class="hidden">
         <div class="table-container">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400" id="extracted-table">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <?php
@@ -220,5 +233,24 @@ $headers = array_map(function($column) use ($column_to_test_name_map) {
                 </tbody>
             </table>
         </div>
+        </div>
+
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        // Initialize DataTable
+        $('#extracted-table').DataTable({
+            scrollY: 400,
+            lengthMenu: [10, 25, 50, 75, 100, 250, 500, 1000, 5000, 10000, { label: 'All', value: -1 }],
+            pageLength: 250,
+            initComplete: function(settings, json) {
+                // Hide loading indicator and show table
+                $('#loading-indicator').hide();
+                $('#table-container').removeClass('hidden');
+            }
+        });
+    });
+</script>
+

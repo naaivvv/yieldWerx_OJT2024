@@ -334,25 +334,29 @@ $(document).ready(function() {
     function updateSelectOptions() {
         let xAxisValue = $('#x-axis-select').val();
         let yAxisValue = $('#y-axis-select').val();
-
+    
         // Enable all options first
-        $('#x-axis-select option').prop('disabled', false);
-        $('#y-axis-select option').prop('disabled', false);
-
+        $('#x-axis-select option').not(':first').prop('disabled', false);
+        $('#y-axis-select option').not(':first').prop('disabled', false);
+    
+        // Explicitly disable the placeholder options
+        $('#x-axis-select option:first').prop('disabled', true);
+        $('#y-axis-select option:first').prop('disabled', true);
+    
         // Disable the selected value in the other select
-        if (xAxisValue) {
+        if (xAxisValue && xAxisValue !== 'X-Axis') {
             $('#y-axis-select option[value="' + xAxisValue + '"]').prop('disabled', true);
         }
-        if (yAxisValue) {
+        if (yAxisValue && yAxisValue !== 'Y-Axis') {
             $('#x-axis-select option[value="' + yAxisValue + '"]').prop('disabled', true);
         }
     }
-
+    
     // Attach change event listeners to both select elements
     $('#x-axis-select, #y-axis-select').change(updateSelectOptions);
     
     // Initial call to disable any pre-selected options
-    updateSelectOptions();
+    updateSelectOptions();    
 
 });
 

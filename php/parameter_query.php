@@ -11,17 +11,17 @@ if (isset($_POST['y'])) {
 }
 $yIndex = isset($_SESSION['yIndex']) ? $_SESSION['yIndex'] : null;
 
-// Retrieve or set orderX
+// Retrieve or set orderX, default to 0 (ASC) if not set
 if (isset($_POST['order-x'])) {
     $_SESSION['orderX'] = $_POST['order-x'];
 }
-$orderX = isset($_SESSION['orderX']) ? $_SESSION['orderX'] : null;
+$orderX = isset($_SESSION['orderX']) ? $_SESSION['orderX'] : 0; // Default to 0 (ASC)
 
-// Retrieve or set orderY
+// Retrieve or set orderY, default to 0 (ASC) if not set
 if (isset($_POST['order-y'])) {
     $_SESSION['orderY'] = $_POST['order-y'];
 }
-$orderY = isset($_SESSION['orderY']) ? $_SESSION['orderY'] : null;
+$orderY = isset($_SESSION['orderY']) ? $_SESSION['orderY'] : 0; // Default to 0 (ASC)
 
 $chart = isset($_POST['chart']) ? $_POST['chart'] : (isset($_SESSION['chart']) ? $_SESSION['chart'] : null);
 
@@ -62,10 +62,6 @@ $filters = [
     "d1.Test_Time" => isset($_POST['time']) ? $_POST['time'] : (isset($_SESSION['time']) ? $_SESSION['time'] : []) 
 ];
 
-
-// echo "<pre>" . print_r($filters, true) . "</pre>";
-
-
 // Generate placeholders for the number of program names in the filter
 $programNamePlaceholders = implode(',', array_fill(0, count($filters['l.Program_Name']), '?'));
 
@@ -79,8 +75,6 @@ $table_stmt = sqlsrv_query($conn, $table_sql, $filters['l.Program_Name']);
 if ($table_stmt === false) {
     die('Query failed: ' . print_r(sqlsrv_errors(), true));
 }
-
-// echo "<pre>$table_sql</pre>";
 
 $device_tables = [];
 while ($table_row = sqlsrv_fetch_array($table_stmt, SQLSRV_FETCH_ASSOC)) {
@@ -111,6 +105,7 @@ if (!empty($sql_filters)) {
     $where_clause = 'WHERE ' . implode(' AND ', $sql_filters);
 }
 
+// Use the correct order direction based on orderX and orderY
 $orderDirectionX = $orderX == 1 ? 'DESC' : 'ASC';
 $orderDirectionY = $orderY == 1 ? 'DESC' : 'ASC';
 
