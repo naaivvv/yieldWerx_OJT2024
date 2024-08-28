@@ -221,6 +221,17 @@ $(document).ready(function() {
         $('#work_center, #device_name, #test_program, #lot, #wafer, #parameter-x, #parameter-y, #chart-1, #chart-2, #chart-3, #filter-checkbox').html('');
     });
 
+    $('#resetFilters').click(function() {
+        $.each(currentAjaxRequests, function(key, request) {
+            if (request) {
+                request.abort();
+            }
+        });
+        $('#filter-checkbox').html('');
+        $('#x-axis-select, #y-axis-select').val([]);
+        $('#x-axis-select, #y-axis-select').val('').prop('selectedIndex', 0);
+    });
+
     $('#resetFacility').click(function() {
         $.each(currentAjaxRequests, function(key, request) {
             if (request) {

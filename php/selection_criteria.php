@@ -219,6 +219,9 @@ $columns = [
             
         </div>
         <div class="bg-white rounded-lg shadow-lg py-12 px-6">
+            <div class="flex items-center justify-end mb-2">
+            <button type="button" id="resetFilters" class="bg-transparent rounded-lg hover:text-red-500"><i class="fa-solid fa-delete-left"></i></button>
+            </div>
         <div class="flex flex-col justify-between w-full gap-4">
                     <!-- Group by Section -->
                 <div class="border-2 border-gray-200 rounded-lg p-4 mb-4 w-full">

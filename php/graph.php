@@ -140,11 +140,13 @@ foreach ($combinations as $combination) {
                 // Only Y parameter is set
                 echo '<div class="flex flex-row items-center justify-center w-full">';
                 echo '<div class="grid gap-2 grid-cols-1">';
+                echo '<div class="flex flex-col items-center">';
                 foreach ($data as $yGroup => $chartData) {
                     $chartId = "chartXY_{$combinationKey}_{$yGroup}";
                     echo '<div class="flex flex-row justify-center items-center w-custom">';
                     echo '<div class="text-center">
-                        <h2 class="text-center text-xl font-semibold mb-4 -rotate-90">' . $yGroup . '</h2></div>';
+                        <h2 class="text-center text-xl font-semibold mb-4 -rotate-90">' . $yGroup . '</h2>
+                        </div>';
                         echo "<canvas id='{$chartId}' style='width: 250px !important; height: 160px !important;'></canvas>";
                     echo '</div>';
                 }
