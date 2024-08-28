@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Loop through the dataGroups to extract all X and Y values
+    for (const parameter in dataGroups) {
         if (xColumn && !yColumn) {
-            for (const parameter in dataGroups) {
                 for (const xGroup in dataGroups[parameter]) {
                     for (const yGroup in dataGroups[parameter][xGroup]) {
                         const data = dataGroups[parameter][xGroup][yGroup];
@@ -26,17 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         allYValues.push(...extractUniqueValues(data, 'y'));
                     }
                 }
-            }
         } else if (!xColumn && yColumn) {
-            for (const parameter in dataGroups) {
                 for (const group in dataGroups[parameter]) {
                     const data = dataGroups[parameter][group];
                     allXValues.push(...extractUniqueValues(data, 'x'));
                     allYValues.push(...extractUniqueValues(data, 'y'));
                 }
-            }
         } else if (xColumn && yColumn) {
-            for (const parameter in dataGroups) {
                 for (const yGroup in dataGroups[parameter]) {
                     for (const xGroup in dataGroups[parameter][yGroup]) {
                         const data = dataGroups[parameter][yGroup][xGroup];
@@ -44,14 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         allYValues.push(...extractUniqueValues(data, 'y'));
                     }
                 }
-            }
         } else {
-            for (const parameter in dataGroups) {
+        
                 const data = dataGroups[parameter]['all'];
                 allXValues.push(...extractUniqueValues(data, 'x'));
                 allYValues.push(...extractUniqueValues(data, 'y'));
-            }
         }
+    }
 
         // Compute min and max values iteratively
         function getMinMax(arr) {

@@ -230,6 +230,7 @@ $(document).ready(function() {
         $('#filter-checkbox').html('');
         $('#x-axis-select, #y-axis-select').val([]);
         $('#x-axis-select, #y-axis-select').val('').prop('selectedIndex', 0);
+        updateSelectOptions();
     });
 
     $('#resetFacility').click(function() {
@@ -329,6 +330,29 @@ $(document).ready(function() {
             $(this).attr('action', 'dashboard.php');
         }
     });
+
+    function updateSelectOptions() {
+        let xAxisValue = $('#x-axis-select').val();
+        let yAxisValue = $('#y-axis-select').val();
+
+        // Enable all options first
+        $('#x-axis-select option').prop('disabled', false);
+        $('#y-axis-select option').prop('disabled', false);
+
+        // Disable the selected value in the other select
+        if (xAxisValue) {
+            $('#y-axis-select option[value="' + xAxisValue + '"]').prop('disabled', true);
+        }
+        if (yAxisValue) {
+            $('#x-axis-select option[value="' + yAxisValue + '"]').prop('disabled', true);
+        }
+    }
+
+    // Attach change event listeners to both select elements
+    $('#x-axis-select, #y-axis-select').change(updateSelectOptions);
+    
+    // Initial call to disable any pre-selected options
+    updateSelectOptions();
 
 });
 
