@@ -141,8 +141,8 @@ Welcome to the YieldWerx Data Extraction and Analytics System, designed to strea
 - **Functionality:** Allows users to define specific criteria for data extraction. The selection process involves filtering data based on parameters such as wafer IDs, probe counts, product types, or any specific test conditions. This feature ensures that the extracted data is relevant and meets the user's analysis needs.
 
 ## Extracted Table
-![Extracted Table - Data Overview](images/ss4.png)
-![Extracted Table - Data Details](images/ss5.png)
+![Extracted Table - Data Overview](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d2f2c6e33119f1f2b26caefd5a82b624430b04ad/images/ss4.png)
+![Extracted Table - Data Details](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d2f2c6e33119f1f2b26caefd5a82b624430b04ad/images/ss5.png)
 - **Functionality:** Presents the data extracted based on the selection criteria in a structured tabular format. Users can view detailed records, perform sorting, apply filters, and manage pagination. This table serves as the central location for reviewing the raw data before it is analyzed or visualized.
 
 ## Graphs
@@ -150,28 +150,28 @@ Welcome to the YieldWerx Data Extraction and Analytics System, designed to strea
 - **Functionality:** Provides visual representations of the extracted data, enabling users to easily interpret complex datasets. The system offers various types of charts and graphs to suit different analytical needs.
 
 ### XY Scatter Plot
-![XY Scatter Plot](images/ss6.png)
+![XY Scatter Plot](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d2f2c6e33119f1f2b26caefd5a82b624430b04ad/images/ss6.png)
 - **Functionality:** Visualizes the relationship between two variables across the dataset. This plot is ideal for identifying correlations, trends, and outliers within the data.
 
 ### Line Chart
-![Line Chart](images/ss7.png)
+![Line Chart](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d2f2c6e33119f1f2b26caefd5a82b624430b04ad/images/ss7.png)
 - **Functionality:** Depicts trends over time or across sequential data points. The line chart is particularly useful for tracking changes in key metrics, allowing users to observe patterns and predict future outcomes based on historical data.
 
 ### Cumulative Probability Chart
-![Cumulative Probability Chart](images/ss8.png)
+![Cumulative Probability Chart](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d2f2c6e33119f1f2b26caefd5a82b624430b04ad/images/ss8.png)
 - **Functionality:** Displays the cumulative probability distribution of a dataset. This chart helps users understand the probability of different outcomes occurring within a range of values, providing insights into the overall data distribution and the likelihood of specific results.
 
 ## Additional UI
 
 ### Received Parameters
-![Received Parameters](images/ss9.png)
+![Received Parameters](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d74c00d113391e0e513216c39d2c96a1880db32c/images/ss9.png)
 - **Functionality:** Lists the parameters that have been selected or input by the user during the data extraction process. This section provides a summary of the choices made, ensuring that users can easily verify the criteria used for data filtering and extraction.
 
 ### Chart Settings for Adjusting Chart Margin
-![Chart Settings for Adjusting Chart Margin](images/ss10.png)
+![Chart Settings for Adjusting Chart Margin](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d74c00d113391e0e513216c39d2c96a1880db32c/images/ss10.png)
 - **Functionality:** Offers users the ability to customize chart margins and other visual settings. By adjusting these parameters, users can refine the display of charts to better fit their analysis needs, ensuring clarity and enhancing the visual presentation of data.
 
 ### Breadcrumbs and Navigation Bar
-![Breadcrumbs and Navigation Bar](images/ss11.png)
+![Breadcrumbs and Navigation Bar](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d74c00d113391e0e513216c39d2c96a1880db32c/images/ss11.png)
 ![Selection Criteria - Step 2](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d2f2c6e33119f1f2b26caefd5a82b624430b04ad/images/ss2.png)
 - **Functionality:** Enhances user navigation by providing a clear pathway of the current page's location within the system. Breadcrumbs help users track their navigation history, while the navigation bar offers quick access to different sections of the application, promoting ease of use and efficient workflow management.
