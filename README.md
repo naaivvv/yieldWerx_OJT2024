@@ -134,6 +134,31 @@ Welcome to the YieldWerx Data Extraction and Analytics System, designed to strea
     http://localhost/yieldwerx_OJT2024/PHP/
     ```
 # UI Screenshots
+
 ## Selection Criteria
-![image](images/ss1.png)
-- Functionality: Displays an overview of system metrics and quick access to key features.
+![Selection Criteria - Step 1](images/ss1.png)
+![Selection Criteria - Step 2](images/ss2.png)
+![Selection Criteria - Step 3](images/ss3.png)
+- **Functionality:** Allows users to define specific criteria for data extraction. The selection process involves filtering data based on parameters such as date ranges, product types, or specific test conditions. This feature ensures that the extracted data is relevant and meets the user's analysis needs.
+
+## Extracted Table
+![Extracted Table - Data Overview](images/ss4.png)
+![Extracted Table - Data Details](images/ss5.png)
+- **Functionality:** Presents the data extracted based on the selection criteria in a structured tabular format. Users can view detailed records, perform sorting, apply filters, and manage pagination. This table serves as the central location for reviewing the raw data before it is analyzed or visualized.
+
+## Graphs
+### Overview
+- **Functionality:** Provides visual representations of the extracted data, enabling users to easily interpret complex datasets. The system offers various types of charts and graphs to suit different analytical needs.
+
+### XY Scatter Plot
+![XY Scatter Plot](images/ss6.png)
+- **Functionality:** Visualizes the relationship between two variables across the dataset. This plot is ideal for identifying correlations, trends, and outliers within the data. Users can interact with the graph to explore specific data points in detail.
+
+### Line Chart
+![Line Chart](images/ss7.png)
+- **Functionality:** Depicts trends over time or across sequential data points. The line chart is particularly useful for tracking changes in key metrics, allowing users to observe patterns and predict future outcomes based on historical data.
+
+### Cumulative Probability Chart
+![Cumulative Probability Chart](images/ss8.png)
+- **Functionality:** Displays the cumulative probability distribution of a dataset. This chart helps users understand the probability of different outcomes occurring within a range of values, providing insights into the overall data distribution and the likelihood of specific results.
+
