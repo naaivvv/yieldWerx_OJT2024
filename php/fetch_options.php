@@ -90,6 +90,20 @@ switch ($type) {
                         WHERE w.Wafer_ID IN ('" . implode("','", $waferIDValue) . "') 
                         ORDER BY d.Test_Time ASC";     
             break;
+    case 'tests_executed':
+            $query = "SELECT DISTINCT d.Tests_Executed 
+                        FROM DEVICE_1_CP1_V1_0_001 d
+                        JOIN wafer w ON d.wafer_sequence = w.wafer_sequence
+                        WHERE w.Wafer_ID IN ('" . implode("','", $waferIDValue) . "') 
+                        ORDER BY d.Tests_Executed ASC";     
+            break;
+    case 'unit_number':
+            $query = "SELECT DISTINCT d.Unit_Number 
+                        FROM DEVICE_1_CP1_V1_0_001 d
+                        JOIN wafer w ON d.wafer_sequence = w.wafer_sequence
+                        WHERE w.Wafer_ID IN ('" . implode("','", $waferIDValue) . "') 
+                        ORDER BY d.Unit_Number ASC";  
+            break;
     default:
         $query = "";
 }
@@ -107,6 +121,10 @@ if ($query) {
             $options[] = ['value' => $row['Test_Temprature'], 'display' => $row['Test_Temprature']];
         } elseif ($type == 'test_time') {
             $options[] = ['value' => $row['Test_Time'], 'display' => $row['Test_Time']];
+        } elseif ($type == 'tests_executed') {  
+            $options[] = ['value' => $row['Tests_Executed'], 'display' => $row['Tests_Executed']];
+        } elseif ($type == 'unit_number') {
+            $options[] = ['value' => $row['Unit_Number'], 'display' => $row['Unit_Number']];
         } elseif ($type == 'probe_sequence') {
             $options[] = ['value' => $row['abbrev'], 'display' => $row['abbrev']];
         } elseif ($type == 'parameter-x' || $type == 'parameter-y') {

@@ -40,6 +40,8 @@ $(document).ready(function() {
             case 'site_number':
             case 'test_temperature':
             case 'test_time':
+            case 'tests_executed':
+            case 'unit_number':
                 data.wafer = selectedValue;
                 break;
             default:
@@ -71,7 +73,9 @@ $(document).ready(function() {
                     'sbin_number': 'sbin[]',
                     'site_number': 'site[]',
                     'test_temperature': 'temp[]',
-                    'test_time': 'time[]'
+                    'test_time': 'time[]',
+                    'tests_executed': 'exec[]',
+                    'unit_number': 'unit[]'
                 };
 
                 function generateCheckboxHTML(name, item) {
@@ -163,6 +167,8 @@ $(document).ready(function() {
         fetchOptions(selectedWafer, $('#dropdownSearchSite ul'), 'site_number');
         fetchOptions(selectedWafer, $('#dropdownSearchTemp ul'), 'test_temperature');
         fetchOptions(selectedWafer, $('#dropdownSearchTime ul'), 'test_time');
+        fetchOptions(selectedWafer, $('#dropdownSearchExec ul'), 'tests_executed');
+        fetchOptions(selectedWafer, $('#dropdownSearchUnit ul'), 'unit_number');
     });
 
     function updateChartsVisibility() {
@@ -382,5 +388,15 @@ document.getElementById('select-all-site').addEventListener('change', function(e
 
 // Temp dropdown
 document.getElementById('select-all-temp').addEventListener('change', function(e) {
+    document.querySelectorAll('.filter-checkbox-temp').forEach(checkbox => checkbox.checked = e.target.checked);
+});
+
+// Exec dropdown
+document.getElementById('select-all-exec').addEventListener('change', function(e) {
+    document.querySelectorAll('.filter-checkbox-exec').forEach(checkbox => checkbox.checked = e.target.checked);
+});
+
+// Unit dropdown
+document.getElementById('select-all-unit').addEventListener('change', function(e) {
     document.querySelectorAll('.filter-checkbox-temp').forEach(checkbox => checkbox.checked = e.target.checked);
 });
