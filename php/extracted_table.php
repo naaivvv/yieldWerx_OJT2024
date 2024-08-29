@@ -96,7 +96,7 @@ sqlsrv_free_stmt($count_stmt); // Free the count statement here
 
 // Retrieve all records with filters
 $tsql = "SELECT l.Facility_ID, l.Work_Center, l.Part_Type, l.Program_Name, l.Test_Temprature, l.Lot_ID,
-                w.Wafer_ID, w.Wafer_Start_Time, w.Wafer_Finish_Time, d1.Unit_Number, d1.X, d1.Y, d1.Head_Number, d1.Tests_Executed,
+                w.Wafer_ID, w.Wafer_Start_Time, w.Wafer_Finish_Time, d1.Unit_Number, d1.X, d1.Y, d1.Head_Number,
                 d1.Site_Number, d1.HBin_Number, d1.SBin_Number,
                 tm.Column_Name, tm.Test_Name, $column_list
          FROM LOT l
@@ -127,7 +127,7 @@ sqlsrv_free_stmt($stmt); // Free the statement here after fetching the mapping
 // Merge static columns with dynamic columns and replace with test names
 $columns = [
     'Facility_ID', 'Work_Center', 'Part_Type', 'Program_Name', 'Test_Temprature', 'Lot_ID',
-    'Wafer_ID', 'Wafer_Start_Time', 'Wafer_Finish_Time', 'Unit_Number', 'X', 'Y', 'Head_Number', 'Tests_Executed',
+    'Wafer_ID', 'Wafer_Start_Time', 'Wafer_Finish_Time', 'Unit_Number', 'X', 'Y', 'Head_Number',
     'Site_Number', 'HBin_Number', 'SBin_Number'
 ];
 $all_columns = array_merge($columns, $filters['tm.Column_Name']);
