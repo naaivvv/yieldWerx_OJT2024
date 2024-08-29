@@ -151,9 +151,9 @@ Welcome to the YieldWerx Data Extraction and Analytics System, designed to strea
 - **Functionality:** Provides visual representations of the extracted data, enabling users to easily interpret complex datasets. The system offers various types of charts and graphs to suit different analytical needs.
 
 ### XY Scatter Plot
-
-- **Functionality:** Visualizes the relationship between two variables across the dataset. This plot is ideal for identifying correlations, trends, and outliers within the data.
 ![ss6](https://github.com/user-attachments/assets/84f99231-e0a1-4114-bbe8-abaabe2312f0)
+- **Functionality:** Visualizes the relationship between two variables across the dataset. This plot is ideal for identifying correlations, trends, and outliers within the data.
+
 ### Line Chart
 ![ss7](https://github.com/user-attachments/assets/fe20af5d-f1d7-41c8-b154-2fc665483f9d)
 - **Functionality:** Depicts trends over time or across sequential data points. The line chart is particularly useful for tracking changes in key metrics, allowing users to observe patterns and predict future outcomes based on historical data.
