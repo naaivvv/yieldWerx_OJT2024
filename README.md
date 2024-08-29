@@ -136,13 +136,14 @@ Welcome to the YieldWerx Data Extraction and Analytics System, designed to strea
 # UI Screenshots
 
 ## Selection Criteria
-![Selection Criteria - Step 1](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d2f2c6e33119f1f2b26caefd5a82b624430b04ad/images/ss1.png)
-![Selection Criteria - Step 2](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d2f2c6e33119f1f2b26caefd5a82b624430b04ad/images/ss3.png)
+![ss1](https://github.com/user-attachments/assets/0087bbf0-a46e-42e5-b553-707d68edcdf6)
+![ss3](https://github.com/user-attachments/assets/1d0df062-7247-405d-81af-dbec34ecb488)
+
 - **Functionality:** Allows users to define specific criteria for data extraction. The selection process involves filtering data based on parameters such as wafer IDs, probe counts, product types, or any specific test conditions. This feature ensures that the extracted data is relevant and meets the user's analysis needs.
 
 ## Extracted Table
-![Extracted Table - Data Overview](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d2f2c6e33119f1f2b26caefd5a82b624430b04ad/images/ss4.png)
-![Extracted Table - Data Details](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d2f2c6e33119f1f2b26caefd5a82b624430b04ad/images/ss5.png)
+![ss4](https://github.com/user-attachments/assets/14bb881f-a82a-4af3-afe4-92eec9360d35)
+![ss5](https://github.com/user-attachments/assets/c57ed2a3-46eb-47e8-8438-83cda21801d6)
 - **Functionality:** Presents the data extracted based on the selection criteria in a structured tabular format. Users can view detailed records, perform sorting, apply filters, and manage pagination. This table serves as the central location for reviewing the raw data before it is analyzed or visualized.
 
 ## Graphs
@@ -150,28 +151,28 @@ Welcome to the YieldWerx Data Extraction and Analytics System, designed to strea
 - **Functionality:** Provides visual representations of the extracted data, enabling users to easily interpret complex datasets. The system offers various types of charts and graphs to suit different analytical needs.
 
 ### XY Scatter Plot
-![XY Scatter Plot](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d2f2c6e33119f1f2b26caefd5a82b624430b04ad/images/ss6.png)
-- **Functionality:** Visualizes the relationship between two variables across the dataset. This plot is ideal for identifying correlations, trends, and outliers within the data.
 
+- **Functionality:** Visualizes the relationship between two variables across the dataset. This plot is ideal for identifying correlations, trends, and outliers within the data.
+![ss6](https://github.com/user-attachments/assets/84f99231-e0a1-4114-bbe8-abaabe2312f0)
 ### Line Chart
-![Line Chart](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d2f2c6e33119f1f2b26caefd5a82b624430b04ad/images/ss7.png)
+![ss7](https://github.com/user-attachments/assets/fe20af5d-f1d7-41c8-b154-2fc665483f9d)
 - **Functionality:** Depicts trends over time or across sequential data points. The line chart is particularly useful for tracking changes in key metrics, allowing users to observe patterns and predict future outcomes based on historical data.
 
 ### Cumulative Probability Chart
-![Cumulative Probability Chart](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d2f2c6e33119f1f2b26caefd5a82b624430b04ad/images/ss8.png)
+![ss8](https://github.com/user-attachments/assets/972bf091-b025-4ed9-914c-5b1973eafada)
 - **Functionality:** Displays the cumulative probability distribution of a dataset. This chart helps users understand the probability of different outcomes occurring within a range of values, providing insights into the overall data distribution and the likelihood of specific results.
 
 ## Additional UI
 
 ### Received Parameters
-![Received Parameters](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d74c00d113391e0e513216c39d2c96a1880db32c/images/ss9.png)
+![ss9](https://github.com/user-attachments/assets/c6621bef-d70d-4a83-9e44-55cbf1510aff)
 - **Functionality:** Lists the parameters that have been selected or input by the user during the data extraction process. This section provides a summary of the choices made, ensuring that users can easily verify the criteria used for data filtering and extraction.
 
 ### Chart Settings for Adjusting Chart Margin
-![Chart Settings for Adjusting Chart Margin](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d74c00d113391e0e513216c39d2c96a1880db32c/images/ss10.png)
+![ss10](https://github.com/user-attachments/assets/60d365b9-52a8-4467-b2d4-661ea5aa5039)
 - **Functionality:** Offers users the ability to customize chart margins and other visual settings. By adjusting these parameters, users can refine the display of charts to better fit their analysis needs, ensuring clarity and enhancing the visual presentation of data.
 
 ### Breadcrumbs and Navigation Bar
-![Breadcrumbs and Navigation Bar](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d74c00d113391e0e513216c39d2c96a1880db32c/images/ss11.png)
-![Selection Criteria - Step 2](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d2f2c6e33119f1f2b26caefd5a82b624430b04ad/images/ss2.png)
+![ss11](https://github.com/user-attachments/assets/f47c44ea-22d4-4925-9810-e973e1c740b3)
+![ss2](https://github.com/user-attachments/assets/c131a2fb-0bbf-4ab2-842d-9855db2e08e8)
 - **Functionality:** Enhances user navigation by providing a clear pathway of the current page's location within the system. Breadcrumbs help users track their navigation history, while the navigation bar offers quick access to different sections of the application, promoting ease of use and efficient workflow management.
