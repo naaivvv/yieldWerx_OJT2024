@@ -135,4 +135,5 @@ Welcome to the YieldWerx Data Extraction and Analytics System, designed to strea
     ```
 # UI Screenshots
 ## Selection Criteria
+![image](images/ss1.png)
 - Functionality: Displays an overview of system metrics and quick access to key features.
