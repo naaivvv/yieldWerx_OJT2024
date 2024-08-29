@@ -136,7 +136,7 @@ Welcome to the YieldWerx Data Extraction and Analytics System, designed to strea
 # UI Screenshots
 
 ## Selection Criteria
-![Selection Criteria - Step 1]([images/ss1.png](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d2f2c6e33119f1f2b26caefd5a82b624430b04ad/images/ss1.png)
+![Selection Criteria - Step 1](https://github.com/naaivvv/yieldWerx_OJT2024/blob/d2f2c6e33119f1f2b26caefd5a82b624430b04ad/images/ss1.png)
 ![Selection Criteria - Step 3](images/ss3.png)
 - **Functionality:** Allows users to define specific criteria for data extraction. The selection process involves filtering data based on parameters such as wafer IDs, probe counts, product types, or any specific test conditions. This feature ensures that the extracted data is relevant and meets the user's analysis needs.
 
