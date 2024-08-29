@@ -137,9 +137,8 @@ Welcome to the YieldWerx Data Extraction and Analytics System, designed to strea
 
 ## Selection Criteria
 ![Selection Criteria - Step 1](images/ss1.png)
-![Selection Criteria - Step 2](images/ss2.png)
 ![Selection Criteria - Step 3](images/ss3.png)
-- **Functionality:** Allows users to define specific criteria for data extraction. The selection process involves filtering data based on parameters such as date ranges, product types, or specific test conditions. This feature ensures that the extracted data is relevant and meets the user's analysis needs.
+- **Functionality:** Allows users to define specific criteria for data extraction. The selection process involves filtering data based on parameters such as wafer IDs, probe counts, product types, or any specific test conditions. This feature ensures that the extracted data is relevant and meets the user's analysis needs.
 
 ## Extracted Table
 ![Extracted Table - Data Overview](images/ss4.png)
@@ -152,7 +151,7 @@ Welcome to the YieldWerx Data Extraction and Analytics System, designed to strea
 
 ### XY Scatter Plot
 ![XY Scatter Plot](images/ss6.png)
-- **Functionality:** Visualizes the relationship between two variables across the dataset. This plot is ideal for identifying correlations, trends, and outliers within the data. Users can interact with the graph to explore specific data points in detail.
+- **Functionality:** Visualizes the relationship between two variables across the dataset. This plot is ideal for identifying correlations, trends, and outliers within the data.
 
 ### Line Chart
 ![Line Chart](images/ss7.png)
@@ -162,3 +161,17 @@ Welcome to the YieldWerx Data Extraction and Analytics System, designed to strea
 ![Cumulative Probability Chart](images/ss8.png)
 - **Functionality:** Displays the cumulative probability distribution of a dataset. This chart helps users understand the probability of different outcomes occurring within a range of values, providing insights into the overall data distribution and the likelihood of specific results.
 
+## Additional UI
+
+### Received Parameters
+![Received Parameters](images/ss9.png)
+- **Functionality:** Lists the parameters that have been selected or input by the user during the data extraction process. This section provides a summary of the choices made, ensuring that users can easily verify the criteria used for data filtering and extraction.
+
+### Chart Settings for Adjusting Chart Margin
+![Chart Settings for Adjusting Chart Margin](images/ss10.png)
+- **Functionality:** Offers users the ability to customize chart margins and other visual settings. By adjusting these parameters, users can refine the display of charts to better fit their analysis needs, ensuring clarity and enhancing the visual presentation of data.
+
+### Breadcrumbs and Navigation Bar
+![Breadcrumbs and Navigation Bar](images/ss11.png)
+![Selection Criteria - Step 2](images/ss2.png)
+- **Functionality:** Enhances user navigation by providing a clear pathway of the current page's location within the system. Breadcrumbs help users track their navigation history, while the navigation bar offers quick access to different sections of the application, promoting ease of use and efficient workflow management.
