@@ -1,3 +1,4 @@
+
 <?php 
 // Retrieve or set xIndex
 if (isset($_POST['x'])) {
@@ -11,17 +12,17 @@ if (isset($_POST['y'])) {
 }
 $yIndex = isset($_SESSION['yIndex']) ? $_SESSION['yIndex'] : null;
 
-// Retrieve or set orderX, default to 0 (ASC) if not set
+// Retrieve or set orderX
 if (isset($_POST['order-x'])) {
     $_SESSION['orderX'] = $_POST['order-x'];
 }
-$orderX = isset($_SESSION['orderX']) ? $_SESSION['orderX'] : 0; // Default to 0 (ASC)
+$orderX = isset($_SESSION['orderX']) ? $_SESSION['orderX'] : null;
 
-// Retrieve or set orderY, default to 0 (ASC) if not set
+// Retrieve or set orderY
 if (isset($_POST['order-y'])) {
     $_SESSION['orderY'] = $_POST['order-y'];
 }
-$orderY = isset($_SESSION['orderY']) ? $_SESSION['orderY'] : 0; // Default to 0 (ASC)
+$orderY = isset($_SESSION['orderY']) ? $_SESSION['orderY'] : null;
 
 $chart = isset($_POST['chart']) ? $_POST['chart'] : (isset($_SESSION['chart']) ? $_SESSION['chart'] : null);
 
@@ -37,7 +38,7 @@ $combinedParameters = array_values(array_unique(array_merge($parameterX, $parame
 
 $columnsGroup = [
     'l.Facility_ID', 'd1.Head_Number', 'd1.HBin_Number', 'l.Lot_ID', 'l.Part_Type', 'p.abbrev', 'l.Program_Name', 
-    'd1.SBin_Number', 'd1.Site_Number', 'l.Test_Temprature', 'd1.Test_Time',
+    'd1.SBin_Number', 'd1.Site_Number', 'l.Test_Temprature', 'd1.Test_Time', 'd1.Tests_Executed',
     'd1.Unit_Number', 'w.Wafer_Finish_Time', 'w.Wafer_ID', 'w.Wafer_Start_Time', 'l.Work_Center', 
     'd1.X', 'd1.Y', 'l.Program_Name'
 ];
@@ -62,6 +63,10 @@ $filters = [
     "d1.Test_Time" => isset($_POST['time']) ? $_POST['time'] : (isset($_SESSION['time']) ? $_SESSION['time'] : []) 
 ];
 
+
+// echo "<pre>" . print_r($filters, true) . "</pre>";
+
+
 // Generate placeholders for the number of program names in the filter
 $programNamePlaceholders = implode(',', array_fill(0, count($filters['l.Program_Name']), '?'));
 
@@ -75,6 +80,8 @@ $table_stmt = sqlsrv_query($conn, $table_sql, $filters['l.Program_Name']);
 if ($table_stmt === false) {
     die('Query failed: ' . print_r(sqlsrv_errors(), true));
 }
+
+// echo "<pre>$table_sql</pre>";
 
 $device_tables = [];
 while ($table_row = sqlsrv_fetch_array($table_stmt, SQLSRV_FETCH_ASSOC)) {
@@ -105,7 +112,6 @@ if (!empty($sql_filters)) {
     $where_clause = 'WHERE ' . implode(' AND ', $sql_filters);
 }
 
-// Use the correct order direction based on orderX and orderY
 $orderDirectionX = $orderX == 1 ? 'DESC' : 'ASC';
 $orderDirectionY = $orderY == 1 ? 'DESC' : 'ASC';
 
